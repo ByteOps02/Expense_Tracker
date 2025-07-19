@@ -1,85 +1,103 @@
-# 💰 Expense Tracker
+# Expense Tracker
 
-A full-stack web application for tracking personal income and expenses with a modern, responsive UI and comprehensive financial analytics.
+A full-stack web application for tracking personal income and expenses with a modern, responsive UI. Built with React frontend and Node.js/Express backend.
 
 ## 🚀 Features
 
-### Authentication & User Management
-- User registration and login with JWT authentication
-- Secure password hashing with bcrypt
-- Profile photo upload functionality
-- Protected routes and middleware
+### 🔐 Authentication
+- User registration with profile photo upload
+- Secure login/logout functionality
+- JWT token-based authentication
+- Protected routes for authenticated users
 
-### Financial Tracking
-- **Income Management**: Add, edit, and delete income entries
-- **Expense Management**: Track various expense categories
-- **Data Export**: Export financial data to Excel format
-- **Real-time Analytics**: Visual charts and statistics
+### 📊 Dashboard
+- Overview of financial statistics
+- Total balance, income, and expense tracking
+- Recent transactions display
+- Responsive design with modern UI
 
-### Dashboard & Analytics
-- Interactive charts using Recharts
-- Monthly/yearly financial summaries
-- Category-wise expense breakdown
-- Income vs Expense comparisons
+### 💰 Income Management
+- Add new income entries with categories
+- View income history
+- Delete income records
+- Export income data to Excel
 
-### User Experience
-- Modern, responsive UI with Tailwind CSS
-- Toast notifications for user feedback
-- Emoji picker for better categorization
-- Mobile-friendly design
+### 💸 Expense Management
+- Add new expense entries with categories
+- View expense history
+- Delete expense records
+- Export expense data to Excel
+
+### 🎨 UI/UX Features
+- Modern, responsive design using Tailwind CSS
+- Beautiful gradient effects and animations
+- Mobile-friendly interface
+- Loading states and error handling
+- Form validation with helpful error messages
 
 ## 🛠️ Tech Stack
 
+### Frontend
+- **React 19** - Modern React with hooks
+- **React Router DOM** - Client-side routing
+- **Axios** - HTTP client for API calls
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Icons** - Icon library
+- **Vite** - Fast build tool and dev server
+- **React Hot Toast** - Toast notifications
+- **Recharts** - Data visualization
+- **Moment.js** - Date handling
+
 ### Backend
-- **Node.js** - Runtime environment
+- **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
-- **MongoDB** - Database with Mongoose ODM
-- **JWT** - Authentication
-- **bcryptjs** - Password hashing
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB ODM
+- **JWT** - JSON Web Tokens for authentication
 - **Multer** - File upload handling
 - **ExcelJS** - Excel file generation
+- **bcryptjs** - Password hashing
 - **CORS** - Cross-origin resource sharing
-
-### Frontend
-- **React 19** - UI library
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Styling framework
-- **React Router** - Client-side routing
-- **Axios** - HTTP client
-- **Recharts** - Chart library
-- **React Hot Toast** - Notifications
-- **React Icons** - Icon library
-- **Moment.js** - Date manipulation
 
 ## 📁 Project Structure
 
 ```
 Expense_Tracker/
-├── Backend/                 # Node.js/Express server
-│   ├── config/
-│   │   └── db.js           # MongoDB connection
-│   ├── controllers/        # Route controllers
-│   ├── middleware/         # Custom middleware
-│   ├── models/            # Mongoose models
-│   ├── routes/            # API routes
-│   ├── uploads/           # File uploads
-│   └── server.js          # Main server file
-├── Frontend/              # React application
+├── Frontend/                 # React frontend application
 │   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   ├── context/       # React context
-│   │   ├── pages/         # Page components
-│   │   └── utils/         # Utility functions
-│   └── public/            # Static assets
-└── README.md
+│   │   ├── components/       # Reusable UI components
+│   │   │   ├── Cards/
+│   │   │   ├── Inputs/
+│   │   │   └── layouts/
+│   │   ├── context/          # React context providers
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── pages/            # Page components
+│   │   │   ├── Auth/
+│   │   │   └── Dashboard/
+│   │   ├── utils/            # Utility functions
+│   │   ├── App.jsx           # Main app component
+│   │   └── main.jsx          # App entry point
+│   ├── public/               # Static assets
+│   ├── package.json          # Frontend dependencies
+│   └── vite.config.js        # Vite configuration
+├── Backend/                  # Node.js backend application
+│   ├── config/               # Configuration files
+│   ├── controllers/          # Route controllers
+│   ├── middleware/           # Custom middleware
+│   ├── models/               # Database models
+│   ├── routes/               # API routes
+│   ├── uploads/              # File upload directory
+│   ├── package.json          # Backend dependencies
+│   └── server.js             # Server entry point
+└── README.md                 # Project documentation
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v16 or higher)
+- npm or yarn
 - MongoDB (local or cloud instance)
-- npm or yarn package manager
 
 ### Installation
 
@@ -89,122 +107,142 @@ Expense_Tracker/
    cd Expense_Tracker
    ```
 
-2. **Backend Setup**
+2. **Install Backend Dependencies**
    ```bash
    cd Backend
    npm install
    ```
 
-3. **Frontend Setup**
+3. **Install Frontend Dependencies**
    ```bash
-   cd Frontend
+   cd ../Frontend
    npm install
    ```
 
-4. **Environment Configuration**
+4. **Environment Setup**
 
    Create a `.env` file in the Backend directory:
    ```env
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   CLIENT_URL=http://localhost:5173
+   PORT=8000
+   MONGODB_URI=mongodb://localhost:27017/expense-tracker
+   JWT_SECRET=your_jwt_secret_key_here
    ```
 
-5. **Start the Application**
-
-   **Backend (Terminal 1):**
+5. **Start the Backend Server**
    ```bash
    cd Backend
-   npm run dev
+   npm start
    ```
+   The backend will run on `http://localhost:8000`
 
-   **Frontend (Terminal 2):**
+6. **Start the Frontend Development Server**
    ```bash
    cd Frontend
    npm run dev
    ```
+   The frontend will run on `http://localhost:5173`
 
-6. **Access the Application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
+## 📚 API Documentation
 
-## 📚 API Endpoints
-
-### Authentication
+### Authentication Endpoints
 - `POST /api/v1/auth/register` - User registration
 - `POST /api/v1/auth/login` - User login
-- `GET /api/v1/auth/profile` - Get user profile
+- `GET /api/v1/auth/getUser` - Get user information
+- `POST /api/v1/auth/upload-image` - Upload profile image
 
-### Expenses
-- `GET /api/v1/expense` - Get all expenses
-- `POST /api/v1/expense` - Create new expense
-- `PUT /api/v1/expense/:id` - Update expense
-- `DELETE /api/v1/expense/:id` - Delete expense
-- `GET /api/v1/expense/export` - Export expenses to Excel
+### Dashboard Endpoints
+- `GET /api/v1/dashboard` - Get dashboard statistics
 
-### Income
-- `GET /api/v1/income` - Get all income entries
-- `POST /api/v1/income` - Create new income entry
-- `PUT /api/v1/income/:id` - Update income entry
-- `DELETE /api/v1/income/:id` - Delete income entry
-- `GET /api/v1/income/export` - Export income to Excel
+### Income Endpoints
+- `POST /api/v1/income/add` - Add new income
+- `GET /api/v1/income/get` - Get all income records
+- `DELETE /api/v1/income/:id` - Delete income record
+- `GET /api/v1/income/downloadexcel` - Export income to Excel
 
-### Dashboard
-- `GET /api/v1/dashboard/summary` - Get financial summary
-- `GET /api/v1/dashboard/charts` - Get chart data
+### Expense Endpoints
+- `POST /api/v1/expense/add` - Add new expense
+- `GET /api/v1/expense/get` - Get all expense records
+- `DELETE /api/v1/expense/:id` - Delete expense record
+- `GET /api/v1/expense/downloadexcel` - Export expense to Excel
 
-## 🔧 Available Scripts
+## 🔧 Development
 
-### Backend
-- `npm start` - Start production server
-- `npm run dev` - Start development server with nodemon
+### Available Scripts
 
-### Frontend
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+#### Backend
+```bash
+npm start          # Start production server
+npm run dev        # Start development server with nodemon
+```
 
-## 🎨 Key Features in Detail
+#### Frontend
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm run preview    # Preview production build
+npm run lint       # Run ESLint
+```
 
-### User Authentication
-- Secure JWT-based authentication
-- Password hashing with bcrypt
-- Protected API routes
-- Automatic token refresh
+### Code Structure
 
-### Financial Management
-- **Income Tracking**: Record various income sources with categories
-- **Expense Tracking**: Log expenses with detailed categorization
-- **Data Export**: Download financial data in Excel format
-- **Search & Filter**: Find specific transactions easily
+#### Frontend Components
+- **AuthLayout**: Beautiful split-screen layout for authentication pages
+- **DashboardLayout**: Main application layout with sidebar navigation
+- **Navbar**: Top navigation with mobile menu support
+- **SideMenu**: Responsive sidebar with user profile and navigation
+- **Input**: Reusable input component with password toggle
+- **ProfilePhotoSelector**: Image upload component with preview
 
-### Analytics Dashboard
-- **Visual Charts**: Interactive pie charts and bar graphs
-- **Monthly Trends**: Track spending patterns over time
-- **Category Analysis**: Understand spending distribution
-- **Financial Summary**: Quick overview of income vs expenses
+#### Backend Architecture
+- **Controllers**: Handle business logic for each route
+- **Models**: MongoDB schemas for data validation
+- **Middleware**: Authentication and file upload handling
+- **Routes**: API endpoint definitions
+- **Config**: Database and server configuration
 
-### File Management
-- **Profile Photos**: Upload and manage user profile pictures
-- **Excel Export**: Generate detailed financial reports
-- **Secure Storage**: Files stored with unique identifiers
+## 🎨 UI/UX Features
+
+### Design System
+- **Color Scheme**: Purple and violet gradients with modern aesthetics
+- **Typography**: Poppins font family for clean readability
+- **Animations**: Smooth transitions and hover effects
+- **Responsive**: Mobile-first design approach
+
+### Components
+- **Statistics Cards**: Beautiful cards displaying financial data
+- **Form Validation**: Real-time validation with error messages
+- **Loading States**: Skeleton loaders and loading spinners
+- **Toast Notifications**: User feedback for actions
 
 ## 🔒 Security Features
 
-- JWT token-based authentication
-- Password hashing with bcrypt
-- CORS configuration for secure cross-origin requests
-- Input validation and sanitization
-- Protected API endpoints
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: bcryptjs for password security
+- **Protected Routes**: Client and server-side route protection
+- **Input Validation**: Comprehensive form validation
+- **CORS Configuration**: Secure cross-origin requests
 
-## 📱 Responsive Design
+## 📱 Mobile Responsiveness
 
-The application is fully responsive and works seamlessly on:
-- Desktop computers
-- Tablets
-- Mobile phones
+The application is fully responsive and optimized for:
+- Desktop (1024px and above)
+- Tablet (768px - 1023px)
+- Mobile (320px - 767px)
+
+## 🚀 Deployment
+
+### Frontend Deployment
+1. Build the application:
+   ```bash
+   cd Frontend
+   npm run build
+   ```
+2. Deploy the `dist` folder to your hosting service
+
+### Backend Deployment
+1. Set up environment variables on your hosting platform
+2. Deploy the Backend folder to your server
+3. Ensure MongoDB connection is configured
 
 ## 🤝 Contributing
 
@@ -214,21 +252,22 @@ The application is fully responsive and works seamlessly on:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
-This project is licensed under the ISC License.
-
-## 👨‍💻 Author
-
-**Ram Krishna**
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
 - React team for the amazing framework
-- Tailwind CSS for the utility-first styling
-- MongoDB for the flexible database solution
-- All open-source contributors whose libraries made this project possible
+- Tailwind CSS for the utility-first CSS framework
+- Vite for the fast build tool
+- MongoDB for the database solution
+- Express.js for the web framework
+
+## 📞 Support
+
+If you have any questions or need help, please open an issue in the repository or contact the development team.
 
 ---
 
-**Happy Expense Tracking! 💰📊** 
+**Happy Coding! 🎉** 
