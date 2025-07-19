@@ -22,29 +22,53 @@ const SideMenu = ({ activeMenu }) => {
   };
 
   return (
-    <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px] z-20">
-      <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
-        {user?.profileImageUrl ? (
-          <img
-            src={user?.profileImageUrl || ""}
-            alt="Profile Image"
-            className="w-20 h-20 bg-slate-400 rounded-full"
-          />
-        ) : (
-          <></>
-        )}
-        <h5 className="text-gray-950 font-medium leading-6">{user?.fullName || ""}</h5>
+    <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px] z-20 shadow-lg hover-lift">
+      {/* Show profile section only when not on Dashboard */}
+      {activeMenu !== "Dashboard" && (
+        <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7 animate-fadeIn">
+          {user?.profileImageUrl ? (
+            <img
+              src={user?.profileImageUrl || ""}
+              alt="Profile Image"
+              className="w-20 h-20 bg-slate-400 rounded-full object-cover shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounceIn"
+            />
+          ) : (
+            <div className="w-20 h-20 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounceIn">
+              Profile Image
+            </div>
+          )}
+          <h5 className="text-gray-950 font-medium leading-6 hover:text-violet-600 transition-colors duration-200">
+            {user?.fullName || ""}
+          </h5>
+        </div>
+      )}
+      
+      {/* Menu items */}
+      <div className="space-y-2">
+        {SIDE_MENU_DATA.map((item, index) => (
+          <button
+            key={`menu_${index}`}
+            className={`w-full flex items-center gap-3 text-[14px] py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-slideIn ${
+              activeMenu === item.label 
+                ? "text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg scale-105 ring-2 ring-violet-300" 
+                : "text-gray-700 hover:text-violet-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 border border-transparent hover:border-violet-200 hover-lift"
+            }`}
+            style={{ animationDelay: `${index * 0.1}s` }}
+            onClick={() => handleClick(item.path)}
+          >
+            {item.icon && (
+              <item.icon 
+                className={`text-lg transition-all duration-300 ${
+                  activeMenu === item.label 
+                    ? "text-white" 
+                    : "text-gray-600 group-hover:text-violet-600"
+                }`} 
+              />
+            )}
+            <span className="font-medium">{item.label}</span>
+          </button>
+        ))}
       </div>
-      {SIDE_MENU_DATA.map((item, index) => (
-        <button
-          key={`menu_${index}`}
-          className={`w-full flex items-center gap-4 text-[15px] ${activeMenu == item.label ? "text-white bg-primary py-3 px-6 rounded-lg mb-3" : ""}`}
-          onClick={() => handleClick(item.path)}
-        >
-          {item.icon && <item.icon className="text-xl" />}
-          {item.label}
-        </button>
-      ))}
     </div>
   );
 };
