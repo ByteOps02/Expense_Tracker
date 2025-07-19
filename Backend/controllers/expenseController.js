@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Expense = require("../models/Expense");
-const XLSX = require("xlsx");
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
 
@@ -84,18 +84,30 @@ exports.downloadExpenseExcel = async (req, res) => {
     if (!expenses.length) {
       return res.status(404).json({ message: "No expenses found to export" });
     }
+    
+    // Create a new workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Expenses");
+    
     // Prepare data for Excel
     const data = expenses.map(
       ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest })
     );
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
-    const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+    
+    // Add headers
+    if (data.length > 0) {
+      const headers = Object.keys(data[0]);
+      worksheet.addRow(headers);
+      
+      // Add data rows
+      data.forEach(expense => {
+        worksheet.addRow(Object.values(expense));
+      });
+    }
 
     // Save the file to the Backend folder
     const filePath = path.join(__dirname, "../expenses.xlsx");
-    fs.writeFileSync(filePath, buffer);
+    await workbook.xlsx.writeFile(filePath);
 
     res
       .status(200)

@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Income = require("../models/Income");
-const XLSX = require("xlsx");
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
 
@@ -37,7 +37,7 @@ exports.getAllIncome = async (req, res) => {
   }
 };
 
-exports.deletIncome = async (req, res) => {
+exports.deleteIncome = async (req, res) => {
   try {
     const userId = req.user.id;
     const incomeId = req.params.id;
@@ -87,18 +87,30 @@ exports.downloadIncomeExcel = async (req, res) => {
     if (!incomes.length) {
       return res.status(404).json({ message: "No incomes found to export" });
     }
+    
+    // Create a new workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Incomes");
+    
     // Prepare data for Excel
     const data = incomes.map(
       ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest })
     );
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Incomes");
-    const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+    
+    // Add headers
+    if (data.length > 0) {
+      const headers = Object.keys(data[0]);
+      worksheet.addRow(headers);
+      
+      // Add data rows
+      data.forEach(income => {
+        worksheet.addRow(Object.values(income));
+      });
+    }
 
     // Save the file to the Backend folder
     const filePath = path.join(__dirname, "../incomes.xlsx");
-    fs.writeFileSync(filePath, buffer);
+    await workbook.xlsx.writeFile(filePath);
 
     res
       .status(200)
