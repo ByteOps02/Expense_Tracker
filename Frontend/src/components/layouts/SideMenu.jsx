@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { SIDE_MENU_DATA } from "../../utils/data";
 import { UserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import CharAvatar from "../Cards/CharAvatar";
 
 const SideMenu = ({ activeMenu }) => {
   const { user, clearUser } = useContext(UserContext);
@@ -23,26 +24,26 @@ const SideMenu = ({ activeMenu }) => {
 
   return (
     <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px] z-20 shadow-lg hover-lift">
-      {/* Show profile section only when not on Dashboard */}
-      {activeMenu !== "Dashboard" && (
-        <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7 animate-fadeIn">
-          {user?.profileImageUrl ? (
-            <img
-              src={user?.profileImageUrl || ""}
-              alt="Profile Image"
-              className="w-20 h-20 bg-slate-400 rounded-full object-cover shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounceIn"
-            />
-          ) : (
-            <div className="w-20 h-20 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounceIn">
-              Profile Image
-            </div>
-          )}
-          <h5 className="text-gray-950 font-medium leading-6 hover:text-violet-600 transition-colors duration-200">
-            {user?.fullName || ""}
-          </h5>
-        </div>
-      )}
-      
+      {/* Always show profile section at the top */}
+      <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7 animate-fadeIn">
+        {!user?.profileImageUrl ? (
+          <CharAvatar
+            fullName={user?.fullName || 'User'}
+            width="w-20"
+            height="h-20"
+            style="text-xl"
+          />
+        ) : (
+          <img
+            src={user?.profileImageUrl}
+            alt="Profile Image"
+            className="w-20 h-20 bg-slate-400 rounded-full object-cover shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounceIn"
+          />
+        )}
+        <h5 className="text-gray-950 font-medium leading-6 hover:text-violet-600 transition-colors duration-200">
+          {user?.fullName || "User"}
+        </h5>
+      </div>
       {/* Menu items */}
       <div className="space-y-2">
         {SIDE_MENU_DATA.map((item, index) => (
