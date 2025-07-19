@@ -7,12 +7,12 @@ const SideMenu = ({ activeMenu }) => {
   const { user, clearUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleClick = (route) => {
-    if (route === "logout") {
+  const handleClick = (path) => {
+    if (path === "/logout") {
       handleLogout();
       return;
     }
-    navigate(route);
+    navigate(path);
   };
 
   const handleLogout = () => {
@@ -39,7 +39,7 @@ const SideMenu = ({ activeMenu }) => {
         <button
           key={`menu_${index}`}
           className={`w-full flex items-center gap-4 text-[15px] ${activeMenu == item.label ? "text-white bg-primary py-3 px-6 rounded-lg mb-3" : ""}`}
-          onClick={() => handleClick(item.route)}
+          onClick={() => handleClick(item.path)}
         >
           {item.icon && <item.icon className="text-xl" />}
           {item.label}
