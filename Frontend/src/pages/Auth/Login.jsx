@@ -46,6 +46,7 @@ const Login = () => {
             label="Email Address"
             placeholder="Ram123@example.com"
             type="text"
+            autoComplete="username"
           />
 
           <Input
@@ -54,6 +55,7 @@ const Login = () => {
             label="Password"
             placeholder="Min 8 characters"
             type="password"
+            autoComplete="current-password"
           />
 
           {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
