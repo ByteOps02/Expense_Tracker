@@ -17,7 +17,7 @@ const Navbar = ({ activeMenu }) => {
 
             {openSideMenu && (
                 <>
-                    <div className='fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden'
+                    <div className='fixed top-[61px] left-0 right-0 bottom-0 bg-black bg-opacity-50 z-40 lg:hidden'
                         onClick={() => setOpenSideMenu(false)}
                     />
                     <div className='fixed top-[61px] left-0 w-64 h-full bg-white shadow-lg z-50 lg:hidden'>

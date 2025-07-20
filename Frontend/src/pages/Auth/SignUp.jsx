@@ -6,6 +6,7 @@ import ProfilePhotoSelector from '../../components/Inputs/ProfilePhotoSelector';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPath';
 import { UserContext } from '../../context/UserContext';
+import uploadImage from '../../utils/uploadImage';
 
 
 const SignUp = () => {
@@ -16,16 +17,6 @@ const SignUp = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-
-  // Helper to upload image and get URL
-  async function uploadImage(imageFile) {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    const res = await axiosInstance.post(API_PATHS.IMAGE.UPLOAD_IMAGE, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return res.data;
-  }
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -88,6 +79,7 @@ const SignUp = () => {
             label="Password"
             placeholder="Min 8 characters"
             type="password"
+            autoComplete="new-password"
           />
           <button type="submit" className="btn-primary">Sign Up</button>
           <p className='text-[13px] text-slate-800 mt-3 text-left'>

@@ -9,6 +9,7 @@ const Home = () => {
   useUserAuth();
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { updateUser } = useContext(UserContext);
 
   const fetchDashboardData = async () => {
@@ -20,7 +21,7 @@ const Home = () => {
       );
       // No need to handle response since data is not displayed
     } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
+      setError("Something went wrong. Please try again.");
     }
     setLoading(false);
   };
@@ -47,6 +48,8 @@ const Home = () => {
       <div className='my-5 mx-auto'>
         {loading ? (
           <div>Loading dashboard...</div>
+        ) : error ? (
+          <div className="text-red-500">{error}</div>
         ) : (
           <div></div>
         )}
