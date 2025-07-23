@@ -5,16 +5,20 @@ import SideMenu from "./SideMenu";
 const Navbar = ({ activeMenu }) => {
     const [openSideMenu, setOpenSideMenu] = useState(false);
     return (
-        <div className='flex gap-5 bg-white border border-b border-gray-200/50 backdrop-blur-[2px] py-4 px-7 sticky top-0 z-30'>
-            <button className='block lg:hidden text-black hover:bg-gray-100 p-1 rounded transition-colors'
-                onClick={() => {
-                    setOpenSideMenu(!openSideMenu);
-                }}>
-                {openSideMenu ? (<HiOutlineX className='text-2xl' />) : (<HiOutlineMenu className='text-2xl' />)}
-            </button>
-
-            <h2 className='text-lg font-medium text-black'>Expense Tracker</h2>
-
+        <div className='flex items-center justify-between bg-white border-b border-gray-200/50 backdrop-blur-[2px] py-4 px-7 sticky top-0 z-30 shadow-sm'>
+            <div className='flex items-center gap-5'>
+                <button className='block lg:hidden text-black hover:bg-gray-100 p-1 rounded transition-colors'
+                    onClick={() => {
+                        setOpenSideMenu(!openSideMenu);
+                    }}>
+                    {openSideMenu ? (<HiOutlineX className='text-2xl' />) : (<HiOutlineMenu className='text-2xl' />)}
+                </button>
+                <h2 className='text-2xl font-bold text-violet-600 tracking-tight drop-shadow-sm'>Expense Tracker</h2>
+            </div>
+            {/* Placeholder for user avatar/profile menu */}
+            <div className='hidden lg:flex items-center gap-4'>
+                {/* You can add a user avatar or profile dropdown here in the future */}
+            </div>
             {openSideMenu && (
                 <>
                     <div className='fixed top-[61px] left-0 right-0 bottom-0 bg-black bg-opacity-50 z-40 lg:hidden'
@@ -29,4 +33,4 @@ const Navbar = ({ activeMenu }) => {
     )
 }
 
-export default Navbar
+export default Navbar 

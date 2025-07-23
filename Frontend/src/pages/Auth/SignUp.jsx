@@ -8,7 +8,6 @@ import { API_PATHS } from '../../utils/apiPath';
 import { UserContext } from '../../context/UserContext';
 import uploadImage from '../../utils/uploadImage';
 
-
 const SignUp = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
@@ -57,7 +56,6 @@ const SignUp = () => {
         </p>
         {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
         <form onSubmit={handleSignUp}>
-
           <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
           <Input
             value={fullName}
@@ -97,4 +95,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default SignUp 
