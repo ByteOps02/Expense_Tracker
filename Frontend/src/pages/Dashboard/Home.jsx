@@ -17,7 +17,6 @@ const Home = () => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const { updateUser } = useContext(UserContext);
 
@@ -30,7 +29,7 @@ const Home = () => {
       );
       setDashboardData(res.data);
     } catch {
-      setError("Something went wrong. Please try again.");
+      // setError("Something went wrong. Please try again."); // This line was removed
     }
     setLoading(false);
   };
@@ -54,35 +53,38 @@ const Home = () => {
 
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className='my-8 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 animate-fadeIn">Dashboard Overview</h2>
-        {loading && <div className="text-center text-gray-500 py-8">Loading...</div>}
-        {error && <div className="text-red-500 text-center py-4">{error}</div>}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10 animate-fadeIn">
-          <InfoCard
-            icon={<MdAccountBalanceWallet />}
-            label="Total Balance"
-            value={addThousandsSeparator(dashboardData?.totalBalance ?? 0)}
-            color="bg-purple-500"
-          />
-          <InfoCard
-            icon={<LuWalletMinimal />}
-            label="Total Income"
-            value={addThousandsSeparator(dashboardData?.totalIncome ?? 0)}
-            color="bg-orange-500"
-          />
-          <InfoCard
-            icon={<LuHandCoins />}
-            label="Total Expense"
-            value={addThousandsSeparator(dashboardData?.totalExpense ?? 0)}
-            color="bg-red-500"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-slideIn">
-          <RecentTransactions
-            transactions={dashboardData?.recentTransactions}
-            onSeeMore={() => navigate("/expense")} />
-          {/* You can add more dashboard widgets here in the future */}
+      <div className='flex flex-col items-center w-full'>
+        <div className="w-full max-w-7xl flex flex-col items-center">
+          <div className="w-full flex flex-row justify-between gap-8 mb-14 animate-fadeIn">
+            <InfoCard
+              icon={<MdAccountBalanceWallet />}
+              label="Total Balance"
+              value={addThousandsSeparator(dashboardData?.totalBalance ?? 0)}
+              color="bg-purple-500"
+              cardWidth="w-[370px]"
+            />
+            <InfoCard
+              icon={<LuWalletMinimal />}
+              label="Total Income"
+              value={addThousandsSeparator(dashboardData?.totalIncome ?? 0)}
+              color="bg-orange-500"
+              cardWidth="w-[370px]"
+            />
+            <InfoCard
+              icon={<LuHandCoins />}
+              label="Total Expense"
+              value={addThousandsSeparator(dashboardData?.totalExpense ?? 0)}
+              color="bg-red-500"
+              cardWidth="w-[370px]"
+            />
+          </div>
+          <div className="w-full flex justify-start animate-slideIn">
+            <div className="w-full md:w-4/5 lg:w-2/5">
+              <RecentTransactions
+                transactions={dashboardData?.recentTransactions}
+                onSeeMore={() => navigate("/expense")} />
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>

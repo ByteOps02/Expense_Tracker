@@ -1,15 +1,23 @@
 import React from 'react'
 
-const InfoCard = ({ icon, label, value, color }) => {
+const InfoCard = ({ icon, label, value, color, cardWidth }) => {
   return (
-    <div className={`flex gap-6 bg-white p-6 rounded-2xl shadow-gray-100 border-gray-200/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg items-center`}> 
-      <div className={`w-16 h-16 flex items-center justify-center text-[32px] text-white ${color} rounded-full drop-shadow-xl transition-all duration-300`}> 
+    <div
+      className={`flex gap-6 bg-gradient-to-br from-white via-gray-50 to-purple-50 p-6 rounded-2xl shadow-xl border border-gray-200/50 transition-all duration-300 ease-in-out items-center justify-start relative overflow-hidden hover:scale-105 hover:shadow-purple-300/40 hover:-rotate-1 hover:-translate-y-2 ${cardWidth ? cardWidth : 'w-full'} max-w-[350px] md:max-w-[320px]'}`}
+      style={{ height: '100px', minHeight: '100px', boxShadow: '0 6px 24px 0 rgba(80, 56, 200, 0.10)' }}
+    >
+      <div
+        className={`w-14 h-14 flex items-center justify-center text-[30px] text-white ${color} rounded-full drop-shadow-xl transition-all duration-300 shadow-lg`}
+        style={{ minWidth: '56px', minHeight: '56px', boxShadow: '0 2px 8px 0 rgba(80, 56, 200, 0.14)' }}
+      >
         {icon}
       </div>
-      <div>
-        <h6 className='text-sm text-gray-500 mb-1'>{label}</h6>
-        <span className='text-[28px] font-semibold'>${value}</span>
+      <div className="flex flex-col justify-center">
+        <h6 className='text-base text-gray-500 mb-1 font-medium tracking-wide'>{label}</h6>
+        <span className='text-[26px] font-bold text-gray-900 drop-shadow-sm'>${value}</span>
       </div>
+      {/* Decorative blurred circle for effect */}
+      <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-purple-200 opacity-20 rounded-full blur-2xl pointer-events-none" />
     </div>
   )
 }
