@@ -1,4 +1,5 @@
 import React from 'react';
+import { LuWalletMinimal, LuHandCoins } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   return (
@@ -14,15 +15,26 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
       </div>
       {transactions && transactions.length > 0 ? (
         <ul>
-          {transactions.map((tx, idx) => (
-            <li key={tx._id || idx} className="py-2 border-b last:border-b-0 flex justify-between items-center">
-              <span className="capitalize">{tx.type === 'income' ? 'Income' : 'Expense'}</span>
-              <span className={tx.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                {tx.amount}
-              </span>
-              <span className="text-xs text-gray-400">{new Date(tx.date).toLocaleDateString()}</span>
-            </li>
-          ))}
+          {transactions.map((tx, idx) => {
+            const isIncome = tx.type === 'income';
+            const name = isIncome ? tx.source : tx.category;
+            const amount = (isIncome ? '+ ' : '- ') + '₹' + tx.amount;
+            const amountClass = isIncome ? 'text-green-600' : 'text-red-600';
+            const icon = isIncome ? <LuWalletMinimal className="text-2xl text-gray-400" /> : <LuHandCoins className="text-2xl text-gray-400" />;
+            const date = new Date(tx.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            return (
+              <li key={tx._id || idx} className="flex items-center justify-between bg-gray-50 rounded-lg mb-3 p-3">
+                <div className="flex items-center gap-3">
+                  {icon}
+                  <div>
+                    <div className="font-medium text-gray-800">{name}</div>
+                    <div className="text-xs text-gray-400">{date}</div>
+                  </div>
+                </div>
+                <div className={`font-semibold text-lg ${amountClass}`}>{amount}</div>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <div className="text-gray-400 text-center py-4">No recent transactions</div>

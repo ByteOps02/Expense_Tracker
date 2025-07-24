@@ -11,6 +11,7 @@ import { addThousandsSeparator } from '../../utils/helper';
 import { LuHandCoins, LuWalletMinimal } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import RecentTransactions from '../../components/Dashboard/RecentTransactions';
+import FinanceOverview from '../../components/Dashboard/FinanceOverview';
 
 const Home = () => {
   useUserAuth();
@@ -59,30 +60,37 @@ const Home = () => {
             <InfoCard
               icon={<MdAccountBalanceWallet />}
               label="Total Balance"
-              value={addThousandsSeparator(dashboardData?.balance ?? 0)}
+              value={"₹" + addThousandsSeparator(dashboardData?.balance ?? 0)}
               color="bg-purple-500"
               cardWidth="w-[370px]"
             />
             <InfoCard
               icon={<LuWalletMinimal />}
               label="Total Income"
-              value={addThousandsSeparator(dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0)}
+              value={"₹" + addThousandsSeparator(dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0)}
               color="bg-orange-500"
               cardWidth="w-[370px]"
             />
             <InfoCard
               icon={<LuHandCoins />}
               label="Total Expense"
-              value={addThousandsSeparator(dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0)}
+              value={"₹" + addThousandsSeparator(dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0)}
               color="bg-red-500"
               cardWidth="w-[370px]"
             />
           </div>
           <div className="w-full flex justify-start animate-slideIn">
             <div className="w-full md:w-4/5 lg:w-2/5">
-              <RecentTransactions
-                transactions={dashboardData?.recentTransactions}
-                onSeeMore={() => navigate("/expense")} />
+              <div className="mb-12">
+                <RecentTransactions
+                  transactions={dashboardData?.last5Transactions}
+                  onSeeMore={() => navigate("/expense")} />
+              </div>
+              <FinanceOverview
+                totalBalance={dashboardData?.balance ?? 0}
+                totalIncome={dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0}
+                totalExpense={dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0}
+              />
             </div>
           </div>
         </div>
