@@ -59,21 +59,21 @@ const Home = () => {
             <InfoCard
               icon={<MdAccountBalanceWallet />}
               label="Total Balance"
-              value={addThousandsSeparator(dashboardData?.totalBalance ?? 0)}
+              value={addThousandsSeparator(dashboardData?.balance ?? 0)}
               color="bg-purple-500"
               cardWidth="w-[370px]"
             />
             <InfoCard
               icon={<LuWalletMinimal />}
               label="Total Income"
-              value={addThousandsSeparator(dashboardData?.totalIncome ?? 0)}
+              value={addThousandsSeparator(dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0)}
               color="bg-orange-500"
               cardWidth="w-[370px]"
             />
             <InfoCard
               icon={<LuHandCoins />}
               label="Total Expense"
-              value={addThousandsSeparator(dashboardData?.totalExpense ?? 0)}
+              value={addThousandsSeparator(dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0)}
               color="bg-red-500"
               cardWidth="w-[370px]"
             />
