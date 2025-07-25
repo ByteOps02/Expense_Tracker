@@ -1,5 +1,6 @@
 import React from 'react';
 import { LuWalletMinimal, LuHandCoins } from 'react-icons/lu';
+import { LuArrowRight } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   return (
@@ -7,10 +8,10 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Recent Transactions</h2>
         <button
-          className="text-sm text-gray-600 hover:text-purple-600 flex items-center gap-1"
+          className="card-btn"
           onClick={onSeeMore}
         >
-          See All <span>&rarr;</span>
+          See All <LuArrowRight className="text-base" />
         </button>
       </div>
       {transactions && transactions.length > 0 ? (
