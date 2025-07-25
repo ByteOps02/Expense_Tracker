@@ -3,7 +3,7 @@ import { LuWalletMinimal, LuHandCoins } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white rounded-xl shadow-md p-6 animate-bounceIn">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Recent Transactions</h2>
         <button
@@ -23,7 +23,7 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
             const icon = isIncome ? <LuWalletMinimal className="text-2xl text-gray-400" /> : <LuHandCoins className="text-2xl text-gray-400" />;
             const date = new Date(tx.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
             return (
-              <li key={tx._id || idx} className="flex items-center justify-between bg-gray-50 rounded-lg mb-3 p-3">
+              <li key={tx._id || idx} className="flex items-center justify-between bg-gray-50 rounded-lg mb-3 p-3 hover-lift animate-fadeIn" style={{ animationDelay: `${idx * 80}ms` }}>
                 <div className="flex items-center gap-3">
                   {icon}
                   <div>
