@@ -84,3 +84,84 @@ Mongoose, JWT, Multer, ExcelJS, bcryptjs
 ## 📦 Folder Structure
 
 ```
+Expense_Tracker/
+  ├── Backend/
+  │   ├── config/
+  │   ├── controllers/
+  │   ├── middleware/
+  │   ├── models/
+  │   ├── routes/
+  │   ├── uploads/
+  │   ├── expenses.xlsx
+  │   ├── incomes.xlsx
+  │   ├── package.json
+  │   └── server.js
+  ├── Frontend/
+  │   ├── hooks/
+  │   ├── public/
+  │   ├── src/
+  │   │   ├── assets/
+  │   │   ├── components/
+  │   │   ├── context/
+  │   │   ├── pages/
+  │   │   ├── utils/
+  │   │   └── index.css
+  │   ├── package.json
+  │   ├── index.html
+  │   └── vite.config.js
+  └── README.md
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repository
+```bash
+git clone <repo-url>
+cd Expense_Tracker
+```
+
+### 2. Backend Setup
+```bash
+cd Backend
+npm install
+# Create a .env file (see below for required variables)
+npm run dev   # For development (with nodemon)
+# or
+npm start     # For production
+```
+
+### 3. Frontend Setup
+```bash
+cd ../Frontend
+npm install
+npm run dev   # Starts the Vite dev server
+```
+
+The frontend will typically run on http://localhost:5173 and the backend on http://localhost:5000 (unless you change the PORT).
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the `Backend/` directory with the following variables:
+
+```
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+PORT=5000                # Optional, defaults to 5000
+CLIENT_URL=http://localhost:5173  # Frontend URL for CORS
+```
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
