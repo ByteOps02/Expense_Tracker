@@ -91,6 +91,11 @@ const Home = () => {
                 totalIncome={dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0}
                 totalExpense={dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0}
               />
+
+              <ExpenseTransactions
+                transactions={dashboardData?.last30DaysExpenses?.transactions || []}
+                onSeeMore={() => navigate("/expense")}
+              />
             </div>
           </div>
         </div>
