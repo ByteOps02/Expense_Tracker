@@ -50,21 +50,19 @@ const SideMenu = ({ activeMenu }) => {
         {SIDE_MENU_DATA.map((item, index) => (
           <button
             key={`menu_${index}`}
-            className={`w-full flex items-center gap-3 text-[15px] py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-md animate-slideIn font-medium focus:outline-none focus:ring-2 focus:ring-violet-300 ${
-              activeMenu === item.label 
-                ? "text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg scale-105 ring-2 ring-violet-300" 
+            className={`w-full flex items-center gap-3 text-[15px] py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-md animate-slideIn font-medium focus:outline-none focus:ring-2 focus:ring-violet-300 ${activeMenu === item.label
+                ? "text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg scale-105 ring-2 ring-violet-300"
                 : "text-gray-700 hover:text-violet-700 hover:bg-gradient-to-r hover:from-violet-100 hover:to-purple-100 border border-transparent hover:border-violet-200 hover-lift"
-            }`}
+              }`}
             style={{ animationDelay: `${index * 0.1}s` }}
             onClick={() => handleClick(item.path)}
           >
             {item.icon && (
-              <item.icon 
-                className={`text-lg transition-all duration-300 ${
-                  activeMenu === item.label 
-                    ? "text-white" 
+              <item.icon
+                className={`text-lg transition-all duration-300 ${activeMenu === item.label
+                    ? "text-white"
                     : "text-violet-500 group-hover:text-violet-700"
-                }`} 
+                  }`}
               />
             )}
             <span>{item.label}</span>

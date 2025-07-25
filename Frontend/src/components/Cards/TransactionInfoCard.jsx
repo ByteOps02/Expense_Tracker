@@ -40,7 +40,7 @@ const TransactionInfoCard = ({
                     </button>
                 )}
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${getAmountStyle()}`}>
-                    <h6 className=''>{type === "income" ? "+" : "-"} ${amount}</h6>
+                    <h6 className=''>{type === "income" ? "+" : "-"} ₹{amount}</h6>
                     {type === "income" ? <LuTrendingUp /> : <LuTrendingDown />}
                 </div>
             </div>

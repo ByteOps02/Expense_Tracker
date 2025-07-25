@@ -34,7 +34,7 @@ const CustomPieChart = ({
                 ))}
             </Pie>
             <Tooltip content={(props) => <CustomTooltip {...props} />} />
-            <Legend content={CustomLegend}/>
+            <Legend content={CustomLegend} />
 
             {showTextAnchor && (
                 <>
