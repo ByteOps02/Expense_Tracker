@@ -13,7 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import RecentTransactions from '../../components/Dashboard/RecentTransactions';
 import FinanceOverview from '../../components/Dashboard/FinanceOverview';
 import ExpenseTransactions from '../../components/Dashboard/ExpenseTransactions';
-import Last30DaysExpenses from './Lat30DaysExpenses';
+import Last30DaysExpenses from './Last30DaysExpenses.jsx';
+import RecentIncomeWithChart from '../../components/Dashboard/RecentIncomeWithChart';
+import RecentIncome from '../../components/Dashboard/RecentIncome';
 
 const Home = () => {
   useUserAuth();
@@ -82,12 +84,12 @@ const Home = () => {
             {/* Left: Recent Transactions */}
             <div className="flex-1 flex flex-col gap-8">
               <RecentTransactions
-                transactions={dashboardData?.last5Transactions?.slice(0, 3) || []}
+                transactions={dashboardData?.last5Transactions || []}
                 onSeeMore={() => navigate("/expense")} />
             </div>
             <div className="flex-1 flex flex-col gap-8">
               <ExpenseTransactions
-                transactions={dashboardData?.expenseLast30Days?.slice(0, 3) || []}
+                transactions={dashboardData?.expenseLast30Days || []}
                 onSeeMore={() => navigate("/expense")}
               />
             </div>
@@ -105,10 +107,26 @@ const Home = () => {
               <Last30DaysExpenses data={dashboardData?.expenseLast30Days || []} />
             </div>
           </div>
+
+          {/* Last 60 Days Income and Income cards side by side */}
+          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
+            <div className="w-full md:w-1/2">
+              <RecentIncomeWithChart
+                data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
+                totalIncome={dashboardData?.totalIncomeLast60Days || 0}
+              />
+            </div>
+            <div className="w-full md:w-1/2">
+              <RecentIncome
+                transactions={dashboardData?.incomeLast60Days || []}
+                onSeeMore={() => navigate("./income")}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
   );
 }
 
-export default Home 
+export default Home;
