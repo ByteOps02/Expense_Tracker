@@ -4,9 +4,9 @@ import { LuArrowRight } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 animate-bounceIn">
+    <div className="card animate-bounceIn hover-lift transition-all duration-300 ease-in-out">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Recent Transactions</h2>
+        <h5 className="text-lg">Recent Transactions</h5>
         <button
           className="card-btn"
           onClick={onSeeMore}

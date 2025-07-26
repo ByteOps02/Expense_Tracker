@@ -10,7 +10,7 @@ const Last30DaysTransactions = ({ data }) => {
         setChartData(result);
     }, [data]);
     return (
-        <div className='card col-span-1'>
+        <div className='card col-span-1 hover-lift transition-all duration-300 ease-in-out'>
             <div className='flex items-center justify-between'>
                 <h5 className='text-lg'>Last 30 Days Transactions</h5>
             </div>

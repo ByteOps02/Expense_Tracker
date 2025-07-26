@@ -25,10 +25,24 @@ export const addThousandsSeparator = (num) => {
 };
 
 export const prepareExpenseBarChartData = (data = []) => {
-  const charData = data.map((item) => ({
-    category: item?.category,
-    amount: item?.amount,
+  // Group expenses by category and sum the amounts
+  const groupedData = data.reduce((acc, item) => {
+    const category = item?.category || 'Other';
+    if (acc[category]) {
+      acc[category] += item?.amount || 0;
+    } else {
+      acc[category] = item?.amount || 0;
+    }
+    return acc;
+  }, {});
+
+  // Convert to array format expected by the chart
+  const chartData = Object.entries(groupedData).map(([category, amount]) => ({
+    category: category,
+    amount: amount,
+    month: category // Using category as month for the X-axis
   }));
-  return charData;
+
+  return chartData;
 };
 

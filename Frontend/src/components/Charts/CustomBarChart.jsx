@@ -13,11 +13,15 @@ import {
 
 
 import CustomTooltip from './CustomTooltip';
-import { getBarColor } from '../../utils/helper';
 
 const CustomBarChart = ({ data }) => {
+    // Function to alternate colors
+    const getBarColor = (index) => {
+        return index % 2 === 0 ? "#875cf5" : "#cfbefb";
+    };
+
     return (
-        <div className='bg-white mt-6'>
+        <div className='mt-6'>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data}>
                     <CartesianGrid stroke="none" />
@@ -28,6 +32,8 @@ const CustomBarChart = ({ data }) => {
                         dataKey="amount"
                         fill="#FF8042"
                         radius={[10, 10, 0, 0]}
+                        activeDot={{ r: 8, fill: "yellow" }}
+                        activeStyle={{ fill: "green" }}
                     >
                         {data.map((entry, index) => (<Cell key={index} fill={getBarColor(index)} />))}
                     </Bar>
