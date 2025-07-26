@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import RecentTransactions from '../../components/Dashboard/RecentTransactions';
 import FinanceOverview from '../../components/Dashboard/FinanceOverview';
 import ExpenseTransactions from '../../components/Dashboard/ExpenseTransactions';
+import Last30DaysExpenses from './Lat30DaysExpenses';
 
 const Home = () => {
   useUserAuth();
@@ -91,14 +92,17 @@ const Home = () => {
               />
             </div>
           </div>
-          {/* Financial Overview below, centered and half width */}
-          <div className="w-full flex justify-start mt-4">
+          {/* Financial Overview and Last 30 Days Expenses side by side */}
+          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
             <div className="w-full md:w-1/2">
               <FinanceOverview
                 totalBalance={dashboardData?.balance ?? 0}
                 totalIncome={dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0}
                 totalExpense={dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0}
               />
+            </div>
+            <div className="w-full md:w-1/2">
+              <Last30DaysExpenses data={dashboardData?.expenseLast30Days || []} />
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import moment from "moment"
 
 const ExpenseTransactions = ({ transactions, onSeeMore }) => {
     return (
-        <div className="card animate-bounceIn min-h-[220px]">
+        <div className="card animate-bounceIn min-h-[220px] hover-lift transition-all duration-300 ease-in-out">
             <div className="flex items-center justify-between ">
                 <h5 className="text-lg">Expenses</h5>
                 <button className="card-btn" onClick={onSeeMore}>

@@ -3,11 +3,11 @@ import React from 'react'
 const InfoCard = ({ icon, label, value, color, cardWidth }) => {
   return (
     <div
-      className={`flex gap-6 bg-gradient-to-br from-white via-gray-50 to-purple-50 p-6 rounded-2xl shadow-xl border border-gray-200/50 transition-all duration-300 ease-in-out items-center justify-start relative overflow-hidden hover:scale-105 hover:shadow-purple-300/40 hover:-rotate-1 hover:-translate-y-2 w-[340px] h-[110px]`}
+      className={`flex gap-6 bg-gradient-to-br from-white via-gray-50 to-purple-50 p-6 rounded-2xl shadow-xl border border-gray-200/50 items-center justify-start relative overflow-hidden w-[340px] h-[110px] hover-lift transition-all duration-300 ease-in-out`}
       style={{ boxShadow: '0 6px 24px 0 rgba(80, 56, 200, 0.10)' }}
     >
       <div
-        className={`w-14 h-14 flex items-center justify-center text-[30px] text-white ${color} rounded-full drop-shadow-xl transition-all duration-300 shadow-lg`}
+        className={`w-14 h-14 flex items-center justify-center text-[30px] text-white ${color} rounded-full drop-shadow-xl shadow-lg`}
         style={{ minWidth: '56px', minHeight: '56px', boxShadow: '0 2px 8px 0 rgba(80, 56, 200, 0.14)' }}
       >
         {icon}
