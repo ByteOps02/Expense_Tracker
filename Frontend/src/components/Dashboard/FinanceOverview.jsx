@@ -11,7 +11,7 @@ const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) => {
     ];
 
     return (
-        <div className="card animate-bounceIn hover-lift transition-all duration-300 ease-in-out">
+        <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
             <div className="flex items-center justify-between">
                 <h5 className="text-lg">Financial Overview</h5>
             </div>

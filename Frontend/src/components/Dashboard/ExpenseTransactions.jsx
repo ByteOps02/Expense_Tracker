@@ -6,7 +6,7 @@ import moment from "moment"
 
 const ExpenseTransactions = ({ transactions, onSeeMore }) => {
     return (
-        <div className="card animate-bounceIn min-h-[220px] hover-lift transition-all duration-300 ease-in-out">
+        <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
             <div className="flex items-center justify-between ">
                 <h5 className="text-lg">Expenses</h5>
                 <button className="card-btn" onClick={onSeeMore}>
@@ -16,7 +16,7 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
 
             <div className="mt-6">
                 <ul>
-                  {transactions?.slice(0, 5)?.map((expense, idx) => {
+                  {transactions?.slice(0, 4)?.map((expense, idx) => {
                     const isIncome = expense.type === 'income';
                     const icon = isIncome ? <LuWalletMinimal className="text-2xl text-gray-400" /> : <LuHandCoins className="text-2xl text-gray-400" />;
                     return (

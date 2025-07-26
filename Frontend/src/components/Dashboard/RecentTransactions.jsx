@@ -4,7 +4,7 @@ import { LuArrowRight } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   return (
-    <div className="card animate-bounceIn hover-lift transition-all duration-300 ease-in-out">
+    <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
       <div className="flex justify-between items-center mb-4">
         <h5 className="text-lg">Recent Transactions</h5>
         <button
@@ -16,7 +16,7 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
       </div>
       {transactions && transactions.length > 0 ? (
         <ul>
-          {transactions.map((tx, idx) => {
+          {transactions.slice(0, 4).map((tx, idx) => {
             const isIncome = tx.type === 'income';
             const name = isIncome ? tx.source : tx.category;
             const amount = (isIncome ? '+ ' : '- ') + '₹' + tx.amount;
