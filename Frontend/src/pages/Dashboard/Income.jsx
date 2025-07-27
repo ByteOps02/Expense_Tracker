@@ -1,7 +1,12 @@
-// Placeholder for Income page implementation
+import React from 'react'
+
 const Income = () => {
   return (
-    <div>Income</div>
+    <DashboardLayout activeMenu="Income">
+      <div className='my-5 mx-auto'>
+        <div className='grid grid-cols-1 gap-6'></div>
+      </div>
+    </DashboardLayout>
   )
 }
 
