@@ -9,12 +9,27 @@ import AddIncomeForm from '../../components/Income/AddIncomeForm';
 const Income = () => {
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [openDeleteAlert, setOpenDeleteAlert] = useState({
-    show:false,
-    data:null,
-  });
-
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false)
+  
+  const handleAddIncome = async (incomeData) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_PATHS.INCOME.ADD_INCOME}`,
+        incomeData
+      );
+      
+      if (response.data) {
+        console.log("Income added successfully:", response.data);
+        setOpenAddIncomeModal(false);
+        // Refresh the income data
+        fetchIncomeDetails();
+      }
+    } catch (error) {
+      console.error("Error adding income:", error);
+      alert("Failed to add income. Please try again.");
+    }
+  };
+  
   const fetchIncomeDetails = async () => {
     if (loading) return;
 
@@ -63,7 +78,7 @@ const Income = () => {
           onClose={() => setOpenAddIncomeModal(false)}
           title="Add Income"
         >
-          <AddIncomeForm />
+          <AddIncomeForm onAddIncome={handleAddIncome} />
         </Modal>
 
       </div>

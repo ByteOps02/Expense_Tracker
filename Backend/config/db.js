@@ -8,9 +8,6 @@ const connectDB = async () => {
       minPoolSize: 2,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      // Enable MongoDB query optimization
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log("MongoDB connected with optimized settings");
   } catch (err) {
