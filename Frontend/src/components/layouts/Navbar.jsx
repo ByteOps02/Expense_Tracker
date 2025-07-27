@@ -44,7 +44,7 @@ const Navbar = ({ activeMenu }) => {
                 </div>
             </div>
             {openSideMenu && (
-                <div className='fixed top-0 left-0 w-64 h-full bg-white shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out'>
+                <div className='fixed top-[61px] left-0 w-64 h-[calc(100vh-61px)] bg-white shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out'>
                     <SideMenu activeMenu={activeMenu} onClose={() => setOpenSideMenu(false)} />
                 </div>
             )}
