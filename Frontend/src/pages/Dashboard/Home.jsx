@@ -58,7 +58,7 @@ const Home = () => {
 
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className='flex flex-col items-center w-full'>
+      <div className='flex flex-col items-center w-full lg:ml-2.5'>
         <div className="w-full max-w-7xl flex flex-col items-center gap-y-8">
           <div className="w-full flex flex-row flex-wrap justify-between gap-x-8 gap-y-8 animate-fadeIn">
             <InfoCard

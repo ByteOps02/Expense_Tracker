@@ -16,7 +16,7 @@ const Navbar = ({ activeMenu }) => {
     }, [openSideMenu]);
 
     return (
-        <div className='flex items-center justify-between bg-gradient-to-r from-white via-violet-50 to-purple-50 border-b border-violet-200/50 py-2 px-5 sticky top-0 z-30 shadow-lg shadow-violet-500/10'>
+        <div className='flex items-center justify-between bg-gradient-to-r from-white via-violet-50 to-purple-50 border-b border-violet-200/50 py-2 px-5 fixed top-0 left-0 w-full z-50 shadow-lg shadow-violet-500/10'>
             <div className='flex items-center gap-5'>
                 <button className='block lg:hidden text-violet-600 hover:text-white hover:bg-violet-600 p-1.5 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-violet-300 shadow-md hover:shadow-lg hover:scale-105'
                     onClick={() => {
