@@ -27,7 +27,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
   };
 
   return (
-    <div className="w-64 h-full bg-gradient-to-br from-white via-violet-50 to-purple-100 border-r border-violet-200/40 p-6 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-y-auto fixed top-0 left-0 z-50 lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50 lg:mt-2">
+    <div className="w-64 h-full bg-gradient-to-br from-white via-violet-50 to-purple-100 border-r border-violet-200/40 p-6 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-y-auto lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
 
       
       {/* Decorative background elements */}
