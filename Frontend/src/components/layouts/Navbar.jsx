@@ -30,19 +30,6 @@ const Navbar = ({ activeMenu }) => {
                 </button>
                 <h2 className='text-xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-violet-700 bg-clip-text text-transparent tracking-tight drop-shadow-sm animate-pulse'>Expense Tracker</h2>
             </div>
-            {/* User profile section */}
-            <div className='hidden lg:flex items-center gap-4'>
-                {/* User profile indicator */}
-                <div className='flex items-center gap-2 p-1.5 bg-gradient-to-r from-violet-50 to-purple-50 rounded-md border border-violet-200/50 hover:shadow-lg transition-all duration-300 cursor-pointer group'>
-                    <div className='w-7 h-7 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xs'>
-                        A
-                    </div>
-                    <div className='hidden xl:block'>
-                        <p className='text-sm font-semibold text-gray-800'>Aman</p>
-                        <p className='text-xs text-violet-600'>Premium</p>
-                    </div>
-                </div>
-            </div>
             {openSideMenu && (
                 <div className='fixed top-[61px] left-0 w-64 h-[calc(100vh-61px)] bg-white shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out'>
                     <SideMenu activeMenu={activeMenu} onClose={() => setOpenSideMenu(false)} />
