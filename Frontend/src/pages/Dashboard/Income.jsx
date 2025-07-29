@@ -5,11 +5,16 @@ import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPath';
 import Modal from '../../components/layouts/Modal';
 import AddIncomeForm from '../../components/Income/AddIncomeForm';
+import IncomeList from '../../components/Income/IncomeList';
+import DeleteAlert from '../../components/layouts/DeleteAlert';
 
 const Income = () => {
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [incomeToDelete, setIncomeToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const handleAddIncome = async (incomeData) => {
     try {
@@ -55,6 +60,29 @@ const Income = () => {
     }
   };
 
+  const handleDeleteIncome = (id) => {
+    setIncomeToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDeleteIncome = async () => {
+    setIsDeleting(true);
+    try {
+      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(incomeToDelete));
+      setIncomeData(prev => prev.filter(income => income._id !== incomeToDelete));
+      setDeleteModalOpen(false);
+      setIncomeToDelete(null);
+    } catch (error) {
+      alert("Failed to delete income. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDownloadIncome = () => {
+    alert('Download income data');
+  };
+
   useEffect(() => {
     fetchIncomeDetails();
     return () => { };
@@ -69,7 +97,13 @@ const Income = () => {
               transactions={incomeData}
               onAddIncome={() => setOpenAddIncomeModal(true)}
             />
-
+            <div className="mt-8">
+              <IncomeList
+                transactions={incomeData}
+                onDelete={handleDeleteIncome}
+                onDownload={handleDownloadIncome}
+              />
+            </div>
           </div>
         </div>
         
@@ -79,6 +113,13 @@ const Income = () => {
           title="Add Income"
         >
           <AddIncomeForm onAddIncome={handleAddIncome} />
+        </Modal>
+        <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Delete Income">
+          <DeleteAlert
+            content="Are you sure you want to delete this income detail?"
+            onDelete={confirmDeleteIncome}
+            isDeleting={isDeleting}
+          />
         </Modal>
 
       </div>

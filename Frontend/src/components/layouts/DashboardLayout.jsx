@@ -13,7 +13,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
                     <div className="hidden lg:block">
                         <SideMenu activeMenu={activeMenu} />
                     </div>
-                    <div className="grow mx-5 pt-20 pb-8 bg-gray-50 min-h-[calc(100vh-61px)] lg:ml-64">
+                    <div className="grow ml-10 pt-20 pb-8 bg-gray-50 min-h-[calc(100vh-61px)] lg:ml-72">
                         {children}
                     </div>
                 </div>
