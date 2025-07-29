@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import DashboardLayout from "../../components/layouts/DashboardLayout"
 import IncomeOverview from '../../components/Income/IncomeOverview';
 import axiosInstance from '../../utils/axiosInstance';
@@ -35,7 +35,7 @@ const Income = () => {
     }
   };
   
-  const fetchIncomeDetails = async () => {
+  const fetchIncomeDetails = useCallback(async () => {
     if (loading) return;
 
     setLoading(true);
@@ -53,12 +53,12 @@ const Income = () => {
         console.log("No income data found in response");
         setIncomeData([]);
       }
-    } catch (error) {
-      console.log("Something went wrong.Please try again.", error)
+    } catch {
+      console.log("Something went wrong.Please try again.")
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
   const handleDeleteIncome = (id) => {
     setIncomeToDelete(id);
@@ -72,7 +72,7 @@ const Income = () => {
       setIncomeData(prev => prev.filter(income => income._id !== incomeToDelete));
       setDeleteModalOpen(false);
       setIncomeToDelete(null);
-    } catch (error) {
+    } catch {
       alert("Failed to delete income. Please try again.");
     } finally {
       setIsDeleting(false);
@@ -86,7 +86,7 @@ const Income = () => {
   useEffect(() => {
     fetchIncomeDetails();
     return () => { };
-  }, []);
+  }, [fetchIncomeDetails]);
 
   return (
     <DashboardLayout activeMenu="Income">

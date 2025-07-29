@@ -38,7 +38,7 @@ const ClearAuthOnLoad = () => {
     if (userContext && userContext.clearUser) {
       userContext.clearUser();
     }
-  }, []);
+  }, [userContext]);
   return null;
 };
 

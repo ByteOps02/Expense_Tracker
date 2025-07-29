@@ -1,6 +1,6 @@
 import React from 'react'
 
-const InfoCard = ({ icon, label, value, color, cardWidth }) => {
+const InfoCard = ({ icon, label, value, color }) => {
   return (
     <div
       className={`flex gap-6 bg-gradient-to-br from-white via-gray-50 to-purple-50 p-6 rounded-2xl shadow-xl border border-gray-200/50 items-center justify-start relative overflow-hidden w-[340px] h-[110px] hover-lift transition-all duration-300 ease-in-out`}
