@@ -1,31 +1,41 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/Auth/Login";
-import SignUp from "./pages/Auth/SignUp";
-import Home from "./pages/Dashboard/Home";
-import Income from "./pages/Dashboard/Income";
-import Expense from "./pages/Dashboard/Expense";
 import UserProvider from "./context/UserContext.jsx";
-import { UserContext } from "./context/UserContext";
+import { UserContext } from "./context/UserContext.js";
+import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingSpinner from "./components/LoadingSpinner";
+
+// Lazy load all page components for better performance
+const Login = lazy(() => import("./pages/Auth/Login"));
+const SignUp = lazy(() => import("./pages/Auth/SignUp"));
+const Home = lazy(() => import("./pages/Dashboard/Home"));
+const Income = lazy(() => import("./pages/Dashboard/Income"));
+const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 
 const App = () => {
   return (
-    <UserProvider>
-      <ClearAuthOnLoad />
-      <div>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Root />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/dashboard" element={<Home />} />
-            <Route path="/income" element={<Income />} />
-            <Route path="/expense" element={<Expense />} />
-          </Routes>
-        </Router>
-      </div>
-    </UserProvider>
+    <ErrorBoundary>
+      <UserProvider>
+        <ClearAuthOnLoad />
+        <div>
+          <Router>
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingSpinner fullScreen text="Loading application..." />}>
+                <Routes>
+                  <Route path="/" element={<Root />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/dashboard" element={<Home />} />
+                  <Route path="/income" element={<Income />} />
+                  <Route path="/expense" element={<Expense />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
+          </Router>
+        </div>
+      </UserProvider>
+    </ErrorBoundary>
   );
 };
 
@@ -33,10 +43,13 @@ const App = () => {
 const ClearAuthOnLoad = () => {
   const userContext = useContext(UserContext);
   useEffect(() => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    if (userContext && userContext.clearUser) {
-      userContext.clearUser();
+    // Only clear if no valid token exists
+    const token = localStorage.getItem("token");
+    if (!token) {
+      sessionStorage.removeItem("token");
+      if (userContext && userContext.clearUser) {
+        userContext.clearUser();
+      }
     }
   }, [userContext]);
   return null;

@@ -11,9 +11,4 @@ const ExpenseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Add indexes for better query performance
-ExpenseSchema.index({ user: 1, date: -1 });
-ExpenseSchema.index({ user: 1 });
-ExpenseSchema.index({ date: -1 });
-
 module.exports = mongoose.model("Expense", ExpenseSchema);
