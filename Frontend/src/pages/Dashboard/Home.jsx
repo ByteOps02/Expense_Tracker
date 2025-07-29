@@ -81,13 +81,12 @@ const Home = () => {
             />
           </div>
           <div className="w-full flex flex-col md:flex-row gap-8 animate-slideIn">
-            {/* Left: Recent Transactions */}
-            <div className="flex-1 flex flex-col gap-8">
+            <div className="w-full md:w-1/2 flex flex-col gap-8">
               <RecentTransactions
                 transactions={dashboardData?.last5Transactions || []}
                 onSeeMore={() => navigate("/expense")} />
             </div>
-            <div className="flex-1 flex flex-col gap-8">
+            <div className="w-full md:w-1/2 flex flex-col gap-8">
               <ExpenseTransactions
                 transactions={dashboardData?.expenseLast30Days || []}
                 onSeeMore={() => navigate("/expense")}
@@ -107,7 +106,6 @@ const Home = () => {
               <Last30DaysExpenses data={dashboardData?.expenseLast30Days || []} />
             </div>
           </div>
-
           {/* Last 60 Days Income and Income cards side by side */}
           <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
             <div className="w-full md:w-1/2">
