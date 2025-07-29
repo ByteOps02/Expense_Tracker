@@ -29,13 +29,26 @@ axiosInstance.interceptors.response.use(
     // Handle common errors globally
     if (error.response) {
       if (error.response.status === 401) {
-        // Redirect to login page
-        window.location.href = "/login";
+        // Clear token and redirect to login
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        
+        // Use window.location for navigation in interceptors since we don't have access to navigate
+        // This ensures the redirect happens even if the component is unmounted
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
       } else if (error.response.status === 500) {
         console.error("Server error. Please try again later.");
+      } else if (error.response.status === 403) {
+        console.error("Access denied. You don't have permission to perform this action.");
+      } else if (error.response.status === 404) {
+        console.error("Resource not found.");
       }
     } else if (error.code === "ECONNABORTED") {
       console.error("Request timeout. Please try again.");
+    } else if (error.message === "Network Error") {
+      console.error("Network error. Please check your internet connection.");
     }
     return Promise.reject(error);
   }

@@ -16,27 +16,36 @@ import ExpenseTransactions from '../../components/Dashboard/ExpenseTransactions'
 import Last30DaysExpenses from './Last30DaysExpenses.jsx';
 import RecentIncomeWithChart from '../../components/Dashboard/RecentIncomeWithChart';
 import RecentIncome from '../../components/Dashboard/RecentIncome';
+import SkeletonLoader from '../../components/SkeletonLoader';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import ErrorBoundary from '../../components/ErrorBoundary';
 
 const Home = () => {
   useUserAuth();
 
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const { updateUser } = useContext(UserContext);
 
   const fetchDashboardData = async () => {
-    if (loading) return;
+    if (loading && dashboardData) return;
+    
     setLoading(true);
+    setError(null);
+    
     try {
       const res = await axiosInstance.get(
         `${API_PATHS.DASHBOARD.GET_DATA}`
       );
       setDashboardData(res.data);
-    } catch {
-      // setError("Something went wrong. Please try again."); // This line was removed
+    } catch (err) {
+      setError("Failed to load dashboard data. Please try again.");
+      console.error("Dashboard data fetch error:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchUserInfo = async () => {
@@ -45,8 +54,9 @@ const Home = () => {
       if (res.data && res.data.user) {
         updateUser(res.data.user);
       }
-    } catch {
-      // Optionally handle error
+    } catch (err) {
+      console.error("User info fetch error:", err);
+      // Don't set error here as it's not critical for dashboard display
     }
   };
 
@@ -56,73 +66,141 @@ const Home = () => {
     // eslint-disable-next-line
   }, []);
 
+  const handleRetry = () => {
+    fetchDashboardData();
+  };
+
+  if (error) {
+    return (
+      <DashboardLayout activeMenu="Dashboard">
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="text-center max-w-md">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LuHandCoins className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <button
+              onClick={handleRetry}
+              className="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className='flex flex-col items-center w-full lg:ml-2.5'>
-        <div className="w-full max-w-7xl flex flex-col items-center gap-y-8">
-          <div className="w-full flex flex-row flex-wrap justify-between gap-x-8 gap-y-8 animate-fadeIn">
-            <InfoCard
-              icon={<MdAccountBalanceWallet />}
-              label="Total Balance"
-              value={"₹" + addThousandsSeparator(dashboardData?.balance ?? 0)}
-              color="bg-purple-500"
-            />
-            <InfoCard
-              icon={<LuWalletMinimal />}
-              label="Total Income"
-              value={"₹" + addThousandsSeparator(dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0)}
-              color="bg-orange-500"
-            />
-            <InfoCard
-              icon={<LuHandCoins />}
-              label="Total Expense"
-              value={"₹" + addThousandsSeparator(dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0)}
-              color="bg-red-500"
-            />
-          </div>
-          <div className="w-full flex flex-col md:flex-row gap-8 animate-slideIn">
-            <div className="w-full md:w-1/2 flex flex-col gap-8">
-              <RecentTransactions
-                transactions={dashboardData?.last5Transactions || []}
-                onSeeMore={() => navigate("/expense")} />
+      <ErrorBoundary>
+        <div className='flex flex-col items-center w-full lg:ml-2.5'>
+          <div className="w-full max-w-7xl flex flex-col items-center gap-y-8">
+            {/* Info Cards Section */}
+            <div className="w-full flex flex-row flex-wrap justify-between gap-x-8 gap-y-8 animate-fadeIn">
+              {loading ? (
+                <>
+                  <SkeletonLoader type="card" />
+                  <SkeletonLoader type="card" />
+                  <SkeletonLoader type="card" />
+                </>
+              ) : (
+                <>
+                  <InfoCard
+                    icon={<MdAccountBalanceWallet />}
+                    label="Total Balance"
+                    value={"₹" + addThousandsSeparator(dashboardData?.balance ?? 0)}
+                    color="bg-purple-500"
+                  />
+                  <InfoCard
+                    icon={<LuWalletMinimal />}
+                    label="Total Income"
+                    value={"₹" + addThousandsSeparator(dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0)}
+                    color="bg-orange-500"
+                  />
+                  <InfoCard
+                    icon={<LuHandCoins />}
+                    label="Total Expense"
+                    value={"₹" + addThousandsSeparator(dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0)}
+                    color="bg-red-500"
+                  />
+                </>
+              )}
             </div>
-            <div className="w-full md:w-1/2 flex flex-col gap-8">
-              <ExpenseTransactions
-                transactions={dashboardData?.expenseLast30Days || []}
-                onSeeMore={() => navigate("/expense")}
-              />
+
+            {/* Recent Transactions Section */}
+            <div className="w-full flex flex-col md:flex-row gap-8 animate-slideIn">
+              <div className="w-full md:w-1/2 flex flex-col gap-8">
+                {loading ? (
+                  <SkeletonLoader type="list" lines={5} />
+                ) : (
+                  <RecentTransactions
+                    transactions={dashboardData?.last5Transactions || []}
+                    onSeeMore={() => navigate("/expense")} 
+                  />
+                )}
+              </div>
+              <div className="w-full md:w-1/2 flex flex-col gap-8">
+                {loading ? (
+                  <SkeletonLoader type="list" lines={5} />
+                ) : (
+                  <ExpenseTransactions
+                    transactions={dashboardData?.expenseLast30Days || []}
+                    onSeeMore={() => navigate("/expense")}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          {/* Financial Overview and Last 30 Days Expenses side by side */}
-          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
-            <div className="w-full md:w-1/2">
-              <FinanceOverview
-                totalBalance={dashboardData?.balance ?? 0}
-                totalIncome={dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0}
-                totalExpense={dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0}
-              />
+
+            {/* Financial Overview and Last 30 Days Expenses */}
+            <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
+              <div className="w-full md:w-1/2">
+                {loading ? (
+                  <SkeletonLoader type="chart" />
+                ) : (
+                  <FinanceOverview
+                    totalBalance={dashboardData?.balance ?? 0}
+                    totalIncome={dashboardData?.allIncomes?.reduce((sum, i) => sum + i.amount, 0) ?? 0}
+                    totalExpense={dashboardData?.allExpenses?.reduce((sum, e) => sum + e.amount, 0) ?? 0}
+                  />
+                )}
+              </div>
+              <div className="w-full md:w-1/2">
+                {loading ? (
+                  <SkeletonLoader type="chart" />
+                ) : (
+                  <Last30DaysExpenses data={dashboardData?.expenseLast30Days || []} />
+                )}
+              </div>
             </div>
-            <div className="w-full md:w-1/2">
-              <Last30DaysExpenses data={dashboardData?.expenseLast30Days || []} />
-            </div>
-          </div>
-          {/* Last 60 Days Income and Income cards side by side */}
-          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
-            <div className="w-full md:w-1/2">
-              <RecentIncomeWithChart
-                data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
-                totalIncome={dashboardData?.totalIncomeLast60Days || 0}
-              />
-            </div>
-            <div className="w-full md:w-1/2">
-              <RecentIncome
-                transactions={dashboardData?.incomeLast60Days || []}
-                onSeeMore={() => navigate("./income")}
-              />
+
+            {/* Last 60 Days Income and Income cards */}
+            <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
+              <div className="w-full md:w-1/2">
+                {loading ? (
+                  <SkeletonLoader type="chart" />
+                ) : (
+                  <RecentIncomeWithChart
+                    data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
+                    totalIncome={dashboardData?.totalIncomeLast60Days || 0}
+                  />
+                )}
+              </div>
+              <div className="w-full md:w-1/2">
+                {loading ? (
+                  <SkeletonLoader type="list" lines={5} />
+                ) : (
+                  <RecentIncome
+                    transactions={dashboardData?.incomeLast60Days || []}
+                    onSeeMore={() => navigate("./income")}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </ErrorBoundary>
     </DashboardLayout>
   );
 }

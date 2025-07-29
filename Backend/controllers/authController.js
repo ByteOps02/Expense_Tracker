@@ -49,15 +49,11 @@ exports.loginUser = async (req, res) => {
     return res.status(400).json({ message: "Email and password are required" });
   }
   try {
-    console.time("findUser");
     const user = await User.findOne({ email });
-    console.timeEnd("findUser");
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.time("comparePassword");
     const isMatch = await user.comparePassword(password);
-    console.timeEnd("comparePassword");
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
