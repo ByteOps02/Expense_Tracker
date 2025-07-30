@@ -1,41 +1,26 @@
 import React from 'react';
-import { LuLoader2 } from 'react-icons/lu';
 
-const LoadingSpinner = ({ 
-  size = 'md', 
-  variant = 'primary', 
-  text = 'Loading...',
-  fullScreen = false 
-}) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6',
-    lg: 'w-8 h-8',
-    xl: 'w-12 h-12'
+const LoadingSpinner = ({ fullScreen = false, text = "Loading...", size = "medium" }) => {
+  const sizeMap = {
+    small: "w-4 h-4",
+    medium: "w-8 h-8", 
+    large: "w-12 h-12"
   };
 
-  const variantClasses = {
-    primary: 'text-violet-600',
-    secondary: 'text-gray-600',
-    white: 'text-white'
-  };
+  const spinnerSize = sizeMap[size] || sizeMap.medium;
 
   const spinner = (
-    <div className="flex flex-col items-center justify-center gap-3">
-      <LuLoader2 
-        className={`${sizeClasses[size]} ${variantClasses[variant]} animate-spin`} 
-      />
+    <div className="flex flex-col items-center justify-center">
+      <div className={`${spinnerSize} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600`}></div>
       {text && (
-        <p className={`text-sm font-medium ${variantClasses[variant]}`}>
-          {text}
-        </p>
+        <p className="mt-2 text-gray-600 text-sm">{text}</p>
       )}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
         {spinner}
       </div>
     );

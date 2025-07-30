@@ -59,13 +59,36 @@ export const prepareExpenseTimeSeriesData = (data = []) => {
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    month: new Date(item?.date).toLocaleDateString('en-US', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
     }),
     amount: item?.amount,
     source: item?.source,
+  }));
+
+  return chartData;
+};
+
+export const prepareExpenseLineChartData = (data = []) => {
+  // Ensure data is an array and handle null/undefined cases
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  const sortedData = [...data].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+
+  const chartData = sortedData.map((item) => ({
+    month: new Date(item?.date).toLocaleDateString('en-US', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    }),
+    amount: item?.amount,
+    category: item?.category,
   }));
 
   return chartData;
@@ -82,31 +105,13 @@ export const prepareIncomeBarChartData = (data = []) => {
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    month: new Date(item?.date).toLocaleDateString('en-US', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
     }),
     amount: item?.amount,
     source: item?.source,
-  }));
-
-  return chartData;
-};
-
-export const prepareExpenseLineChartData = (data = []) => {
-  const sortedData = [...data].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  );
-
-  const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    amount: item?.amount,
-    category: item?.category,
   }));
 
   return chartData;

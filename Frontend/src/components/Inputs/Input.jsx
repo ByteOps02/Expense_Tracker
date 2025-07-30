@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6"
 
-const Input = ({ value, onChange, placeholder, label, type, error, disabled = false, ...rest }) => {
+const Input = ({ value, onChange, placeholder, label, type, error, ...rest }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const toggleShowPassword = () => {
@@ -11,17 +11,16 @@ const Input = ({ value, onChange, placeholder, label, type, error, disabled = fa
     return (
         <div className="mb-4">
             <label className='text-[13px] text-slate-800'>{label}</label>
-            <div className={`input-box ${error ? 'border-red-500' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`} style={{ position: 'relative' }}>
+            <div className={`input-box ${error ? 'border-red-500' : ''}`} style={{ position: 'relative' }}>
                 <input
                     type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
                     value={value}
-                    className="w-full bg-transparent outline-none pr-16 disabled:cursor-not-allowed"
+                    className="w-full bg-transparent outline-none pr-16"
                     onChange={onChange}
                     placeholder={placeholder}
-                    disabled={disabled}
                     {...rest}
                 />
-                {type === 'password' && !disabled && (
+                {type === 'password' && (
                     <>
                         {showPassword ? (
                             <FaRegEye
