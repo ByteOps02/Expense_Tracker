@@ -1,100 +1,135 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useUserAuth } from "../../../hooks/useUserAuth"
+import React, { useEffect, useState } from 'react'
 import DashboardLayout from "../../components/layouts/DashboardLayout"
-import axiosInstance from '../../utils/axiosInstance'
-import { API_PATHS } from '../../utils/apiPath'
-import ExpenseOverview from '../../components/Expense/ExpenseOverview'
-import SkeletonLoader from '../../components/SkeletonLoader';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import ErrorBoundary from '../../components/ErrorBoundary';
-import { LuAlertTriangle } from 'react-icons/lu';
+import ExpenseOverview from '../../components/Expense/ExpenseOverview';
+import ExpenseList from '../../components/Expense/ExpenseList';
+import axiosInstance from '../../utils/axiosInstance';
+import { API_PATHS } from '../../utils/apiPath';
+import Modal from '../../components/layouts/Modal';
+import AddExpenseForm from '../../components/Expense/AddExpenseForm';
 
 const Expense = () => {
-  useUserAuth();
-
   const [expenseData, setExpenseData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false)
+  
+  const handleAddExpense = async (expenseData) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_PATHS.EXPENSE.ADD_EXPENSE}`,
+        expenseData
+      );
+      
+      if (response.data) {
+        console.log("Expense added successfully:", response.data);
+        setOpenAddExpenseModal(false);
+        // Refresh the expense data
+        fetchExpenseDetails();
+      }
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      alert("Failed to add expense. Please try again.");
+    }
+  };
 
-  const fetchExpenseDetails = useCallback(async () => {
-    if (loading && expenseData.length > 0) return;
+  const handleDeleteExpense = async (expenseId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `${API_PATHS.EXPENSE.DELETE_EXPENSE(expenseId)}`
+      );
+      
+      if (response.data) {
+        console.log("Expense deleted successfully:", response.data);
+        // Refresh the expense data
+        fetchExpenseDetails();
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      alert("Failed to delete expense. Please try again.");
+    }
+  };
+
+  const handleDownloadExpense = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_PATHS.EXPENSE.DOWNLOAD_EXPENSE}`,
+        { responseType: 'blob' }
+      );
+      
+      // Create a download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'expense_data.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading expense:", error);
+      alert("Failed to download expense data. Please try again.");
+    }
+  };
+  
+  const fetchExpenseDetails = async () => {
+    if (loading) return;
 
     setLoading(true);
-    setError(null);
 
     try {
       const response = await axiosInstance.get(
         `${API_PATHS.EXPENSE.GET_ALL_EXPENSE}`
       );
 
-      if (response.data) {
-        setExpenseData(response.data);
+      console.log("Expense API Response:", response.data);
+      
+      if (response.data && response.data.expenses) {
+        setExpenseData(response.data.expenses);
       } else {
+        console.log("No expense data found in response");
         setExpenseData([]);
       }
-    }
-    catch (err) {
-      console.error("Expense fetch error:", err);
-      setError("Failed to load expense data. Please try again.");
+    } catch (error) {
+      console.log("Something went wrong. Please try again.", error)
     } finally {
       setLoading(false);
     }
-  }, [loading, expenseData.length]);
-
-  const handleRetry = () => {
-    fetchExpenseDetails();
   };
 
   useEffect(() => {
     fetchExpenseDetails();
     return () => { };
-  }, [fetchExpenseDetails]);
-
-  if (error) {
-    return (
-      <DashboardLayout activeMenu="Expense">
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <div className="text-center max-w-md">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <LuAlertTriangle className="w-8 h-8 text-red-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Expense Data</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={handleRetry}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  }, []);
 
   return (
     <DashboardLayout activeMenu="Expense">
-      <ErrorBoundary>
-        <div className='my-5 mx-auto'>
-          <div className='grid grid-cols-1 gap-6'>
-            <div className=''>
-              {loading ? (
-                <div className="space-y-6">
-                  <SkeletonLoader type="card" />
-                  <SkeletonLoader type="table" lines={5} />
-                </div>
-              ) : (
-                <ExpenseOverview
-                  transactions={expenseData}
-                  onExpenseIncome={() => {}}
-                />
-              )}
-            </div>
+      <div className='my-5 mx-auto'>
+        <div className='grid grid-cols-1 gap-6'>
+          <div className=''>
+            <ExpenseOverview
+              transactions={expenseData}
+              onExpenseIncome={() => setOpenAddExpenseModal(true)}
+            />
+          </div>
+          
+          <div className=''>
+            <ExpenseList
+              transactions={expenseData}
+              onDelete={handleDeleteExpense}
+              onDownload={handleDownloadExpense}
+            />
           </div>
         </div>
-      </ErrorBoundary>
+        
+        <Modal
+          isOpen={openAddExpenseModal}
+          onClose={() => setOpenAddExpenseModal(false)}
+          title="Add Expense"
+        >
+          <AddExpenseForm onAddExpense={handleAddExpense} />
+        </Modal>
+
+      </div>
     </DashboardLayout>
-  );
-};
+  )
+}
 
 export default Expense

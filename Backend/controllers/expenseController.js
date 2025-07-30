@@ -3,6 +3,7 @@ const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
+const { clearCache } = require("../middleware/cacheMiddleware");
 
 exports.addExpense = async (req, res) => {
   try {
@@ -17,6 +18,10 @@ exports.addExpense = async (req, res) => {
       note,
     });
     await expense.save();
+    
+    // Clear dashboard cache when new expense is added
+    clearCache("dashboard");
+    
     res.status(201).json({ message: "Expense added successfully", expense });
   } catch (err) {
     res
@@ -28,7 +33,10 @@ exports.addExpense = async (req, res) => {
 exports.getAllExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
-    const expenses = await Expense.find({ user: userId }).sort({ date: -1 });
+    // Use lean() for better performance when full documents aren't needed
+    const expenses = await Expense.find({ user: userId })
+      .sort({ date: -1 })
+      .lean();
     res.status(200).json({ expenses });
   } catch (err) {
     res
@@ -48,6 +56,10 @@ exports.deleteExpense = async (req, res) => {
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
+    
+    // Clear dashboard cache when expense is deleted
+    clearCache("dashboard");
+    
     res.status(200).json({ message: "Expense deleted successfully" });
   } catch (err) {
     res
@@ -69,6 +81,10 @@ exports.updateExpense = async (req, res) => {
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
+    
+    // Clear dashboard cache when expense is updated
+    clearCache("dashboard");
+    
     res.status(200).json({ message: "Expense updated successfully", expense });
   } catch (err) {
     res
