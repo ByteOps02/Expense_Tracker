@@ -3,6 +3,12 @@ import { LuWalletMinimal, LuHandCoins } from 'react-icons/lu';
 import { LuArrowRight } from 'react-icons/lu';
 
 const RecentTransactions = ({ transactions = [], onSeeMore }) => {
+  // Sort transactions by date descending, handling various date formats
+  const sortedTransactions = [...transactions].sort((a,b) => {
+    const dateA = Date.parse(a.date) || 0;
+    const dateB = Date.parse(b.date) || 0;
+    return dateB - dateA;
+  });
   return (
     <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
       <div className="flex justify-between items-center mb-4">
@@ -14,9 +20,9 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
           See All <LuArrowRight className="text-base" />
         </button>
       </div>
-      {transactions && transactions.length > 0 ? (
+      {sortedTransactions && sortedTransactions.length > 0 ? (
         <ul>
-          {transactions.slice(0, 4).map((tx, idx) => {
+          {sortedTransactions.slice(0, 4).map((tx, idx) => {
             const isIncome = tx.type === 'income';
             const name = isIncome ? tx.source : tx.category;
             const amount = (isIncome ? '+ ' : '- ') + '₹' + tx.amount;
