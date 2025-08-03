@@ -113,6 +113,40 @@ Expense_Tracker/
 ```
 
 ---
+## 📦 Enhanced Folder Structure
+
+**Backend/**
+- `config/` - Database configuration
+- `controllers/` - Route controllers (auth, dashboard, expense, income)
+- `middleware/` - Auth, cache, performance, upload middlewares
+- `models/` - Mongoose models (User, Expense, Income)
+- `routes/` - API route definitions
+- `uploads/` - Uploaded profile images
+- `package.json` - Backend dependencies
+- `server.js` - Express server entry point
+
+**Frontend/**
+- `hooks/` - Custom React hooks
+- `public/` - Static assets
+- `src/`
+  - `assets/` - Images, SVGs
+  - `components/` - Reusable UI components
+  - `context/` - React context providers
+  - `pages/` - App pages (Auth, Dashboard, Expense, Income, etc.)
+  - `utils/` - Helper functions, API utils
+  - `index.css` - Global styles
+- `package.json` - Frontend dependencies
+- `index.html` - App entry point
+- `vite.config.js` - Vite configuration
+
+---
+## 🔗 API & Integration
+
+The frontend communicates with the backend via RESTful API endpoints. CORS is enabled in the backend to allow requests from the frontend (default: http://localhost:5173). All sensitive operations are protected by JWT authentication.
+
+---
+
+---
 
 ## ⚙️ Setup Instructions
 
