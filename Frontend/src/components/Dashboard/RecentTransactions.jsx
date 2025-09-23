@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { LuWalletMinimal, LuHandCoins } from 'react-icons/lu';
 import { LuArrowRight } from 'react-icons/lu';
 
@@ -50,4 +50,4 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
   );
 };
 
-export default RecentTransactions; 
+export default memo(RecentTransactions); 
