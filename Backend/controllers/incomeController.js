@@ -3,7 +3,7 @@ const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
-const { clearCache } = require("../middleware/cacheMiddleware");
+
 
 exports.addIncome = async (req, res) => {
   try {
@@ -18,9 +18,6 @@ exports.addIncome = async (req, res) => {
       note,
     });
     await income.save();
-    
-    // Clear dashboard cache when new income is added
-    clearCache("dashboard");
     
     res.status(201).json({ message: "Income added successfully", income });
   } catch (err) {
@@ -57,9 +54,6 @@ exports.deleteIncome = async (req, res) => {
       return res.status(404).json({ message: "Income not found" });
     }
     
-    // Clear dashboard cache when income is deleted
-    clearCache("dashboard");
-    
     res.status(200).json({ message: "Income deleted successfully" });
   } catch (err) {
     res
@@ -83,9 +77,6 @@ exports.updateIncome = async (req, res) => {
     if (!income) {
       return res.status(404).json({ message: "Income not found" });
     }
-    
-    // Clear dashboard cache when income is updated
-    clearCache("dashboard");
     
     res.status(200).json({ message: "Income updated successfully", income });
   } catch (err) {
