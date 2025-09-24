@@ -1,35 +1,47 @@
-import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiMail, FiLock } from 'react-icons/fi';
-import { UserContext } from '../../context/UserContext';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATHS } from '../../utils/apiPath';
-import { validateEmail } from '../../utils/helper';
-import AuthBranding from '../../components/layouts/AuthBranding';
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiMail, FiLock } from "react-icons/fi";
+import { FaFingerprint } from "react-icons/fa";
+import { UserContext } from "../../context/UserContext";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPath";
+import { validateEmail } from "../../utils/helper";
+import AuthBranding from "../../components/layouts/AuthBranding";
+import BiometricLock from "../../components/BiometricLock";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [showBiometricLock, setShowBiometricLock] = useState(false);
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateEmail(email) || !password) {
-      setError('Please enter both email and password.');
+      setError("Please enter both email and password.");
       return;
     }
     setError(null);
     try {
-      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, { email, password });
-      localStorage.setItem('token', response.data.token);
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+        email,
+        password,
+      });
+      localStorage.setItem("token", response.data.token);
       updateUser(response.data.user);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     }
+  };
+
+  const handleBiometricSuccess = (user, token) => {
+    localStorage.setItem("token", token);
+    updateUser(user);
+    navigate("/dashboard");
   };
 
   return (
@@ -73,7 +85,7 @@ const Login = () => {
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <motion.button
-              whileHover={{ scale: 1.05, boxShadow: '0px 0px 12px rgb(168, 85, 247)' }}
+              whileHover={{ scale: 1.05, boxShadow: "0px 0px 12px rgb(168, 85, 247)" }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               className="w-full p-3 font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
@@ -81,14 +93,33 @@ const Login = () => {
               LOGIN
             </motion.button>
           </form>
+          <div className="flex items-center justify-center">
+            <button
+              onClick={() => setShowBiometricLock(true)}
+              className="flex items-center justify-center w-full p-3 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-all duration-300"
+            >
+              <FaFingerprint className="mr-2" />
+              Login with Biometrics
+            </button>
+          </div>
           <p className="text-center text-gray-400">
-            Don't have an account?{' '}
-            <Link to="/signup" className="font-medium text-purple-400 hover:text-purple-300">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="font-medium text-purple-400 hover:text-purple-300"
+            >
               Sign up
             </Link>
           </p>
         </motion.div>
       </div>
+      {showBiometricLock && (
+        <BiometricLock
+          email={email}
+          onUnlock={handleBiometricSuccess}
+          onClose={() => setShowBiometricLock(false)}
+        />
+      )}
     </div>
   );
 };
