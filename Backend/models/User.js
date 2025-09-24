@@ -1,12 +1,20 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const AuthenticatorSchema = new mongoose.Schema({
+  credID: { type: String, required: true },
+  fmt: { type: String, required: true },
+  publicKey: { type: String, required: true },
+  counter: { type: Number, required: true },
+});
+
 const UserSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profileImageUrl: { type: String, default: null },
+    authenticators: [AuthenticatorSchema],
   },
   { timestamps: true }
 );

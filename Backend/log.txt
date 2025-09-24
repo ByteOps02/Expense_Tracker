@@ -1,0 +1,53 @@
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.0] injecting env (3) from .env (tip: ⚙️  suppress all logs with { quiet: true })
+Server running on port 5000
+MongoDB connected with optimized settings
+OPTIONS /api/v1/auth/getUser - 1ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+GET /api/v1/auth/getUser - 60ms
+GET /api/v1/dashboard - 52ms
+GET /api/v1/auth/getUser - 47ms
+GET /api/v1/dashboard - 47ms
+GET /uploads/1758602726601-Profile%20IMAGE.jpg - 3ms
+GET /api/v1/auth/getUser - 47ms
+GET /api/v1/auth/getUser - 49ms
+GET /api/v1/auth/getUser - 2ms
+OPTIONS /api/v1/auth/login - 0ms
+POST /api/v1/auth/login - 138ms
+GET /uploads/1758602726601-Profile%20IMAGE.jpg - 1ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+GET /api/v1/auth/getUser - 48ms
+GET /api/v1/dashboard - 59ms
+GET /api/v1/auth/getUser - 57ms
+GET /api/v1/dashboard - 52ms
+OPTIONS /api/v1/biometric/passkeys - 0ms
+OPTIONS /api/v1/biometric/passkeys - 0ms
+GET /api/v1/biometric/passkeys - 46ms
+GET /api/v1/biometric/passkeys - 45ms
+OPTIONS /api/v1/biometric/attestation/options - 0ms
+POST /api/v1/biometric/attestation/options - 46ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+OPTIONS /api/v1/dashboard - 0ms
+OPTIONS /api/v1/auth/getUser - 0ms
+GET /api/v1/dashboard - 48ms
+GET /api/v1/auth/getUser - 46ms
+GET /api/v1/dashboard - 48ms
+GET /api/v1/auth/getUser - 48ms
+GET /api/v1/auth/getUser - 1ms
+OPTIONS /api/v1/biometric/assertion/options - 0ms
+POST /api/v1/biometric/assertion/options - 47ms
+POST /api/v1/biometric/assertion/options - 45ms
+OPTIONS /api/v1/biometric/assertion/options - 0ms
+POST /api/v1/biometric/assertion/options - 46ms
