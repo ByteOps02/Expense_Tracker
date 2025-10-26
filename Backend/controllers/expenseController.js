@@ -3,6 +3,7 @@ const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
+const { cache, clearCache } = require("../middleware/cacheMiddleware");
 
 
 exports.addExpense = async (req, res) => {
@@ -18,10 +19,10 @@ exports.addExpense = async (req, res) => {
       note,
     });
     await expense.save();
-    
+
     // Clear dashboard cache when new expense is added
     clearCache("dashboard");
-    
+
     res.status(201).json({ message: "Expense added successfully", expense });
   } catch (err) {
     res
@@ -33,10 +34,14 @@ exports.addExpense = async (req, res) => {
 exports.getAllExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
+    if (cache.has(userId)) {
+      return res.status(200).json({ expenses: cache.get(userId) });
+    }
     // Use lean() for better performance when full documents aren't needed
     const expenses = await Expense.find({ user: userId })
       .sort({ date: -1 })
       .lean();
+    cache.set(userId, expenses);
     res.status(200).json({ expenses });
   } catch (err) {
     res
@@ -53,14 +58,14 @@ exports.deleteExpense = async (req, res) => {
       _id: expenseId,
       user: userId,
     });
-    if (!expense) {
-      return res.status(404).json({ message: "Expense not found" });
-    }
+        if (!expense) {
+          return res.status(404).json({ message: "Expense not found" });
+        }
     
-    // Clear dashboard cache when expense is deleted
-    clearCache("dashboard");
+        // Clear dashboard cache when expense is deleted
+        clearCache("dashboard");
     
-    res.status(200).json({ message: "Expense deleted successfully" });
+        res.status(200).json({ message: "Expense deleted successfully" });
   } catch (err) {
     res
       .status(500)
@@ -78,14 +83,14 @@ exports.updateExpense = async (req, res) => {
       { icon, amount, category, date, note },
       { new: true, runValidators: true }
     );
-    if (!expense) {
-      return res.status(404).json({ message: "Expense not found" });
-    }
+        if (!expense) {
+          return res.status(404).json({ message: "Expense not found" });
+        }
     
-    // Clear dashboard cache when expense is updated
-    clearCache("dashboard");
+        // Clear dashboard cache when expense is updated
+        clearCache("dashboard");
     
-    res.status(200).json({ message: "Expense updated successfully", expense });
+        res.status(200).json({ message: "Expense updated successfully", expense });
   } catch (err) {
     res
       .status(500)
