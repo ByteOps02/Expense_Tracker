@@ -1,11 +1,14 @@
-const User = require("../models/User");
+// Import necessary packages and models
 const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
-const fs = require("fs");
 const path = require("path");
 const { cache, clearCache } = require("../middleware/cacheMiddleware");
 
-
+/**
+ * @desc    Add a new expense
+ * @route   POST /api/v1/expense
+ * @access  Private
+ */
 exports.addExpense = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -20,7 +23,7 @@ exports.addExpense = async (req, res) => {
     });
     await expense.save();
 
-    // Clear dashboard cache when new expense is added
+    // Clear the cache for the dashboard data since it is now stale
     clearCache("dashboard");
 
     res.status(201).json({ message: "Expense added successfully", expense });
@@ -31,17 +34,29 @@ exports.addExpense = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get all expenses for the logged-in user
+ * @route   GET /api/v1/expense
+ * @access  Private
+ */
 exports.getAllExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
+
+    // Check if the data is in the cache
     if (cache.has(userId)) {
       return res.status(200).json({ expenses: cache.get(userId) });
     }
-    // Use lean() for better performance when full documents aren't needed
+
+    // If not in cache, fetch from the database
+    // Use .lean() for better performance as it returns a plain JavaScript object
     const expenses = await Expense.find({ user: userId })
       .sort({ date: -1 })
       .lean();
+
+    // Store the fetched data in the cache
     cache.set(userId, expenses);
+
     res.status(200).json({ expenses });
   } catch (err) {
     res
@@ -50,6 +65,11 @@ exports.getAllExpenses = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Delete an expense
+ * @route   DELETE /api/v1/expense/:id
+ * @access  Private
+ */
 exports.deleteExpense = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -58,14 +78,14 @@ exports.deleteExpense = async (req, res) => {
       _id: expenseId,
       user: userId,
     });
-        if (!expense) {
-          return res.status(404).json({ message: "Expense not found" });
-        }
-    
-        // Clear dashboard cache when expense is deleted
-        clearCache("dashboard");
-    
-        res.status(200).json({ message: "Expense deleted successfully" });
+    if (!expense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    // Clear the cache for the dashboard data since it is now stale
+    clearCache("dashboard");
+
+    res.status(200).json({ message: "Expense deleted successfully" });
   } catch (err) {
     res
       .status(500)
@@ -73,6 +93,11 @@ exports.deleteExpense = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Update an expense
+ * @route   PUT /api/v1/expense/:id
+ * @access  Private
+ */
 exports.updateExpense = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -81,16 +106,16 @@ exports.updateExpense = async (req, res) => {
     const expense = await Expense.findOneAndUpdate(
       { _id: expenseId, user: userId },
       { icon, amount, category, date, note },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
-        if (!expense) {
-          return res.status(404).json({ message: "Expense not found" });
-        }
-    
-        // Clear dashboard cache when expense is updated
-        clearCache("dashboard");
-    
-        res.status(200).json({ message: "Expense updated successfully", expense });
+    if (!expense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    // Clear the cache for the dashboard data since it is now stale
+    clearCache("dashboard");
+
+    res.status(200).json({ message: "Expense updated successfully", expense });
   } catch (err) {
     res
       .status(500)
@@ -98,6 +123,11 @@ exports.updateExpense = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Download all expenses as an Excel file
+ * @route   GET /api/v1/expense/download-excel
+ * @access  Private
+ */
 exports.downloadExpenseExcel = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -105,28 +135,28 @@ exports.downloadExpenseExcel = async (req, res) => {
     if (!expenses.length) {
       return res.status(404).json({ message: "No expenses found to export" });
     }
-    
-    // Create a new workbook and worksheet
+
+    // Create a new Excel workbook and worksheet
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Expenses");
-    
-    // Prepare data for Excel
+
+    // Prepare data for Excel by removing unwanted fields
     const data = expenses.map(
-      ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest })
+      ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest }),
     );
-    
-    // Add headers
+
+    // Add headers to the worksheet
     if (data.length > 0) {
       const headers = Object.keys(data[0]);
       worksheet.addRow(headers);
-      
-      // Add data rows
-      data.forEach(expense => {
+
+      // Add data rows to the worksheet
+      data.forEach((expense) => {
         worksheet.addRow(Object.values(expense));
       });
     }
 
-    // Save the file to the Backend folder
+    // Save the Excel file to the backend folder
     const filePath = path.join(__dirname, "../expenses.xlsx");
     await workbook.xlsx.writeFile(filePath);
 

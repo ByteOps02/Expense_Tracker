@@ -27,10 +27,14 @@ const RecentIncome = ({ transactions, onSeeMore }) => {
                 )}
                 <div>
                   <div className="font-medium text-gray-800">{item.source}</div>
-                  <div className="text-xs text-gray-400">{moment(item.date).format("DD MMM, YYYY")}</div>
+                  <div className="text-xs text-gray-400">
+                    {moment(item.date).format("DD MMM, YYYY")}
+                  </div>
                 </div>
               </div>
-              <div className="font-semibold text-lg text-green-600">+ ₹{item.amount}</div>
+              <div className="font-semibold text-lg text-green-600">
+                + ₹{item.amount}
+              </div>
             </li>
           ))}
         </ul>

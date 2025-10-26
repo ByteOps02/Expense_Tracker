@@ -55,14 +55,14 @@ export const prepareExpenseTimeSeriesData = (data = []) => {
   }
 
   const sortedData = [...data].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
+    (a, b) => new Date(a.date) - new Date(b.date),
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString('en-US', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    month: new Date(item?.date).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     }),
     amount: item?.amount,
     source: item?.source,
@@ -78,14 +78,14 @@ export const prepareExpenseLineChartData = (data = []) => {
   }
 
   const sortedData = [...data].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
+    (a, b) => new Date(a.date) - new Date(b.date),
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString('en-US', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    month: new Date(item?.date).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     }),
     amount: item?.amount,
     category: item?.category,
@@ -101,14 +101,14 @@ export const prepareIncomeBarChartData = (data = []) => {
   }
 
   const sortedData = [...data].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
+    (a, b) => new Date(a.date) - new Date(b.date),
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString('en-US', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    month: new Date(item?.date).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     }),
     amount: item?.amount,
     source: item?.source,

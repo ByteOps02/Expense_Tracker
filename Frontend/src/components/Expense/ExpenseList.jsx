@@ -1,7 +1,7 @@
-import React from 'react';
-import { LuDownload } from 'react-icons/lu';
-import TransactionInfoCard from '../Cards/TransactionInfoCard';
-import moment from 'moment';
+import React from "react";
+import { LuDownload } from "react-icons/lu";
+import TransactionInfoCard from "../Cards/TransactionInfoCard";
+import moment from "moment";
 
 const ExpenseList = ({ transactions, onDelete, onDownload }) => {
   return (
@@ -18,7 +18,7 @@ const ExpenseList = ({ transactions, onDelete, onDownload }) => {
             key={expense._id}
             title={expense.category}
             icon={expense.icon}
-            date={moment(expense.date).format('Do MMM YYYY')}
+            date={moment(expense.date).format("Do MMM YYYY")}
             amount={expense.amount}
             type="expense"
             onDelete={() => onDelete(expense._id)}
@@ -29,4 +29,4 @@ const ExpenseList = ({ transactions, onDelete, onDownload }) => {
   );
 };
 
-export default ExpenseList; 
+export default ExpenseList;

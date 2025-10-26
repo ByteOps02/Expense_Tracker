@@ -1,20 +1,24 @@
-import React from 'react';
+import React from "react";
 
-const LoadingSpinner = ({ fullScreen = false, text = "Loading...", size = "medium" }) => {
+const LoadingSpinner = ({
+  fullScreen = false,
+  text = "Loading...",
+  size = "medium",
+}) => {
   const sizeMap = {
     small: "w-4 h-4",
-    medium: "w-8 h-8", 
-    large: "w-12 h-12"
+    medium: "w-8 h-8",
+    large: "w-12 h-12",
   };
 
   const spinnerSize = sizeMap[size] || sizeMap.medium;
 
   const spinner = (
     <div className="flex flex-col items-center justify-center">
-      <div className={`${spinnerSize} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600`}></div>
-      {text && (
-        <p className="mt-2 text-gray-600 text-sm">{text}</p>
-      )}
+      <div
+        className={`${spinnerSize} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600`}
+      ></div>
+      {text && <p className="mt-2 text-gray-600 text-sm">{text}</p>}
     </div>
   );
 
@@ -29,4 +33,4 @@ const LoadingSpinner = ({ fullScreen = false, text = "Loading...", size = "mediu
   return spinner;
 };
 
-export default LoadingSpinner; 
+export default LoadingSpinner;

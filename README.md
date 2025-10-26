@@ -17,67 +17,54 @@ A modern, full-stack web application to track your personal income and expenses,
 
 ## ✨ Features
 
-- 🔐 **Authentication:** JWT-based, secure registration & login, profile photo upload
-- 📊 **Dashboard:** Real-time financial statistics, recent transactions
-- 💰 **Income/Expense Management:** Add, view, delete, and export to Excel
-- 📱 **Responsive Design:** Mobile-friendly, modern UI with Tailwind CSS
-- 🛡️ **Security:** Password hashing, protected routes, input validation
-- ⚡ **Fast & Modern:** Built with Vite, React 19, and Express.js
-
----
-
-## 🚀 Demo
-
-<!-- Uncomment and add your demo link or GIF/screenshots here -->
-<!-- [Live Demo](https://your-demo-link.com) -->
-<!-- ![Demo GIF](demo.gif) -->
+- 🔐 **Secure Authentication:**
+  - JWT-based registration and login system.
+  - Password hashing using `bcryptjs`.
+  - Profile photo uploads.
+- 🖐️ **Biometric Authentication:**
+  - Support for passwordless login using WebAuthn for a seamless and secure user experience.
+  - Register and manage multiple passkeys.
+- 📊 **Interactive Dashboard:**
+  - Real-time financial statistics.
+  - Overview of recent transactions.
+  - Charts and graphs to visualize income and expenses.
+- 💰 **Income & Expense Management:**
+  - Add, view, update, and delete income and expense records.
+  - Export your financial data to Excel for offline analysis.
+- 📱 **Responsive & Modern UI:**
+  - Built with React and Tailwind CSS for a mobile-first, modern, and intuitive user interface.
+  - Uses `Recharts` for beautiful and interactive charts.
+- 🛡️ **Robust Security:**
+  - Protected API routes to ensure data privacy.
+  - Input validation to prevent common vulnerabilities.
+- ⚡ **Optimized Performance:**
+  - Fast and modern frontend build with Vite.
+  - Efficient backend with Node.js and Express.
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend:**  
-![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/-TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white) ![Vite](https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white)  
-React Router DOM, Axios, Recharts, React Hot Toast
+**Frontend:**
+- **React 19:** For building the user interface.
+- **Vite:** As the build tool and development server.
+- **Tailwind CSS:** For styling the application.
+- **React Router DOM:** For client-side routing.
+- **Axios:** For making HTTP requests to the backend.
+- **Recharts:** For creating interactive charts.
+- **Framer Motion:** For animations.
+- **Lucide React:** For icons.
 
-**Backend:**  
-![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/-Express-000000?logo=express&logoColor=white) ![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?logo=mongodb&logoColor=white)  
-Mongoose, JWT, Multer, ExcelJS, bcryptjs
-
----
-
-## 📦 Node Modules & Their Purpose
-
-### Backend
-| Module        | Purpose                                                               |
-|---------------|------------------------------------------------------------------------|
-| bcryptjs      | Hashes user passwords securely before storing in the database          |
-| cors          | Enables Cross-Origin Resource Sharing for API requests                 |
-| dotenv        | Loads environment variables from a .env file                           |
-| exceljs       | Generates and manipulates Excel files for data export                  |
-| express       | Web framework for building RESTful APIs                                |
-| jsonwebtoken  | Implements JWT-based authentication and authorization                  |
-| mongoose      | ODM for MongoDB, manages data models and queries                       |
-| multer        | Handles file uploads (e.g., profile photos)                            |
-| nodemon       | Automatically restarts the server on code changes (development only)   |
-| eslint        | Lints and enforces code style (development only)                       |
-
-### Frontend
-| Module                  | Purpose                                                                 |
-|-------------------------|-------------------------------------------------------------------------|
-| react                   | Core library for building user interfaces                               |
-| react-dom               | DOM bindings for React                                                  |
-| tailwindcss             | Utility-first CSS framework for rapid UI development                    |
-| @tailwindcss/vite       | Integrates Tailwind CSS with Vite build tool                            |
-| vite                    | Fast build tool and development server                                  |
-| @vitejs/plugin-react    | Vite plugin for React support                                           |
-| @types/react            | TypeScript type definitions for React (development only)                |
-| @types/react-dom        | TypeScript type definitions for React DOM (development only)            |
-| eslint                  | Lints and enforces code style (development only)                        |
-| @eslint/js              | ESLint configuration for JavaScript (development only)                  |
-| eslint-plugin-react-hooks| ESLint rules for React hooks (development only)                        |
-| eslint-plugin-react-refresh| ESLint rules for React Fast Refresh (development only)               |
-| globals                 | Provides global variables for ESLint (development only)                 |
+**Backend:**
+- **Node.js:** As the JavaScript runtime environment.
+- **Express.js:** As the web framework for building the API.
+- **MongoDB:** As the NoSQL database for storing data.
+- **Mongoose:** As the ODM for MongoDB.
+- **JWT (JSON Web Tokens):** For authentication.
+- **bcryptjs:** For password hashing.
+- **Multer:** For handling file uploads.
+- **ExcelJS:** For generating Excel files.
+- **WebAuthn (via `base64url`, `cbor`):** For biometric authentication.
 
 ---
 
@@ -85,70 +72,40 @@ Mongoose, JWT, Multer, ExcelJS, bcryptjs
 
 ```
 Expense_Tracker/
-  ├── Backend/
-  │   ├── config/
-  │   ├── controllers/
-  │   ├── middleware/
-  │   ├── models/
-  │   ├── routes/
-  │   ├── uploads/
-  │   ├── expenses.xlsx
-  │   ├── incomes.xlsx
-  │   ├── package.json
-  │   └── server.js
-  ├── Frontend/
-  │   ├── hooks/
-  │   ├── public/
-  │   ├── src/
-  │   │   ├── assets/
-  │   │   ├── components/
-  │   │   ├── context/
-  │   │   ├── pages/
-  │   │   ├── utils/
-  │   │   └── index.css
-  │   ├── package.json
-  │   ├── index.html
-  │   └── vite.config.js
-  └── README.md
+├── Backend/
+│   ├── config/         # Database configuration
+│   ├── controllers/    # Application logic
+│   ├── middleware/     # Express middleware
+│   ├── models/         # Mongoose models
+│   ├── routes/         # API routes
+│   ├── uploads/        # Uploaded files
+│   ├── utils/          # Utility functions
+│   ├── package.json
+│   └── server.js       # Server entry point
+├── Frontend/
+│   ├── public/         # Static assets
+│   ├── src/
+│   │   ├── assets/     # Images, icons, etc.
+│   │   ├── components/ # Reusable React components
+│   │   ├── context/    # React context providers
+│   │   ├── hooks/      # Custom React hooks
+│   │   ├── pages/      # Application pages
+│   │   └── utils/      # Utility functions
+│   ├── package.json
+│   ├── index.html
+│   └── vite.config.js
+└── README.md
 ```
-
----
-## 📦 Enhanced Folder Structure
-
-**Backend/**
-- `config/` - Database configuration
-- `controllers/` - Route controllers (auth, dashboard, expense, income)
-- `middleware/` - Auth, cache, performance, upload middlewares
-- `models/` - Mongoose models (User, Expense, Income)
-- `routes/` - API route definitions
-- `uploads/` - Uploaded profile images
-- `package.json` - Backend dependencies
-- `server.js` - Express server entry point
-
-**Frontend/**
-- `hooks/` - Custom React hooks
-- `public/` - Static assets
-- `src/`
-  - `assets/` - Images, SVGs
-  - `components/` - Reusable UI components
-  - `context/` - React context providers
-  - `pages/` - App pages (Auth, Dashboard, Expense, Income, etc.)
-  - `utils/` - Helper functions, API utils
-  - `index.css` - Global styles
-- `package.json` - Frontend dependencies
-- `index.html` - App entry point
-- `vite.config.js` - Vite configuration
-
----
-## 🔗 API & Integration
-
-The frontend communicates with the backend via RESTful API endpoints. CORS is enabled in the backend to allow requests from the frontend (default: http://localhost:5173). All sensitive operations are protected by JWT authentication.
-
----
 
 ---
 
 ## ⚙️ Setup Instructions
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v14 or higher)
+- [npm](https://www.npmjs.com/) (v6 or higher)
+- [MongoDB](https://www.mongodb.com/try/download/community) (or a MongoDB Atlas account)
 
 ### 1. Clone the repository
 ```bash
@@ -161,19 +118,37 @@ cd Expense_Tracker
 cd Backend
 npm install
 # Create a .env file (see below for required variables)
-npm run dev   # For development (with nodemon)
-# or
-npm start     # For production
+npm run dev
 ```
 
 ### 3. Frontend Setup
 ```bash
 cd ../Frontend
 npm install
-npm run dev   # Starts the Vite dev server
+npm run dev
 ```
 
-The frontend will typically run on http://localhost:5173 and the backend on http://localhost:5000 (unless you change the PORT).
+The frontend will typically run on `http://localhost:5173` and the backend on `http://localhost:5000`.
+
+---
+
+## 📜 Available Scripts
+
+### Backend
+
+| Script  | Description                                  |
+|---------|----------------------------------------------|
+| `start` | Starts the server in production mode.        |
+| `dev`   | Starts the server in development mode with nodemon. |
+
+### Frontend
+
+| Script    | Description                               |
+|-----------|-------------------------------------------|
+| `dev`     | Starts the Vite dev server.               |
+| `build`   | Builds the app for production.            |
+| `lint`    | Lints the code using ESLint.              |
+| `preview` | Previews the production build locally.    |
 
 ---
 
@@ -187,6 +162,56 @@ JWT_SECRET=your_jwt_secret_key
 PORT=5000                # Optional, defaults to 5000
 CLIENT_URL=http://localhost:5173  # Frontend URL for CORS
 ```
+
+---
+
+## 🔗 API Endpoints
+
+### Authentication (`/api/auth`)
+
+| Method | Endpoint         | Description              |
+|--------|------------------|--------------------------|
+| POST   | `/register`      | Register a new user.     |
+| POST   | `/login`         | Log in a user.           |
+| GET    | `/getUser`       | Get user information.    |
+| POST   | `/upload-image`  | Upload a profile image.  |
+
+### Biometric (`/api/biometric`)
+
+| Method | Endpoint                  | Description                       |
+|--------|---------------------------|-----------------------------------|
+| POST   | `/attestation/options`    | Generate passkey registration options. |
+| POST   | `/attestation/result`     | Verify and save a new passkey.    |
+| POST   | `/assertion/options`      | Generate passkey login options.   |
+| POST   | `/assertion/result`       | Verify a passkey and log in.      |
+| GET    | `/passkeys`               | Get all passkeys for the user.    |
+| DELETE | `/passkeys/:id`           | Delete a passkey.                 |
+
+### Dashboard (`/api/dashboard`)
+
+| Method | Endpoint | Description                  |
+|--------|----------|------------------------------|
+| GET    | `/`      | Get dashboard summary data.  |
+
+### Expenses (`/api/expenses`)
+
+| Method | Endpoint          | Description                   |
+|--------|-------------------|-------------------------------|
+| POST   | `/`               | Add a new expense.            |
+| GET    | `/`               | Get all expenses.             |
+| PUT    | `/:id`            | Update an expense.            |
+| DELETE | `/:id`            | Delete an expense.            |
+| GET    | `/download-excel` | Download expenses as Excel.   |
+
+### Incomes (`/api/incomes`)
+
+| Method | Endpoint          | Description                 |
+|--------|-------------------|-----------------------------|
+| POST   | `/`               | Add a new income.           |
+| GET    | `/`               | Get all incomes.            |
+| PUT    | `/:id`            | Update an income.           |
+| DELETE | `/:id`            | Delete an income.           |
+| GET    | `/download-excel` | Download incomes as Excel.  |
 
 ---
 

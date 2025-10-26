@@ -28,21 +28,19 @@ const SideMenu = ({ activeMenu, onClose }) => {
 
   return (
     <div className="w-64 h-full bg-gradient-to-br from-white via-violet-50 to-purple-100 border-r border-violet-200/40 p-6 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-y-auto lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
-
-      
       {/* Decorative background elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5">
         <div className="absolute top-10 right-10 w-32 h-32 bg-violet-400 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 left-5 w-24 h-24 bg-purple-400 rounded-full blur-2xl"></div>
       </div>
-      
+
       {/* Profile section with enhanced styling */}
       <div className="relative flex flex-col items-center justify-center gap-4 mt-4 mb-8 animate-fadeIn">
         <div className="relative group">
           {!user?.profileImageUrl ? (
             <div className="relative">
               <CharAvatar
-                fullName={user?.fullName || 'User'}
+                fullName={user?.fullName || "User"}
                 width="w-24"
                 height="h-24"
                 style="text-2xl font-semibold"
@@ -62,7 +60,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
           {/* Status indicator */}
           <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full animate-pulse"></div>
         </div>
-        
+
         <div className="text-center">
           <h5 className="text-gray-900 font-semibold text-lg leading-tight hover:text-violet-700 transition-colors duration-300">
             {user?.fullName || "User"}
@@ -72,7 +70,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
           </p>
         </div>
       </div>
-      
+
       {/* Enhanced separator */}
       <div className="relative mb-6">
         <div className="h-px bg-gradient-to-r from-transparent via-violet-300 to-transparent"></div>
@@ -80,7 +78,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
           <div className="w-2 h-2 bg-violet-400 rounded-full"></div>
         </div>
       </div>
-      
+
       {/* Menu items with enhanced styling */}
       <div className="space-y-3 relative">
         {SIDE_MENU_DATA.map((item, index) => (
@@ -98,19 +96,21 @@ const SideMenu = ({ activeMenu, onClose }) => {
             {activeMenu === item.label && (
               <div className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-purple-400/20 blur-xl"></div>
             )}
-            
+
             <div className="relative z-10 flex items-center gap-4 w-full">
               {item.icon && (
-                <div className={`p-2 rounded-lg transition-all duration-300 ${
-                  activeMenu === item.label
-                    ? "text-white bg-white/20 backdrop-blur-sm"
-                    : "text-violet-500 group-hover:text-violet-700 group-hover:bg-violet-100/50"
-                }`}>
+                <div
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    activeMenu === item.label
+                      ? "text-white bg-white/20 backdrop-blur-sm"
+                      : "text-violet-500 group-hover:text-violet-700 group-hover:bg-violet-100/50"
+                  }`}
+                >
                   <item.icon className="text-xl" />
                 </div>
               )}
               <span className="font-semibold">{item.label}</span>
-              
+
               {/* Arrow indicator for active items */}
               {activeMenu === item.label && (
                 <div className="ml-auto">
@@ -121,7 +121,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
           </button>
         ))}
       </div>
-      
+
       {/* Bottom decorative element */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
         <div className="w-16 h-1 bg-gradient-to-r from-violet-400 to-purple-500 rounded-full opacity-60"></div>
@@ -130,4 +130,4 @@ const SideMenu = ({ activeMenu, onClose }) => {
   );
 };
 
-export default SideMenu; 
+export default SideMenu;

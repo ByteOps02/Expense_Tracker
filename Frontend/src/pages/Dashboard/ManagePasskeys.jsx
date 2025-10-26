@@ -23,7 +23,7 @@ const ManagePasskeys = () => {
   const addPasskey = async () => {
     try {
       const attestationOptions = await axiosInstance.post(
-        "/api/v1/biometric/attestation/options"
+        "/api/v1/biometric/attestation/options",
       );
 
       const credential = await navigator.credentials.create({
@@ -34,7 +34,7 @@ const ManagePasskeys = () => {
         attestationResponse: {
           clientDataJSON: base64url.encode(credential.response.clientDataJSON),
           attestationObject: base64url.encode(
-            credential.response.attestationObject
+            credential.response.attestationObject,
           ),
         },
       });

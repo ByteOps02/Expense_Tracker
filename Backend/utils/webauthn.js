@@ -1,4 +1,3 @@
-
 const base64url = require("base64url");
 const crypto = require("crypto");
 const cbor = require("cbor");
@@ -33,11 +32,14 @@ const generateAttestation = (user) => {
 };
 
 const verifyAttestation = (attestationResponse, challenge) => {
-  const decodedAttestation = cbor.decodeFirstSync(attestationResponse.attestationObject);
+  const decodedAttestation = cbor.decodeFirstSync(
+    attestationResponse.attestationObject,
+  );
   const { authData } = decodedAttestation;
   const decodedAuthData = cbor.decodeFirstSync(authData);
 
-  const { rpIdHash, flags, signCount, attestedCredentialData, extensions } = decodedAuthData;
+  const { rpIdHash, flags, signCount, attestedCredentialData, extensions } =
+    decodedAuthData;
 
   const { aaguid, credentialId, credentialPublicKey } = attestedCredentialData;
 
@@ -48,7 +50,11 @@ const verifyAttestation = (attestationResponse, challenge) => {
   const pem = ASN1toPEM(publicKey);
 
   const clientDataJSON = base64url.decode(attestationResponse.clientDataJSON);
-  const { type, origin, challenge: clientChallenge } = JSON.parse(clientDataJSON);
+  const {
+    type,
+    origin,
+    challenge: clientChallenge,
+  } = JSON.parse(clientDataJSON);
 
   if (type !== "webauthn.create") {
     throw new Error("Invalid attestation type");
@@ -74,7 +80,11 @@ const verifyAttestation = (attestationResponse, challenge) => {
 
 const verifyAssertion = (assertionResponse, challenge, authr) => {
   const clientDataJSON = base64url.decode(assertionResponse.clientDataJSON);
-  const { type, origin, challenge: clientChallenge } = JSON.parse(clientDataJSON);
+  const {
+    type,
+    origin,
+    challenge: clientChallenge,
+  } = JSON.parse(clientDataJSON);
 
   if (type !== "webauthn.get") {
     throw new Error("Invalid assertion type");
@@ -88,16 +98,15 @@ const verifyAssertion = (assertionResponse, challenge, authr) => {
     throw new Error("Invalid challenge");
   }
 
-  const decodedAuthData = cbor.decodeFirstSync(assertionResponse.authenticatorData);
+  const decodedAuthData = cbor.decodeFirstSync(
+    assertionResponse.authenticatorData,
+  );
   const { rpIdHash, flags, signCount } = decodedAuthData;
 
   const signature = assertionResponse.signature;
   const authenticatorData = assertionResponse.authenticatorData;
 
-  const verificationData = Buffer.concat([
-    authenticatorData,
-    clientDataJSON,
-  ]);
+  const verificationData = Buffer.concat([authenticatorData, clientDataJSON]);
 
   const verify = crypto.createVerify("sha256");
   verify.update(verificationData);

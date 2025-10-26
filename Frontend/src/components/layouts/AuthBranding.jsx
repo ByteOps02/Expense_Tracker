@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 const AuthBranding = () => {
   return (
@@ -7,13 +7,12 @@ const AuthBranding = () => {
       <motion.div
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h1 className="text-5xl font-bold text-white mb-4">
-          Expense Tracker
-        </h1>
+        <h1 className="text-5xl font-bold text-white mb-4">Expense Tracker</h1>
         <p className="text-xl text-gray-300">
-          Take control of your finances with our intuitive and powerful expense tracking app.
+          Take control of your finances with our intuitive and powerful expense
+          tracking app.
         </p>
       </motion.div>
     </div>
