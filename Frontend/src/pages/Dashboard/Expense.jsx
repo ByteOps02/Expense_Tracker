@@ -28,9 +28,8 @@ const Expense = () => {
 
       if (response.data) {
         console.log("Expense added successfully:", response.data);
+        setExpenseData((prevExpenses) => [...prevExpenses, response.data.expense]);
         setOpenAddExpenseModal(false);
-        // Refresh the expense data after adding a new record
-        fetchExpenseDetails();
       }
     } catch (error) {
       console.error("Error adding expense:", error);
@@ -50,8 +49,9 @@ const Expense = () => {
 
       if (response.data) {
         console.log("Expense deleted successfully:", response.data);
-        // Refresh the expense data after deleting a record
-        fetchExpenseDetails();
+        setExpenseData((prevExpenses) =>
+          prevExpenses.filter((expense) => expense._id !== expenseId),
+        );
       }
     } catch (error) {
       console.error("Error deleting expense:", error);

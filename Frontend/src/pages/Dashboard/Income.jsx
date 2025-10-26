@@ -28,9 +28,8 @@ const Income = () => {
 
       if (response.data) {
         console.log("Income added successfully:", response.data);
+        setIncomeData((prevIncomes) => [...prevIncomes, response.data.income]);
         setOpenAddIncomeModal(false);
-        // Refresh the income data after adding a new record
-        fetchIncomeDetails();
       }
     } catch (error) {
       console.error("Error adding income:", error);
@@ -50,8 +49,9 @@ const Income = () => {
 
       if (response.data) {
         console.log("Income deleted successfully:", response.data);
-        // Refresh the income data after deleting a record
-        fetchIncomeDetails();
+        setIncomeData((prevIncomes) =>
+          prevIncomes.filter((income) => income._id !== incomeId),
+        );
       }
     } catch (error) {
       console.error("Error deleting income:", error);
