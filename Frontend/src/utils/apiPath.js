@@ -1,4 +1,4 @@
-export const BASE_URL = import.meta.env.VITE_BASE_URL
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 // utils/apiPath.js
 export const API_PATHS = {
   AUTH: {
@@ -10,16 +10,16 @@ export const API_PATHS = {
     GET_DATA: "/api/v1/dashboard",
   },
   INCOME: {
-    ADD_INCOME: "/api/v1/income/add",
-    GET_ALL_INCOME: "/api/v1/income/get",
+    ADD_INCOME: "/api/v1/income",
+    GET_ALL_INCOME: "/api/v1/income",
     DELETE_INCOME: (incomeId) => `/api/v1/income/${incomeId}`,
-    DOWNLOAD_INCOME: `/api/v1/income/downloadexcel`,
+    DOWNLOAD_INCOME: `/api/v1/income/download-excel`,
   },
   EXPENSE: {
-    ADD_EXPENSE: "/api/v1/expense/add",
-    GET_ALL_EXPENSE: "/api/v1/expense/get",
+    ADD_EXPENSE: "/api/v1/expense",
+    GET_ALL_EXPENSE: "/api/v1/expense",
     DELETE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
-    DOWNLOAD_EXPENSE: `/api/v1/expense/downloadexcel`,
+    DOWNLOAD_EXPENSE: `/api/v1/expense/download-excel`,
   },
   IMAGE: {
     UPLOAD_IMAGE: "/api/v1/auth/upload-image",

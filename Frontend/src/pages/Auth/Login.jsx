@@ -1,3 +1,4 @@
+// Import necessary packages and components
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -10,34 +11,55 @@ import { validateEmail } from "../../utils/helper";
 import AuthBranding from "../../components/layouts/AuthBranding";
 import BiometricLock from "../../components/BiometricLock";
 
+// Login component
 const Login = () => {
+  // State variables for email, password, error, and biometric lock visibility
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [showBiometricLock, setShowBiometricLock] = useState(false);
+
+  // Get user context and navigation functions
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
+  /**
+   * @desc    Handles the standard email/password login process
+   * @param   {object} e - The form submission event
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Basic validation
     if (!validateEmail(email) || !password) {
       setError("Please enter both email and password.");
       return;
     }
     setError(null);
+
     try {
+      // Make API call to log in
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
         email,
         password,
       });
+
+      // On success, store the token, update the user context, and navigate to the dashboard
       localStorage.setItem("token", response.data.token);
       updateUser(response.data.user);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Login failed. Please try again.",
+      );
     }
   };
 
+  /**
+   * @desc    Handles successful biometric login
+   * @param   {object} user - The user object
+   * @param   {string} token - The JWT token
+   */
   const handleBiometricSuccess = (user, token) => {
     localStorage.setItem("token", token);
     updateUser(user);
@@ -46,6 +68,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
+      {/* Branding component for the authentication pages */}
       <AuthBranding />
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-800 text-white p-8">
         <motion.div
@@ -58,9 +81,12 @@ const Login = () => {
             <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
               Welcome Back
             </h2>
-            <p className="mt-2 text-gray-400">Login to continue your journey.</p>
+            <p className="mt-2 text-gray-400">
+              Login to continue your journey.
+            </p>
           </div>
           <form className="space-y-6" onSubmit={handleLogin}>
+            {/* Email and password input fields */}
             <div className="relative">
               <FiMail className="absolute top-3.5 left-3 text-gray-400" />
               <input
@@ -84,8 +110,12 @@ const Login = () => {
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            {/* Login button */}
             <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0px 0px 12px rgb(168, 85, 247)" }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 0px 12px rgb(168, 85, 247)",
+              }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               className="w-full p-3 font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
@@ -93,6 +123,7 @@ const Login = () => {
               LOGIN
             </motion.button>
           </form>
+          {/* Biometric login button */}
           <div className="flex items-center justify-center">
             <button
               onClick={() => setShowBiometricLock(true)}
@@ -102,6 +133,7 @@ const Login = () => {
               Login with Biometrics
             </button>
           </div>
+          {/* Link to sign up page */}
           <p className="text-center text-gray-400">
             Don't have an account?{" "}
             <Link
@@ -113,6 +145,7 @@ const Login = () => {
           </p>
         </motion.div>
       </div>
+      {/* Biometric lock modal */}
       {showBiometricLock && (
         <BiometricLock
           email={email}

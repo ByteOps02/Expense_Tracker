@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const CustomLegend = ({ payload }) => {
   return (
@@ -15,7 +15,7 @@ const CustomLegend = ({ payload }) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default CustomLegend
+export default CustomLegend;

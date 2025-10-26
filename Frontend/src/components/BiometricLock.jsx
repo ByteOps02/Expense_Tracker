@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Fingerprint } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
@@ -15,13 +14,13 @@ const BiometricLock = ({ onUnlock, onClose, email }) => {
     try {
       if (!navigator.credentials || !navigator.credentials.get) {
         throw new Error(
-          "Biometric authentication is not supported by this browser."
+          "Biometric authentication is not supported by this browser.",
         );
       }
 
       const assertionOptions = await axiosInstance.post(
         "/api/v1/biometric/assertion/options",
-        { email }
+        { email },
       );
 
       const credential = await navigator.credentials.get({
@@ -34,15 +33,15 @@ const BiometricLock = ({ onUnlock, onClose, email }) => {
           id: credential.id,
           response: {
             clientDataJSON: base64url.encode(
-              credential.response.clientDataJSON
+              credential.response.clientDataJSON,
             ),
             authenticatorData: base64url.encode(
-              credential.response.authenticatorData
+              credential.response.authenticatorData,
             ),
             signature: base64url.encode(credential.response.signature),
             userHandle: base64url.encode(credential.response.userHandle),
           },
-        }
+        },
       );
 
       if (response.data.verified) {

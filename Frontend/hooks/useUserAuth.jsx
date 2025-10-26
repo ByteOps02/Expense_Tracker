@@ -5,31 +5,31 @@ import axiosInstance from "../src/utils/axiosInstance";
 import { API_PATHS } from "../src/utils/apiPath";
 
 export const useUserAuth = () => {
-    const { user, updateUser, clearUser } = useContext(UserContext);
-    const navigate = useNavigate();
+  const { user, updateUser, clearUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (user) return;
+  useEffect(() => {
+    if (user) return;
 
-        let isMounted = true;
+    let isMounted = true;
 
-        const fetchUserInfo = async () => {
-            try {
-                const response = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
-                if (isMounted && response?.data) {
-                    updateUser(response.data);
-                }
-            } catch {
-                if (isMounted) {
-                    clearUser();
-                    navigate("/login");
-                }
-            }
-        };
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
+        if (isMounted && response?.data) {
+          updateUser(response.data);
+        }
+      } catch {
+        if (isMounted) {
+          clearUser();
+          navigate("/login");
+        }
+      }
+    };
 
-        fetchUserInfo();
-        return () => {
-            isMounted = false;
-        };
-    }, [user, updateUser, clearUser, navigate]);
+    fetchUserInfo();
+    return () => {
+      isMounted = false;
+    };
+  }, [user, updateUser, clearUser, navigate]);
 };

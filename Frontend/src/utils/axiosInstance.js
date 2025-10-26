@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Response Interceptor
@@ -38,7 +38,7 @@ axiosInstance.interceptors.response.use(
       console.error("Request timeout. Please try again.");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

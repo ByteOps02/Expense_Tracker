@@ -1,63 +1,81 @@
-import React, { useState } from 'react';
-import Input from '../Inputs/Input';
-import EmojiPickerPopup from '../layouts/EmojiPickerPopup';
+// Import necessary packages and components
+import React, { useState } from "react";
+import Input from "../Inputs/Input";
+import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 
+// Form component for adding a new expense
 const AddExpenseForm = ({ onAddExpense }) => {
+  // State for form fields, submission status, and errors
   const [expense, setExpense] = useState({
-    category: '',
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
-    description: '',
-    icon: ''
+    category: "",
+    amount: "",
+    date: new Date().toISOString().split("T")[0], // Default to today's date
+    description: "",
+    icon: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
+  /**
+   * @desc    Handles changes in form fields
+   * @param   {string} key - The name of the field to update
+   * @param   {string} value - The new value of the field
+   */
   const handleChange = (key, value) => {
     setExpense({ ...expense, [key]: value });
-    // Clear error when user starts typing
+    // Clear the error for a field when the user starts typing
     if (errors[key]) {
       setErrors({ ...errors, [key]: "" });
     }
   };
-  
+
+  /**
+   * @desc    Validates the form fields
+   * @returns {boolean} - True if the form is valid, false otherwise
+   */
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!expense.category.trim()) {
       newErrors.category = "Expense category is required";
     }
-    
+
     if (!expense.amount || parseFloat(expense.amount) <= 0) {
       newErrors.amount = "Please enter a valid amount";
     }
-    
+
     if (!expense.date) {
       newErrors.date = "Date is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
+  /**
+   * @desc    Handles the form submission
+   * @param   {object} e - The form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // If the form is not valid, do not submit
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (onAddExpense) {
         await onAddExpense(expense);
+        // Reset the form after successful submission
         setExpense({
-          category: '',
-          amount: '',
-          date: new Date().toISOString().split('T')[0],
-          description: '',
-          icon: ''
+          category: "",
+          amount: "",
+          date: new Date().toISOString().split("T")[0],
+          description: "",
+          icon: "",
         });
         setErrors({});
       }
@@ -71,11 +89,13 @@ const AddExpenseForm = ({ onAddExpense }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
+        {/* Emoji picker for selecting an icon */}
         <EmojiPickerPopup
           icon={expense.icon}
           onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
         />
 
+        {/* Input fields for expense details */}
         <Input
           value={expense.category}
           onChange={({ target }) => handleChange("category", target.value)}
@@ -116,7 +136,8 @@ const AddExpenseForm = ({ onAddExpense }) => {
           />
         </div>
       </div>
-      
+
+      {/* Submit button */}
       <button
         type="submit"
         disabled={isSubmitting}
@@ -128,4 +149,4 @@ const AddExpenseForm = ({ onAddExpense }) => {
   );
 };
 
-export default AddExpenseForm; 
+export default AddExpenseForm;

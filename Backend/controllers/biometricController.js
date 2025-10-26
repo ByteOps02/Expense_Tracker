@@ -1,4 +1,4 @@
-
+// Import necessary packages and models
 const User = require("../models/User");
 const base64url = require("base64url");
 const crypto = require("crypto");
@@ -9,10 +9,20 @@ const {
   verifyAssertion,
 } = require("../utils/webauthn");
 
+/**
+ * @desc    Generate JWT token
+ * @param   {string} id - User ID
+ * @returns {string} - JWT token
+ */
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
+/**
+ * @desc    Get all passkeys for the logged-in user
+ * @route   GET /api/v1/biometric/passkeys
+ * @access  Private
+ */
 exports.getPasskeys = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -25,14 +35,20 @@ exports.getPasskeys = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Delete a passkey
+ * @route   DELETE /api/v1/biometric/passkeys/:id
+ * @access  Private
+ */
 exports.deletePasskey = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    // Filter out the passkey to be deleted
     user.authenticators = user.authenticators.filter(
-      (authr) => authr.credID !== req.params.id
+      (authr) => authr.credID !== req.params.id,
     );
     await user.save();
     res.status(200).json({ message: "Passkey deleted successfully" });
@@ -41,6 +57,11 @@ exports.deletePasskey = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Generate attestation options for registering a new passkey
+ * @route   POST /api/v1/biometric/attestation/options
+ * @access  Private
+ */
 exports.generateAttestationOptions = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -51,6 +72,7 @@ exports.generateAttestationOptions = async (req, res) => {
 
     const attestationOptions = generateAttestation(user);
 
+    // Store the challenge and user ID in the session for later verification
     req.session.challenge = attestationOptions.challenge;
     req.session.userId = user.id;
 
@@ -60,6 +82,11 @@ exports.generateAttestationOptions = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Verify the attestation response and save the new passkey
+ * @route   POST /api/v1/biometric/attestation/result
+ * @access  Private
+ */
 exports.verifyAttestationResponse = async (req, res) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -68,12 +95,14 @@ exports.verifyAttestationResponse = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Verify the attestation response
     const verification = verifyAttestation(
       req.body.attestationResponse,
-      req.session.challenge
+      req.session.challenge,
     );
 
     if (verification.verified) {
+      // If verification is successful, save the new authenticator
       user.authenticators.push(verification.authr);
       await user.save();
       res.status(200).json({ verified: true });
@@ -85,6 +114,11 @@ exports.verifyAttestationResponse = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Generate assertion options for authenticating with a passkey
+ * @route   POST /api/v1/biometric/assertion/options
+ * @access  Public
+ */
 exports.generateAssertionOptions = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -95,6 +129,7 @@ exports.generateAssertionOptions = async (req, res) => {
         .json({ message: "User not found or no passkeys registered" });
     }
 
+    // Generate assertion options
     const assertionOptions = {
       challenge: base64url.encode(crypto.randomBytes(32)),
       allowCredentials: user.authenticators.map((authr) => ({
@@ -104,6 +139,7 @@ exports.generateAssertionOptions = async (req, res) => {
       userVerification: "required",
     };
 
+    // Store the challenge and email in the session for later verification
     req.session.challenge = assertionOptions.challenge;
     req.session.email = req.body.email;
 
@@ -113,6 +149,11 @@ exports.generateAssertionOptions = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Verify the assertion response and log the user in
+ * @route   POST /api/v1/biometric/assertion/result
+ * @access  Public
+ */
 exports.verifyAssertionResponse = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.session.email });
@@ -121,21 +162,24 @@ exports.verifyAssertionResponse = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Find the authenticator that matches the credential ID
     const authr = user.authenticators.find(
-      (authr) => authr.credID === req.body.id
+      (authr) => authr.credID === req.body.id,
     );
 
     if (!authr) {
       return res.status(404).json({ message: "Authenticator not found" });
     }
 
+    // Verify the assertion response
     const verification = verifyAssertion(
       req.body,
       req.session.challenge,
-      authr
+      authr,
     );
 
     if (verification.verified) {
+      // If verification is successful, generate a JWT token and log the user in
       const token = generateToken(user._id);
       res.status(200).json({ verified: true, user, token });
     } else {

@@ -1,10 +1,14 @@
-const User = require("../models/User");
+// Import necessary packages and models
 const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
-const fs = require("fs");
 const path = require("path");
+const { cache, clearCache } = require("../middleware/cacheMiddleware");
 
-
+/**
+ * @desc    Add a new income
+ * @route   POST /api/v1/income
+ * @access  Private
+ */
 exports.addIncome = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -18,30 +22,50 @@ exports.addIncome = async (req, res) => {
       note,
     });
     await income.save();
-    
+
+    // Clear the cache for the dashboard data since it is now stale
+    clearCache("dashboard");
+
     res.status(201).json({ message: "Income added successfully", income });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error adding income", error: err.message });
+    res.status(500).json({ message: "Error adding income", error: err.message });
   }
 };
 
+/**
+ * @desc    Get all incomes for the logged-in user
+ * @route   GET /api/v1/income
+ * @access  Private
+ */
 exports.getAllIncome = async (req, res) => {
   try {
     const userId = req.user.id;
-    // Use lean() for better performance when full documents aren't needed
+
+    // Check if the data is in the cache
+    if (cache.has(userId)) {
+      return res.status(200).json({ incomes: cache.get(userId) });
+    }
+
+    // If not in cache, fetch from the database
+    // Use .lean() for better performance as it returns a plain JavaScript object
     const incomes = await Income.find({ user: userId })
       .sort({ date: -1 })
       .lean();
+
+    // Store the fetched data in the cache
+    cache.set(userId, incomes);
+
     res.status(200).json({ incomes });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error fetching incomes", error: err.message });
+    res.status(500).json({ message: "Error fetching incomes", error: err.message });
   }
 };
 
+/**
+ * @desc    Delete an income
+ * @route   DELETE /api/v1/income/:id
+ * @access  Private
+ */
 exports.deleteIncome = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -53,15 +77,21 @@ exports.deleteIncome = async (req, res) => {
     if (!income) {
       return res.status(404).json({ message: "Income not found" });
     }
-    
+
+    // Clear the cache for the dashboard data since it is now stale
+    clearCache("dashboard");
+
     res.status(200).json({ message: "Income deleted successfully" });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error deleting income", error: err.message });
+    res.status(500).json({ message: "Error deleting income", error: err.message });
   }
 };
 
+/**
+ * @desc    Update an income
+ * @route   PUT /api/v1/income/:id
+ * @access  Private
+ */
 exports.updateIncome = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -71,21 +101,27 @@ exports.updateIncome = async (req, res) => {
     const income = await Income.findOneAndUpdate(
       { _id: incomeId, user: userId },
       { icon, amount, source, date, note },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!income) {
       return res.status(404).json({ message: "Income not found" });
     }
-    
+
+    // Clear the cache for the dashboard data since it is now stale
+    clearCache("dashboard");
+
     res.status(200).json({ message: "Income updated successfully", income });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error updating income", error: err.message });
+    res.status(500).json({ message: "Error updating income", error: err.message });
   }
 };
 
+/**
+ * @desc    Download all incomes as an Excel file
+ * @route   GET /api/v1/income/download-excel
+ * @access  Private
+ */
 exports.downloadIncomeExcel = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -93,28 +129,28 @@ exports.downloadIncomeExcel = async (req, res) => {
     if (!incomes.length) {
       return res.status(404).json({ message: "No incomes found to export" });
     }
-    
-    // Create a new workbook and worksheet
+
+    // Create a new Excel workbook and worksheet
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Incomes");
-    
-    // Prepare data for Excel
+
+    // Prepare data for Excel by removing unwanted fields
     const data = incomes.map(
-      ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest })
+      ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest }),
     );
-    
-    // Add headers
+
+    // Add headers to the worksheet
     if (data.length > 0) {
       const headers = Object.keys(data[0]);
       worksheet.addRow(headers);
-      
-      // Add data rows
-      data.forEach(income => {
+
+      // Add data rows to the worksheet
+      data.forEach((income) => {
         worksheet.addRow(Object.values(income));
       });
     }
 
-    // Save the file to the Backend folder
+    // Save the Excel file to the backend folder
     const filePath = path.join(__dirname, "../incomes.xlsx");
     await workbook.xlsx.writeFile(filePath);
 
@@ -122,8 +158,6 @@ exports.downloadIncomeExcel = async (req, res) => {
       .status(200)
       .json({ message: "Excel file saved to backend folder", filePath });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error exporting incomes", error: err.message });
+    res.status(500).json({ message: "Error exporting incomes", error: err.message });
   }
 };
