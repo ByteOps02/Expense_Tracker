@@ -6,22 +6,21 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative">
-      <div
-        className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
+    <div className="relative inline-block">
+      <button
+        type="button"
+        className="flex items-center justify-center p-2 rounded-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm text-gray-700"
         onClick={() => setIsOpen(true)}
       >
-        <div className="w-8 h-8 flex items-center justify-center">
+        <div className="w-5 h-5 flex items-center justify-center mr-2">
           {icon ? (
-            <img src={icon} alt="Icon" className="w-6 h-6" />
+            <img src={icon} alt="Icon" className="w-full h-full object-contain" />
           ) : (
-            <LuImage className="w-5 h-5 text-slate-500" />
+            <LuImage className="w-full h-full text-gray-500" />
           )}
         </div>
-        <p className="text-sm text-slate-600">
-          {icon ? "Change Icon" : "Pick Icon"}
-        </p>
-      </div>
+        {icon ? "Change" : "Pick"} Icon
+      </button>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
