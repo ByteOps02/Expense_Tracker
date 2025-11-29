@@ -27,6 +27,7 @@ const Expense = () => {
    * @param   {object} expenseData - The new expense data from the form
    */
   const handleAddExpense = async (expenseData) => {
+    console.log("Attempting to add expense with data:", expenseData);
     try {
       const response = await axiosInstance.post(
         `${API_PATHS.EXPENSE.ADD_EXPENSE}`,
@@ -34,7 +35,7 @@ const Expense = () => {
       );
 
       if (response.data) {
-        console.log("Expense added successfully:", response.data);
+        console.log("Expense added successfully. Response:", response.data);
         setExpenseData((prevExpenses) => [
           ...prevExpenses,
           response.data.expense,
@@ -42,8 +43,12 @@ const Expense = () => {
         setOpenAddExpenseModal(false);
       }
     } catch (error) {
-      console.error("Error adding expense:", error);
-      alert("Failed to add expense. Please try again.");
+      console.error("Error adding expense:", error.response || error);
+      const errorMessage =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : "Failed to add expense. Please try again.";
+      alert(errorMessage);
     }
   };
 

@@ -3,21 +3,18 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiMail, FiLock } from "react-icons/fi";
-import { FaFingerprint } from "react-icons/fa";
 import { UserContext } from "../../context/UserContext";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import { validateEmail } from "../../utils/helper";
 import AuthBranding from "../../components/layouts/AuthBranding";
-import BiometricLock from "../../components/BiometricLock";
 
 // Login component
 const Login = () => {
-  // State variables for email, password, error, and biometric lock visibility
+  // State variables for email, password, error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [showBiometricLock, setShowBiometricLock] = useState(false);
 
   // Get user context and navigation functions
   const { updateUser } = useContext(UserContext);
@@ -53,17 +50,6 @@ const Login = () => {
         err.response?.data?.message || "Login failed. Please try again.",
       );
     }
-  };
-
-  /**
-   * @desc    Handles successful biometric login
-   * @param   {object} user - The user object
-   * @param   {string} token - The JWT token
-   */
-  const handleBiometricSuccess = (user, token) => {
-    localStorage.setItem("token", token);
-    updateUser(user);
-    navigate("/dashboard");
   };
 
   return (
@@ -126,16 +112,6 @@ const Login = () => {
               Sign In
             </motion.button>
           </form>
-          {/* Biometric login button */}
-          <div className="flex items-center justify-center">
-            <button
-              onClick={() => setShowBiometricLock(true)}
-              className="flex items-center justify-center w-full p-3.5 font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-purple-600 transition-all duration-200"
-            >
-              <FaFingerprint className="mr-2 text-lg" />
-              Login with Biometrics
-            </button>
-          </div>
           {/* Link to sign up page */}
           <p className="text-center text-sm text-gray-500">
             Don&apos;t have an account?{" "}
@@ -148,14 +124,6 @@ const Login = () => {
           </p>
         </motion.div>
       </div>
-      {/* Biometric lock modal */}
-      {showBiometricLock && (
-        <BiometricLock
-          email={email}
-          onUnlock={handleBiometricSuccess}
-          onClose={() => setShowBiometricLock(false)}
-        />
-      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 // Import necessary packages and components
-import React, { useEffect, useContext, lazy, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import UserProvider, { UserContext } from "./context/UserContext.jsx";
+import UserProvider from "./context/UserContext.jsx";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 
