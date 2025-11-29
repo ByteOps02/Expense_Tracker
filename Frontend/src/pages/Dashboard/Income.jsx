@@ -137,7 +137,7 @@ const Income = () => {
 
   return (
     <DashboardLayout activeMenu="Income">
-      <div className="my-5 mx-auto">
+      <div className="w-full max-w-[1400px] mx-auto px-4">
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner text="Loading income data..." />
@@ -155,9 +155,9 @@ const Income = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-6">
             {/* Income overview and add income button */}
-            <div>
+            <div className="w-full">
               <IncomeOverview
                 transactions={incomeData}
                 onAddIncome={() => setOpenAddIncomeModal(true)}
@@ -165,7 +165,7 @@ const Income = () => {
             </div>
 
             {/* List of income records */}
-            <div>
+            <div className="w-full">
               <IncomeList
                 transactions={incomeData}
                 onDelete={handleDeleteIncome}

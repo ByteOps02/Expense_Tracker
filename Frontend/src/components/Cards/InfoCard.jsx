@@ -14,15 +14,15 @@ const InfoCard = ({ icon, label, value, color }) => {
   const colorClasses = colorVariants[color] || "bg-gray-100 text-gray-600";
 
   return (
-    <div className="card flex items-center gap-5 p-6 min-w-[300px] flex-1">
+    <div className="card flex items-center gap-5 p-6 w-full">
       <div
-        className={`w-12 h-12 flex items-center justify-center text-2xl rounded-xl ${colorClasses}`}
+        className={`w-12 h-12 flex items-center justify-center text-2xl rounded-xl flex-shrink-0 ${colorClasses}`}
       >
         {icon}
       </div>
-      <div>
+      <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-500 mb-0.5">{label}</p>
-        <h4 className="text-2xl font-bold text-gray-900">{value}</h4>
+        <h4 className="text-2xl font-bold text-gray-900 truncate">{value}</h4>
       </div>
     </div>
   );

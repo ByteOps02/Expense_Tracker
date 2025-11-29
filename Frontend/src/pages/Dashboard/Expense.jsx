@@ -1,3 +1,4 @@
+// src/pages/Expense/index.jsx  (or wherever your file lives)
 // Import necessary packages and components
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
@@ -29,12 +30,15 @@ const Expense = () => {
     try {
       const response = await axiosInstance.post(
         `${API_PATHS.EXPENSE.ADD_EXPENSE}`,
-        expenseData,
+        expenseData
       );
 
       if (response.data) {
         console.log("Expense added successfully:", response.data);
-        setExpenseData((prevExpenses) => [...prevExpenses, response.data.expense]);
+        setExpenseData((prevExpenses) => [
+          ...prevExpenses,
+          response.data.expense,
+        ]);
         setOpenAddExpenseModal(false);
       }
     } catch (error) {
@@ -50,13 +54,13 @@ const Expense = () => {
   const handleDeleteExpense = async (expenseId) => {
     try {
       const response = await axiosInstance.delete(
-        `${API_PATHS.EXPENSE.DELETE_EXPENSE(expenseId)}`,
+        `${API_PATHS.EXPENSE.DELETE_EXPENSE(expenseId)}`
       );
 
       if (response.data) {
         console.log("Expense deleted successfully:", response.data);
         setExpenseData((prevExpenses) =>
-          prevExpenses.filter((expense) => expense._id !== expenseId),
+          prevExpenses.filter((expense) => expense._id !== expenseId)
         );
       }
     } catch (error) {
@@ -72,7 +76,7 @@ const Expense = () => {
     try {
       const response = await axiosInstance.get(
         `${API_PATHS.EXPENSE.DOWNLOAD_EXPENSE}`,
-        { responseType: "blob" },
+        { responseType: "blob" }
       );
 
       // Create a temporary URL and trigger the download
@@ -98,7 +102,7 @@ const Expense = () => {
 
     try {
       const response = await axiosInstance.get(
-        `${API_PATHS.EXPENSE.GET_ALL_EXPENSE}`,
+        `${API_PATHS.EXPENSE.GET_ALL_EXPENSE}`
       );
 
       console.log("Expense API Response:", response.data);
@@ -137,7 +141,7 @@ const Expense = () => {
 
   return (
     <DashboardLayout activeMenu="Expense">
-      <div className="my-5 mx-auto">
+      <div className="w-full max-w-[1400px] mx-auto px-4">
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner text="Loading expense data..." />
@@ -146,26 +150,23 @@ const Expense = () => {
           <div className="card">
             <div className="text-center text-red-500 py-8">
               <p>{error}</p>
-              <button
-                onClick={fetchExpenseDetails}
-                className="mt-4 btn-primary"
-              >
+              <button onClick={fetchExpenseDetails} className="mt-4 btn-primary">
                 Retry
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-6">
             {/* Expense overview and add expense button */}
-            <div>
+            <div className="w-full">
               <ExpenseOverview
                 transactions={expenseData}
-                onExpenseIncome={() => setOpenAddExpenseModal(true)}
+                onAddExpense={() => setOpenAddExpenseModal(true)}
               />
             </div>
 
             {/* List of expense records */}
-            <div>
+            <div className="w-full">
               <ExpenseList
                 transactions={expenseData}
                 onDelete={handleDeleteExpense}
