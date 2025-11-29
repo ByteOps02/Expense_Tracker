@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { LuDollarSign, LuTag, LuFileText } from "react-icons/lu";
+import { LuIndianRupee, LuTag, LuFileText } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
@@ -79,8 +79,10 @@ const AddExpenseForm = ({ onAddExpense }) => {
       className="w-full max-w-2xl mx-auto"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
+        
         {/* Title & Category Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
           {/* Expense Title */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
@@ -135,13 +137,14 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
         {/* Amount & Date Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
           {/* Amount */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
               Amount <span className="text-red-500">*</span>
             </label>
             <div className="relative group">
-              <LuDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
+              <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
               <input
                 type="number"
                 placeholder="0.00"
@@ -174,7 +177,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           />
         </div>
 
-        {/* Description - Full Width */}
+        {/* Description */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-gray-700">
             Description

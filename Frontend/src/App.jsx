@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import UserProvider from "./context/UserContext.jsx";
+
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -18,59 +19,58 @@ const Home = lazy(() => import("./pages/Dashboard/Home"));
 const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 
-
-// Main App component
-const App = () => {
-  return (
-    <ErrorBoundary>
-      <UserProvider>
-        <div>
-          <Router>
-            <ErrorBoundary>
-              <Suspense
-                fallback={
-                  <LoadingSpinner fullScreen text="Loading application..." />
-                }
-              >
-                <Routes>
-                  {/* Always redirect root to login */}
-                  <Route path="/" element={<Navigate to="/login" replace />} />
-
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<SignUp />} />
-
-                  {/* Protected routes */}
-                  <Route
-                    path="/dashboard"
-                    element={<ProtectedRoute Component={Home} />}
-                  />
-                  <Route
-                    path="/income"
-                    element={<ProtectedRoute Component={Income} />}
-                  />
-                  <Route
-                    path="/expense"
-                    element={<ProtectedRoute Component={Expense} />}
-                  />
-
-                </Routes>
-              </Suspense>
-            </ErrorBoundary>
-          </Router>
-        </div>
-      </UserProvider>
-    </ErrorBoundary>
-  );
-};
-
 /**
  * @desc Protected Route wrapper
  *       Only allows access if token exists
  */
 const ProtectedRoute = ({ Component }) => {
   const token = localStorage.getItem("token");
-
   return token ? <Component /> : <Navigate to="/login" replace />;
+};
+
+// Main App component
+const App = () => {
+  return (
+
+      <ErrorBoundary>
+        <UserProvider>
+          <div>
+            <Router>
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <LoadingSpinner fullScreen text="Loading application..." />
+                  }
+                >
+                  <Routes>
+                    {/* Always redirect root to login */}
+                    <Route path="/" element={<Navigate to="/login" replace />} />
+
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+
+                    {/* Protected routes */}
+                    <Route
+                      path="/dashboard"
+                      element={<ProtectedRoute Component={Home} />}
+                    />
+                    <Route
+                      path="/income"
+                      element={<ProtectedRoute Component={Income} />}
+                    />
+                    <Route
+                      path="/expense"
+                      element={<ProtectedRoute Component={Expense} />}
+                    />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
+            </Router>
+          </div>
+        </UserProvider>
+      </ErrorBoundary>
+
+  );
 };
 
 export default App;

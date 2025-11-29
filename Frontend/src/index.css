@@ -4,7 +4,18 @@
 :root {
   --font-display: "Plus Jakarta Sans", "sans-serif";
   --breakpoint-3xl: 1920px;
-  --color-primary: #7c3aed;
+
+  /* Light Theme Colors */
+  --background-color: #f8fafc;
+  --text-color: #1e293b;
+  --primary-color: #7c3aed; /* Adjusted for consistency */
+}
+
+/* Dark Theme Colors */
+.dark {
+  --background-color: #1a202c; /* Tailwind gray-900 */
+  --text-color: #e2e8f0; /* Tailwind gray-200 */
+  --primary-color: #8b5cf6; /* Tailwind primary-500, slightly lighter for contrast */
 }
 
 @layer base {
@@ -15,23 +26,25 @@
   }
 
   body {
-    background-color: #f8fafc; /* Slightly cooler gray */
+    background-color: var(--background-color);
     overflow-x: hidden;
-    color: #1e293b;
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
   }
 }
 
 @layer components {
+  /* Existing components using hardcoded colors will need to be updated to use theme variables or Tailwind's dark mode utility classes. */
   .glass {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg dark:bg-gray-800/70 dark:border-gray-700/20;
   }
 
   .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3.5 mb-4 mt-2 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200;
+    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3.5 mb-4 mt-2 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:focus:border-primary-500;
   }
 
   .btn-primary {
-    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 p-[12px] rounded-xl my-1 hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-300 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
+    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 p-[12px] rounded-xl my-1 hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-300 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 dark:bg-primary-600 dark:hover:bg-primary-700 dark:shadow-primary-300;
   }
 
   /* Custom animations */
