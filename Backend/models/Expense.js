@@ -12,8 +12,8 @@ const ExpenseSchema = new mongoose.Schema(
     category: { type: String, required: true },
     // Date of the expense
     date: { type: Date, default: Date.now },
-    // Optional note for the expense
-    note: { type: String },
+    // Optional description for the expense
+    description: { type: String },
   },
   // Enable timestamps (createdAt and updatedAt)
   { timestamps: true },

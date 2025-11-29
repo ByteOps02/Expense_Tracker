@@ -17,7 +17,7 @@ const SignUp = lazy(() => import("./pages/Auth/SignUp"));
 const Home = lazy(() => import("./pages/Dashboard/Home"));
 const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
-const ManagePasskeys = lazy(() => import("./pages/Dashboard/ManagePasskeys"));
+
 
 // Main App component
 const App = () => {
@@ -52,10 +52,7 @@ const App = () => {
                     path="/expense"
                     element={<ProtectedRoute Component={Expense} />}
                   />
-                  <Route
-                    path="/security"
-                    element={<ProtectedRoute Component={ManagePasskeys} />}
-                  />
+
                 </Routes>
               </Suspense>
             </ErrorBoundary>

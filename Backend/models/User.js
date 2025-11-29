@@ -2,13 +2,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-// Define the Authenticator schema for passkeys
-const AuthenticatorSchema = new mongoose.Schema({
-  credID: { type: String, required: true },
-  fmt: { type: String, required: true },
-  publicKey: { type: String, required: true },
-  counter: { type: Number, required: true },
-});
+
 
 // Define the User schema
 const UserSchema = new mongoose.Schema(
@@ -28,8 +22,7 @@ const UserSchema = new mongoose.Schema(
         status: { type: String }, // e.g., "Successful", "Failed"
       },
     ],
-    // Array of authenticators for passkey authentication
-    authenticators: [AuthenticatorSchema],
+
   },
   // Enable timestamps (createdAt and updatedAt)
   { timestamps: true },

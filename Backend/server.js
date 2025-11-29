@@ -15,7 +15,7 @@ const authRoutes = require("./routes/authRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
-const biometricRoutes = require("./routes/biometricRoutes");
+
 
 // Initialize express app
 const app = express();
@@ -66,8 +66,7 @@ app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/income", incomeRoutes);
 // All dashboard-related routes are prefixed with /api/v1/dashboard
 app.use("/api/v1/dashboard", dashboardRoutes);
-// All biometric-related routes are prefixed with /api/v1/biometric
-app.use("/api/v1/biometric", biometricRoutes);
+
 
 // Serve static files from the "uploads" directory
 // This is used to serve user-uploaded profile images
