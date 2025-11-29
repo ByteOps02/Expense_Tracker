@@ -10,6 +10,7 @@ const path = require("path");
  */
 exports.addExpense = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { icon, amount, category, date, description } = req.body;
     const expense = new Expense({
       user: userId,

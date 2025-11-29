@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { LuDollarSign, LuBriefcase } from "react-icons/lu";
+import { LuIndianRupee, LuBriefcase } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
@@ -96,7 +96,9 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 value={income.title}
                 onChange={(e) => handleChange("title", e.target.value)}
                 className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-                  errors.title ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200"
+                  errors.title
+                    ? "border-red-300 focus:ring-red-100 focus:border-red-500"
+                    : "border-gray-200"
                 }`}
               />
             </div>
@@ -121,11 +123,13 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
                 <input
                   type="text"
-                  placeholder="e.g., Salary, Freelance"
+                  placeholder="e.g., Salary"
                   value={income.source}
                   onChange={(e) => handleChange("source", e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-                    errors.source ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200"
+                    errors.source
+                      ? "border-red-300 focus:ring-red-100 focus:border-red-500"
+                      : "border-gray-200"
                   }`}
                 />
               </div>
@@ -138,7 +142,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
               <motion.p
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 flex items-center gap-1"
+                className="text-xs text-red-500"
               >
                 {errors.source}
               </motion.p>
@@ -154,14 +158,16 @@ const AddIncomeForm = ({ onAddIncome }) => {
               Amount <span className="text-green-500">*</span>
             </label>
             <div className="relative group">
-              <LuDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
+              <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
               <input
                 type="number"
                 placeholder="0.00"
                 value={income.amount}
                 onChange={(e) => handleChange("amount", e.target.value)}
                 className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-                  errors.amount ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200"
+                  errors.amount
+                    ? "border-red-300 focus:ring-red-100 focus:border-red-500"
+                    : "border-gray-200"
                 }`}
                 step="0.01"
                 min="0"
@@ -171,7 +177,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
               <motion.p
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 flex items-center gap-1"
+                className="text-xs text-red-500"
               >
                 {errors.amount}
               </motion.p>
@@ -187,7 +193,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
           />
         </div>
 
-        {/* Note - Full Width */}
+        {/* Note */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-gray-700">
             Note
@@ -212,8 +218,20 @@ const AddIncomeForm = ({ onAddIncome }) => {
           {isSubmitting ? (
             <span className="flex items-center justify-center gap-2">
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               Adding Income...
             </span>
