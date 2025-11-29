@@ -11,8 +11,7 @@ import UserProvider, { UserContext } from "./context/UserContext.jsx";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// Lazy load all page components for better performance
-// This splits the code into smaller chunks and loads them on demand
+// Lazy load page components
 const Login = lazy(() => import("./pages/Auth/Login"));
 const SignUp = lazy(() => import("./pages/Auth/SignUp"));
 const Home = lazy(() => import("./pages/Dashboard/Home"));
@@ -23,29 +22,40 @@ const ManagePasskeys = lazy(() => import("./pages/Dashboard/ManagePasskeys"));
 // Main App component
 const App = () => {
   return (
-    // Wrap the entire application in an ErrorBoundary to catch and handle errors
     <ErrorBoundary>
-      {/* UserProvider provides user context to all components */}
       <UserProvider>
-        <ClearAuthOnLoad />
         <div>
           <Router>
             <ErrorBoundary>
-              {/* Suspense is used with lazy loading to show a fallback while components are loading */}
               <Suspense
                 fallback={
                   <LoadingSpinner fullScreen text="Loading application..." />
                 }
               >
-                {/* Define the application routes */}
                 <Routes>
-                  <Route path="/" element={<Root />} />
+                  {/* Always redirect root to login */}
+                  <Route path="/" element={<Navigate to="/login" replace />} />
+
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
-                  <Route path="/dashboard" element={<Home />} />
-                  <Route path="/income" element={<Income />} />
-                  <Route path="/expense" element={<Expense />} />
-                  <Route path="/security" element={<ManagePasskeys />} />
+
+                  {/* Protected routes */}
+                  <Route
+                    path="/dashboard"
+                    element={<ProtectedRoute Component={Home} />}
+                  />
+                  <Route
+                    path="/income"
+                    element={<ProtectedRoute Component={Income} />}
+                  />
+                  <Route
+                    path="/expense"
+                    element={<ProtectedRoute Component={Expense} />}
+                  />
+                  <Route
+                    path="/security"
+                    element={<ProtectedRoute Component={ManagePasskeys} />}
+                  />
                 </Routes>
               </Suspense>
             </ErrorBoundary>
@@ -57,35 +67,13 @@ const App = () => {
 };
 
 /**
- * @desc    Component to clear auth token and user context on app load
- *          This is to ensure that no stale authentication data persists
+ * @desc Protected Route wrapper
+ *       Only allows access if token exists
  */
-const ClearAuthOnLoad = () => {
-  const userContext = useContext(UserContext);
-  useEffect(() => {
-    // Only clear if no valid token exists in localStorage
-    const token = localStorage.getItem("token");
-    if (!token) {
-      sessionStorage.removeItem("token");
-      if (userContext && userContext.clearUser) {
-        userContext.clearUser();
-      }
-    }
-  }, [userContext]);
-  return null;
+const ProtectedRoute = ({ Component }) => {
+  const token = localStorage.getItem("token");
+
+  return token ? <Component /> : <Navigate to="/login" replace />;
 };
 
 export default App;
-
-/**
- * @desc    Root component to handle initial navigation
- *          Redirects to the dashboard if authenticated, otherwise to the login page
- */
-const Root = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
-    <Navigate to="/login" />
-  );
-};
