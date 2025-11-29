@@ -10,15 +10,14 @@ const path = require("path");
  */
 exports.addExpense = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { icon, amount, category, date, note } = req.body;
+    const { icon, amount, category, date, description } = req.body;
     const expense = new Expense({
       user: userId,
       icon,
       amount,
       category,
       date,
-      note,
+      description,
     });
     await expense.save();
 
@@ -91,10 +90,10 @@ exports.updateExpense = async (req, res) => {
   try {
     const userId = req.user.id;
     const expenseId = req.params.id;
-    const { icon, amount, category, date, note } = req.body;
+    const { icon, amount, category, date, description } = req.body;
     const expense = await Expense.findOneAndUpdate(
       { _id: expenseId, user: userId },
-      { icon, amount, category, date, note },
+      { icon, amount, category, date, description },
       { new: true, runValidators: true },
     );
     if (!expense) {
@@ -131,7 +130,7 @@ exports.downloadExpenseExcel = async (req, res) => {
 
     // Prepare data for Excel by removing unwanted fields
     const data = expenses.map(
-      ({ _id, user: _user, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...rest }) => ({ ...rest }),
+      ({ _id, user: _user, __v, createdAt: _createdAt, updatedAt: _updatedAt, note: _note, ...rest }) => ({ ...rest }),
     );
 
     // Add headers to the worksheet
