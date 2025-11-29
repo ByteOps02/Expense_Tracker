@@ -87,65 +87,64 @@ const AddExpenseForm = ({ onAddExpense }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        {/* Emoji picker for selecting an icon */}
-        <EmojiPickerPopup
-          icon={expense.icon}
-          onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
-        />
-
-        {/* Input fields for expense details */}
-        <Input
-          value={expense.category}
-          onChange={({ target }) => handleChange("category", target.value)}
-          label="Expense Category"
-          placeholder="Food, Transport, Entertainment, etc"
-          type="text"
-          error={errors.category}
-        />
-
-        <Input
-          value={expense.amount}
-          onChange={({ target }) => handleChange("amount", target.value)}
-          label="Amount"
-          placeholder="Enter amount"
-          type="number"
-          error={errors.amount}
-        />
-
-        <Input
-          value={expense.date}
-          onChange={({ target }) => handleChange("date", target.value)}
-          label="Date"
-          placeholder="Select date"
-          type="date"
-          error={errors.date}
-        />
-
+    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Add New Expense</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            value={expense.description}
-            onChange={({ target }) => handleChange("description", target.value)}
-            placeholder="Optional description"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200"
-            rows="3"
+          {/* Emoji picker for selecting an icon */}
+          <EmojiPickerPopup
+            icon={expense.icon}
+            onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+          />
+
+          {/* Input fields for expense details */}
+          <Input
+            value={expense.title}
+            onChange={({ target }) => handleChange("title", target.value)}
+            label="Expense Title"
+            placeholder="Rent, Groceries, etc."
+            type="text"
+            error={errors.title}
+          />
+
+          <Input
+            value={expense.amount}
+            onChange={({ target }) => handleChange("amount", target.value)}
+            label="Amount"
+            placeholder="Enter amount"
+            type="number"
+            error={errors.amount}
+          />
+
+          <Input
+            value={expense.date}
+            onChange={({ target }) => handleChange("date", target.value)}
+            label="Date"
+            placeholder="Select date"
+            type="date"
+            error={errors.date}
+          />
+
+          <Input
+            value={expense.category}
+            onChange={({ target }) => handleChange("category", target.value)}
+            label="Category"
+            placeholder="Utilities, Food, Entertainment"
+            type="text"
+            error={errors.category}
           />
         </div>
-      </div>
 
-      {/* Submit button */}
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? "Adding Expense..." : "Add Expense"}
-      </button>
-    </form>
+        {/* Submit button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+        >
+          {isSubmitting ? "Adding Expense..." : "Add Expense"}
+        </button>
+      </form>
+    </div>
   );
 };
 
