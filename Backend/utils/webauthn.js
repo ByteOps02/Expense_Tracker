@@ -38,10 +38,10 @@ const verifyAttestation = (attestationResponse, challenge) => {
   const { authData } = decodedAttestation;
   const decodedAuthData = cbor.decodeFirstSync(authData);
 
-  const { rpIdHash, flags, signCount, attestedCredentialData, extensions } =
+  const { signCount, attestedCredentialData } =
     decodedAuthData;
 
-  const { aaguid, credentialId, credentialPublicKey } = attestedCredentialData;
+  const { credentialId, credentialPublicKey } = attestedCredentialData;
 
   const cosePublicKey = cbor.decodeFirstSync(credentialPublicKey);
 
@@ -101,7 +101,7 @@ const verifyAssertion = (assertionResponse, challenge, authr) => {
   const decodedAuthData = cbor.decodeFirstSync(
     assertionResponse.authenticatorData,
   );
-  const { rpIdHash, flags, signCount } = decodedAuthData;
+  const { signCount } = decodedAuthData;
 
   const signature = assertionResponse.signature;
   const authenticatorData = assertionResponse.authenticatorData;

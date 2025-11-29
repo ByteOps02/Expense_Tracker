@@ -1,43 +1,50 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --font-display: "Poppins", "sans-serif";
+  --font-display: "Plus Jakarta Sans", "sans-serif";
   --breakpoint-3xl: 1920px;
-  --color-primary: #87cf5;
+  --color-primary: #7c3aed;
 }
 
 @layer base {
   html {
     font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: #fcfbfc;
+    background-color: #f8fafc; /* Slightly cooler gray */
     overflow-x: hidden;
+    color: #1e293b;
   }
 }
 
 @layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+
   .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-black bg-slate-100 rounded px-4 py-3 mb-4 mt-3 border border-slate-200 outline-none;
+    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3.5 mb-4 mt-2 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200;
   }
 
   .btn-primary {
-    @apply w-full text-sm font-medium text-white bg-violet-500 shadow-lg shadow-purple-600/5 p-[10px] rounded-md my-1 hover:bg-purple-600/15 hover:text-purple-600;
+    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 p-[12px] rounded-xl my-1 hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-300 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
   }
 
   /* Custom animations */
   .animate-fadeIn {
-    animation: fadeIn 0.6s ease-in-out;
+    animation: fadeIn 0.6s ease-out forwards;
   }
 
   .animate-slideIn {
-    animation: slideIn 0.5s ease-out;
+    animation: slideIn 0.5s ease-out forwards;
   }
 
   .animate-bounceIn {
-    animation: bounceIn 0.6s ease-out;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
   }
 
   /* Hover effects */
@@ -47,22 +54,15 @@
   }
 
   .hover-lift:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15),
-      0 10px 20px -5px rgba(0, 0, 0, 0.1);
-    border-color: rgba(139, 92, 246, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
   }
 
   /* Enhanced card hover effects */
   .card:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    border-color: rgba(139, 92, 246, 0.3);
-  }
-
-  /* Special hover effect for InfoCard with gradient */
-  .hover-lift:hover .bg-gradient-to-br {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f3e8ff 100%);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(124, 58, 237, 0.2); /* Primary color border hint */
   }
 }
 
@@ -107,18 +107,18 @@
 }
 
 .card {
-  @apply bg-white p-6 rounded-2xl shadow-md border border-gray-200/50;
+  @apply bg-white p-6 rounded-2xl shadow-lg border border-gray-100;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-btn {
-  @apply flex items-center gap-3 text-[12px] font-medium text-gray-700 hover:text-purple-500 bg-gray-50 hover:bg-purple-50 px-4 py-1.5 rounded-lg border border-gray-200/50 cursor-pointer;
+  @apply flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-purple-600 bg-gray-50 hover:bg-purple-50 px-4 py-2 rounded-lg border border-gray-200 transition-colors duration-200 cursor-pointer;
 }
 
 .add-btn {
-  @apply flex items-center gap-1.5 text-xs md:text-sm font-medium text-purple-600 whitespace-nowrap bg-purple-50 border border-purple-100 rounded-lg px-4 py-2 cursor-pointer;
+  @apply flex items-center gap-2 text-sm font-semibold text-purple-600 whitespace-nowrap bg-purple-50 border border-purple-100 rounded-lg px-5 py-2.5 cursor-pointer hover:bg-purple-100 transition-colors duration-200;
 }
 
-.add-btn-fill {
-  @apply text-white bg-purple-600
-}
+  .add-btn-fill {
+    @apply text-white bg-purple-600 hover:bg-purple-700 border-transparent shadow-md shadow-purple-200;
+  }

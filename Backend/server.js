@@ -73,6 +73,14 @@ app.use("/api/v1/biometric", biometricRoutes);
 // This is used to serve user-uploaded profile images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Serve frontend static files from the build directory
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+// Any remaining requests are sent to the React app's index.html
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
+});
+
 // Define the port for the server
 const PORT = process.env.PORT || 5000;
 

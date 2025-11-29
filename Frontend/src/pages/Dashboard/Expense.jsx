@@ -7,13 +7,19 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useUserAuth } from "../../../hooks/useUserAuth";
 
 // Expense page component
 const Expense = () => {
+  // Ensure user is authenticated before loading data
+  useUserAuth();
+
   // State variables for expense data, loading state, and modal visibility
   const [expenseData, setExpenseData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
+  const [error, setError] = useState(null);
 
   /**
    * @desc    Handles adding a new expense record
@@ -87,9 +93,8 @@ const Expense = () => {
    * @desc    Fetches all expense records for the user
    */
   const fetchExpenseDetails = async () => {
-    if (loading) return;
-
     setLoading(true);
+    setError(null);
 
     try {
       const response = await axiosInstance.get(
@@ -105,7 +110,9 @@ const Expense = () => {
         setExpenseData([]);
       }
     } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
+      console.error("Error fetching expenses:", error);
+      setError("Failed to load expense data. Please try again.");
+      setExpenseData([]);
     } finally {
       setLoading(false);
     }
@@ -113,31 +120,60 @@ const Expense = () => {
 
   // Fetch expense data on component mount
   useEffect(() => {
-    fetchExpenseDetails();
-    return () => {};
+    let isMounted = true;
+
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchExpenseDetails();
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <DashboardLayout activeMenu="Expense">
       <div className="my-5 mx-auto">
-        <div className="grid grid-cols-1 gap-6">
-          {/* Expense overview and add expense button */}
-          <div className="">
-            <ExpenseOverview
-              transactions={expenseData}
-              onExpenseIncome={() => setOpenAddExpenseModal(true)}
-            />
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <LoadingSpinner text="Loading expense data..." />
           </div>
+        ) : error ? (
+          <div className="card">
+            <div className="text-center text-red-500 py-8">
+              <p>{error}</p>
+              <button
+                onClick={fetchExpenseDetails}
+                className="mt-4 btn-primary"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6">
+            {/* Expense overview and add expense button */}
+            <div>
+              <ExpenseOverview
+                transactions={expenseData}
+                onExpenseIncome={() => setOpenAddExpenseModal(true)}
+              />
+            </div>
 
-          {/* List of expense records */}
-          <div className="">
-            <ExpenseList
-              transactions={expenseData}
-              onDelete={handleDeleteExpense}
-              onDownload={handleDownloadExpense}
-            />
+            {/* List of expense records */}
+            <div>
+              <ExpenseList
+                transactions={expenseData}
+                onDelete={handleDeleteExpense}
+                onDownload={handleDownloadExpense}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Modal for adding a new expense record */}
         <Modal

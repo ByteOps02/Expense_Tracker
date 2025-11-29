@@ -15,6 +15,7 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
   useEffect(() => {
     if (image) {
       const url = URL.createObjectURL(image);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewUrl(url);
       return () => URL.revokeObjectURL(url);
     } else {

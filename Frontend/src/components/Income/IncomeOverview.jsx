@@ -1,27 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { LuPlus } from "react-icons/lu";
-import CustomBarChart from "../Charts/CustomBarChart";
-import { prepareIncomeBarChartData } from "../../utils/helper";
+import {
+  prepareIncomeBarChartData,
+  prepareCategoryData,
+} from "../../utils/helper";
+import ChartJsBarChart from "../Charts/ChartJsBarChart";
+import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
 
 const IncomeOverview = ({ transactions, onAddIncome }) => {
-  const [chartData, setChartData] = useState([]);
-
-  useEffect(() => {
-    console.log("IncomeOverview - transactions prop:", transactions);
-    const result = prepareIncomeBarChartData(transactions);
-    console.log("IncomeOverview - chart data result:", result);
-    setChartData(result);
-
-    return () => {};
-  }, [transactions]);
+  const barChartData = useMemo(
+    () => prepareIncomeBarChartData(transactions),
+    [transactions],
+  );
+  const sourceChartData = useMemo(
+    () => prepareCategoryData(transactions, "source"),
+    [transactions],
+  );
 
   return (
     <div className="card lg:ml-2.5">
-      <div className="flex items-center justify-between">
-        <div className="">
-          <h5 className="text-lg">Income Overview</h5>
-          <p className="text-xs text-gray-400 mt-0.5">
-            Track your earnings over time and analyze your income trends.
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h5 className="text-lg font-semibold text-gray-900">
+            Income Overview
+          </h5>
+          <p className="text-sm text-gray-500 mt-1">
+            Track your earnings and analyze income sources.
           </p>
         </div>
 
@@ -31,8 +35,30 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
         </button>
       </div>
 
-      <div className="mt-10">
-        <CustomBarChart data={chartData} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Bar Chart Section */}
+        <div className="lg:col-span-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+          <h6 className="text-sm font-semibold text-gray-700 mb-4">
+            Income Trend
+          </h6>
+          <div className="h-[300px]">
+            <ChartJsBarChart data={barChartData} />
+          </div>
+        </div>
+
+        {/* Doughnut Chart Section */}
+        <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 flex flex-col">
+          <h6 className="text-sm font-semibold text-gray-700 mb-4">
+            Income Sources
+          </h6>
+          <div className="h-[300px] flex items-center justify-center">
+            {sourceChartData.length > 0 ? (
+              <ChartJsDoughnutChart data={sourceChartData} />
+            ) : (
+              <div className="text-gray-400 text-sm">No data available</div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

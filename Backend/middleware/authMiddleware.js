@@ -27,7 +27,7 @@ const Protect = (req, res, next) => {
 
     // Proceed to the next middleware or route handler
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ message: "Invalid token" });
   }
 };

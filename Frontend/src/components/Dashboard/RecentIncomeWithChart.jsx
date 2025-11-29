@@ -1,38 +1,32 @@
-import React, { useEffect, useState } from "react";
-import CustomPieChart from "../Charts/CustomPieChart";
+import React, { useMemo } from "react";
+import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
+import { addThousandsSeparator, prepareCategoryData } from "../../utils/helper";
 
-const COLORS = ["#875CF5", "#FA2C37", "#FF6900"];
+const COLORS = ["#875CF5", "#FA2C37", "#FF6900", "#4ADE80", "#3B82F6"];
 
 const RecentIncomeWithChart = ({ data, totalIncome }) => {
-  const [chartData, setChartData] = useState([]);
+  const chartData = useMemo(
+    () => prepareCategoryData(data, "source"),
+    [data],
+  );
 
-  const prepareChartData = () => {
-    const dataArr = data?.map((item) => ({
-      name: item?.source,
-      amount: item?.amount,
-    }));
-
-    setChartData(dataArr);
-  };
-
-  useEffect(() => {
-    prepareChartData();
-
-    return () => {};
-  }, [data]);
   return (
-    <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
+    <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out flex flex-col">
       <div className="flex items-center justify-between">
-        <h5 className="text-lg">Last 60 Days Income</h5>
+        <h5 className="text-lg font-semibold text-gray-900">
+          Last 60 Days Income
+        </h5>
       </div>
 
-      <CustomPieChart
-        data={chartData}
-        label="Total Income"
-        totalAmount={`₹${totalIncome}`}
-        showTextAnchor
-        colors={COLORS}
-      />
+      <div className="flex-1 w-full mt-4 min-h-0 relative flex items-center justify-center">
+        <ChartJsDoughnutChart data={chartData} colors={COLORS} />
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-sm text-gray-500 font-medium">Total Income</span>
+          <span className="text-2xl font-bold text-gray-900 mt-1">
+            ₹{addThousandsSeparator(totalIncome)}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
