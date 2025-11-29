@@ -1,6 +1,7 @@
 // Import necessary models
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
+const User = require("../models/User"); // Import User model
 const mongoose = require("mongoose");
 
 /**
@@ -123,5 +124,24 @@ exports.getDashboardSummary = async (req, res) => {
       message: "Error fetching dashboard summary",
       error: err.message,
     });
+  }
+};
+
+/**
+ * @desc    Get recent login activities
+ * @route   GET /api/v1/dashboard/recent-activities
+ * @access  Private
+ */
+exports.getRecentActivities = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("recentLoginActivities");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ activities: user.recentLoginActivities.sort((a, b) => b.timestamp - a.timestamp) });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching recent activities", error: err.message });
   }
 };
