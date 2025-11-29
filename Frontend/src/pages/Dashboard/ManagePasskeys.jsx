@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import base64url from "base64url";
@@ -7,18 +7,19 @@ const ManagePasskeys = () => {
   const [passkeys, setPasskeys] = useState([]);
   const [error, setError] = useState(null);
 
-  const getPasskeys = async () => {
+  const getPasskeys = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/api/v1/biometric/passkeys");
       setPasskeys(response.data.passkeys);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch passkeys.");
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     getPasskeys();
-  }, []);
+  }, [getPasskeys]);
 
   const addPasskey = async () => {
     try {
@@ -58,7 +59,7 @@ const ManagePasskeys = () => {
     <DashboardLayout activeMenu="Security">
       <div className="my-5 mx-auto">
         <div className="card">
-          <h5 className="text-lg">Manage Passkeys</h5>
+          <h5 className="text-lg font-semibold text-gray-900">Manage Passkeys</h5>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="mt-6">
             <button className="btn-primary" onClick={addPasskey}>

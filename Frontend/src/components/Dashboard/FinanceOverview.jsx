@@ -1,7 +1,8 @@
 import React, { memo } from "react";
-import CustomPieChart from "../Charts/CustomPieChart";
+import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
+import { addThousandsSeparator } from "../../utils/helper";
 
-const COLORS = ["#875CF5", "#FA2C37", "#FF6900"];
+const COLORS = ["#875CF5", "#FA2C37", "#FF6900", "#4ADE80", "#3B82F6"];
 
 const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) => {
   const balanceData = [
@@ -11,17 +12,23 @@ const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) => {
   ];
 
   return (
-    <div className="card animate-bounceIn h-[400px] hover-lift transition-all duration-300 ease-in-out">
+    <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out flex flex-col">
       <div className="flex items-center justify-between">
-        <h5 className="text-lg">Financial Overview</h5>
+        <h5 className="text-lg font-semibold text-gray-900">
+          Financial Overview
+        </h5>
       </div>
-      <CustomPieChart
-        data={balanceData}
-        label="Total Balance"
-        totalAmount={`₹${totalBalance}`}
-        colors={COLORS}
-        showTextAnchor
-      />
+      <div className="flex-1 w-full mt-4 min-h-0 relative flex items-center justify-center">
+        <ChartJsDoughnutChart data={balanceData} colors={COLORS} />
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-sm text-gray-500 font-medium">
+            Total Balance
+          </span>
+          <span className="text-2xl font-bold text-gray-900 mt-1">
+            ₹{addThousandsSeparator(totalBalance)}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

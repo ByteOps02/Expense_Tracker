@@ -67,78 +67,81 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white">
       {/* Branding component for the authentication pages */}
       <AuthBranding />
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-800 text-white p-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <motion.div
-          initial={{ opacity: 0, y: -50 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-md space-y-8"
         >
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+            <h2 className="text-3xl font-bold text-gray-900">
               Welcome Back
             </h2>
-            <p className="mt-2 text-gray-400">
-              Login to continue your journey.
+            <p className="mt-2 text-gray-500">
+              Please enter your details to sign in.
             </p>
           </div>
           <form className="space-y-6" onSubmit={handleLogin}>
             {/* Email and password input fields */}
-            <div className="relative">
-              <FiMail className="absolute top-3.5 left-3 text-gray-400" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
-                autoComplete="username"
-              />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <div className="relative">
+                <FiMail className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                  autoComplete="username"
+                />
+              </div>
             </div>
-            <div className="relative">
-              <FiLock className="absolute top-3.5 left-3 text-gray-400" />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
-                autoComplete="current-password"
-              />
+            <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <div className="relative">
+                <FiLock className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                  autoComplete="current-password"
+                />
+              </div>
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded-lg">{error}</p>}
             {/* Login button */}
             <motion.button
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 0px 12px rgb(168, 85, 247)",
-              }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full p-3 font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+              className="w-full p-3.5 font-semibold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors duration-200 shadow-lg shadow-purple-200"
             >
-              LOGIN
+              Sign In
             </motion.button>
           </form>
           {/* Biometric login button */}
           <div className="flex items-center justify-center">
             <button
               onClick={() => setShowBiometricLock(true)}
-              className="flex items-center justify-center w-full p-3 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-all duration-300"
+              className="flex items-center justify-center w-full p-3.5 font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-purple-600 transition-all duration-200"
             >
-              <FaFingerprint className="mr-2" />
+              <FaFingerprint className="mr-2 text-lg" />
               Login with Biometrics
             </button>
           </div>
           {/* Link to sign up page */}
-          <p className="text-center text-gray-400">
-            Don't have an account?{" "}
+          <p className="text-center text-sm text-gray-500">
+            Don&apos;t have an account?{" "}
             <Link
               to="/signup"
-              className="font-medium text-purple-400 hover:text-purple-300"
+              className="font-semibold text-purple-600 hover:text-purple-700 hover:underline"
             >
               Sign up
             </Link>

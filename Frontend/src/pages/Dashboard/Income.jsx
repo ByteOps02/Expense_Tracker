@@ -7,13 +7,19 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddIncomeForm from "../../components/Income/AddIncomeForm";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useUserAuth } from "../../../hooks/useUserAuth";
 
 // Income page component
 const Income = () => {
+  // Ensure user is authenticated before loading data
+  useUserAuth();
+
   // State variables for income data, loading state, and modal visibility
   const [incomeData, setIncomeData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
+  const [error, setError] = useState(null);
 
   /**
    * @desc    Handles adding a new income record
@@ -87,9 +93,8 @@ const Income = () => {
    * @desc    Fetches all income records for the user
    */
   const fetchIncomeDetails = async () => {
-    if (loading) return;
-
     setLoading(true);
+    setError(null);
 
     try {
       const response = await axiosInstance.get(
@@ -105,7 +110,9 @@ const Income = () => {
         setIncomeData([]);
       }
     } catch (error) {
-      console.log("Something went wrong.Please try again.", error);
+      console.error("Error fetching income:", error);
+      setError("Failed to load income data. Please try again.");
+      setIncomeData([]);
     } finally {
       setLoading(false);
     }
@@ -113,31 +120,60 @@ const Income = () => {
 
   // Fetch income data on component mount
   useEffect(() => {
-    fetchIncomeDetails();
-    return () => {};
+    let isMounted = true;
+
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchIncomeDetails();
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <DashboardLayout activeMenu="Income">
       <div className="my-5 mx-auto">
-        <div className="grid grid-cols-1 gap-6">
-          {/* Income overview and add income button */}
-          <div className="">
-            <IncomeOverview
-              transactions={incomeData}
-              onAddIncome={() => setOpenAddIncomeModal(true)}
-            />
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <LoadingSpinner text="Loading income data..." />
           </div>
+        ) : error ? (
+          <div className="card">
+            <div className="text-center text-red-500 py-8">
+              <p>{error}</p>
+              <button
+                onClick={fetchIncomeDetails}
+                className="mt-4 btn-primary"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6">
+            {/* Income overview and add income button */}
+            <div>
+              <IncomeOverview
+                transactions={incomeData}
+                onAddIncome={() => setOpenAddIncomeModal(true)}
+              />
+            </div>
 
-          {/* List of income records */}
-          <div className="">
-            <IncomeList
-              transactions={incomeData}
-              onDelete={handleDeleteIncome}
-              onDownload={handleDownloadIncome}
-            />
+            {/* List of income records */}
+            <div>
+              <IncomeList
+                transactions={incomeData}
+                onDelete={handleDeleteIncome}
+                onDownload={handleDownloadIncome}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Modal for adding a new income record */}
         <Modal

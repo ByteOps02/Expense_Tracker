@@ -116,3 +116,18 @@ export const prepareIncomeBarChartData = (data = []) => {
 
   return chartData;
 };
+
+export const prepareCategoryData = (data = [], key = "category") => {
+  if (!Array.isArray(data)) return [];
+
+  const grouped = data.reduce((acc, item) => {
+    const label = item[key] || "Other";
+    acc[label] = (acc[label] || 0) + (item.amount || 0);
+    return acc;
+  }, {});
+
+  return Object.entries(grouped).map(([label, amount]) => ({
+    name: label,
+    amount,
+  }));
+};

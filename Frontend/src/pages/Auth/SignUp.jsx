@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiUser, FiMail, FiLock, FiCamera } from "react-icons/fi";
+import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import uploadImage from "../../utils/uploadImage";
@@ -63,81 +63,90 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white">
       {/* Branding component for the authentication pages */}
       <AuthBranding />
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-800 text-white p-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <motion.div
-          initial={{ opacity: 0, y: -50 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-md space-y-6"
         >
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+            <h2 className="text-3xl font-bold text-gray-900">
               Create an Account
             </h2>
-            <p className="mt-2 text-gray-400">
+            <p className="mt-2 text-gray-500">
               Join us and start tracking your expenses.
             </p>
           </div>
-          <form className="space-y-4" onSubmit={handleSignUp}>
+          <form className="space-y-5" onSubmit={handleSignUp}>
             {/* Profile picture upload */}
             <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
             {/* Full name, email, and password input fields */}
-            <div className="relative">
-              <FiUser className="absolute top-3.5 left-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-10 p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
-              />
+            <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <div className="relative">
+                  <FiUser className="absolute top-3.5 left-3 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full pl-10 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900"
+                  />
+                </div>
             </div>
-            <div className="relative">
-              <FiMail className="absolute top-3.5 left-3 text-gray-400" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
-              />
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <div className="relative">
+                <FiMail className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="email"
+                  placeholder="john@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900"
+                />
+              </div>
             </div>
-            <div className="relative">
-              <FiLock className="absolute top-3.5 left-3 text-gray-400" />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
-                autoComplete="new-password"
-              />
+
+            <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+               <div className="relative">
+                <FiLock className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900"
+                  autoComplete="new-password"
+                />
+              </div>
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            
+            {error && <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded-lg">{error}</p>}
             {/* Sign up button */}
             <motion.button
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 0px 12px rgb(168, 85, 247)",
-              }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full p-3 font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+              className="w-full p-3.5 font-semibold text-white bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors duration-200 shadow-lg shadow-purple-200"
             >
-              SIGN UP
+              Sign Up
             </motion.button>
           </form>
           {/* Link to login page */}
-          <p className="text-center text-gray-400">
+          <p className="text-center text-sm text-gray-500">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-medium text-purple-400 hover:text-purple-300"
+              className="font-semibold text-purple-600 hover:text-purple-700 hover:underline"
             >
-              Login
+              Sign In
             </Link>
           </p>
         </motion.div>

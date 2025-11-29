@@ -23,45 +23,34 @@ const Home = () => {
   useUserAuth();
 
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const { updateUser } = useContext(UserContext);
 
-  /**
-   * @desc    Fetches the main dashboard data from the API
-   */
-  const fetchDashboardData = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const res = await axiosInstance.get(`${API_PATHS.DASHBOARD.GET_DATA}`);
-      setDashboardData(res.data);
-    } catch {
-      // Silently handle error, as specific error handling is not required here
-    }
-    setLoading(false);
-  };
-
-  /**
-   * @desc    Fetches the latest user information
-   */
-  const fetchUserInfo = async () => {
-    try {
-      const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
-      if (res.data && res.data.user) {
-        updateUser(res.data.user);
-      }
-    } catch {
-      // Silently handle error
-    }
-  };
-
   // Fetch data on component mount
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const res = await axiosInstance.get(`${API_PATHS.DASHBOARD.GET_DATA}`);
+        setDashboardData(res.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
+        if (res.data && res.data.user) {
+          updateUser(res.data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
     fetchDashboardData();
     fetchUserInfo();
-    // eslint-disable-next-line
-  }, []);
+  }, [updateUser]);
 
   return (
     <DashboardLayout activeMenu="Dashboard">

@@ -16,13 +16,15 @@ const TransactionInfoCard = ({
   onDelete,
 }) => {
   const getAmountStyle = () =>
-    type === "income" ? "bg-green-50 text-green-500" : "bg-red-50 text-red-500";
+    type === "income"
+      ? "bg-green-50 text-green-600 font-semibold"
+      : "bg-red-50 text-red-600 font-semibold";
 
   return (
-    <div className="group relative flex items-center gap-4 mt-2 p-3 rounded-lg hover:bg-gray-100/60 hover-lift transition-all duration-300 ease-in-out">
-      <div className="w-12 h-12 flex items-center justify-center text-xl text-gray-800 bg-gray-100 rounded-full">
+    <div className="group relative flex items-center gap-4 mt-2 p-3 rounded-xl hover:bg-gray-50 hover:shadow-sm transition-all duration-200 cursor-default border border-transparent hover:border-gray-100">
+      <div className="w-12 h-12 flex items-center justify-center text-xl text-gray-600 bg-gray-100 rounded-xl">
         {icon ? (
-          <img src={icon} alt={title} className="w-6 h-6" />
+          <img src={icon} alt={title} className="w-6 h-6 object-contain" />
         ) : (
           <LuUtensils />
         )}
@@ -30,22 +32,22 @@ const TransactionInfoCard = ({
 
       <div className="flex-1 flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-700 font-medium">{title}</p>
-          <p className="text-xs text-gray-400 mt-1">{date}</p>
+          <p className="text-sm text-gray-900 font-medium">{title}</p>
+          <p className="text-xs text-gray-500 mt-1">{date}</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {!hideDeleteBtn && (
           <button
-            className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
             onClick={onDelete}
           >
             <LuTrash2 size={18} />
           </button>
         )}
         <div
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${getAmountStyle()}`}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs ${getAmountStyle()}`}
         >
           <h6 className="">
             {type === "income" ? "+" : "-"} ₹{amount}

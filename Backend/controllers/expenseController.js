@@ -2,7 +2,6 @@
 const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
 const path = require("path");
-const { cache, clearCache } = require("../middleware/cacheMiddleware");
 
 /**
  * @desc    Add a new expense
@@ -24,7 +23,7 @@ exports.addExpense = async (req, res) => {
     await expense.save();
 
     // Clear the cache for the dashboard data since it is now stale
-    clearCache("dashboard");
+
 
     res.status(201).json({ message: "Expense added successfully", expense });
   } catch (err) {
@@ -43,19 +42,9 @@ exports.getAllExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Check if the data is in the cache
-    if (cache.has(userId)) {
-      return res.status(200).json({ expenses: cache.get(userId) });
-    }
-
-    // If not in cache, fetch from the database
-    // Use .lean() for better performance as it returns a plain JavaScript object
     const expenses = await Expense.find({ user: userId })
       .sort({ date: -1 })
       .lean();
-
-    // Store the fetched data in the cache
-    cache.set(userId, expenses);
 
     res.status(200).json({ expenses });
   } catch (err) {
@@ -83,7 +72,7 @@ exports.deleteExpense = async (req, res) => {
     }
 
     // Clear the cache for the dashboard data since it is now stale
-    clearCache("dashboard");
+
 
     res.status(200).json({ message: "Expense deleted successfully" });
   } catch (err) {
@@ -113,7 +102,7 @@ exports.updateExpense = async (req, res) => {
     }
 
     // Clear the cache for the dashboard data since it is now stale
-    clearCache("dashboard");
+
 
     res.status(200).json({ message: "Expense updated successfully", expense });
   } catch (err) {
@@ -142,7 +131,7 @@ exports.downloadExpenseExcel = async (req, res) => {
 
     // Prepare data for Excel by removing unwanted fields
     const data = expenses.map(
-      ({ _id, user, __v, createdAt, updatedAt, ...rest }) => ({ ...rest }),
+      ({ _id, user: _user, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...rest }) => ({ ...rest }),
     );
 
     // Add headers to the worksheet
