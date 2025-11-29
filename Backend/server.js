@@ -24,7 +24,7 @@ const app = express();
 app.use(compression());
 
 // Custom middleware to monitor the performance of requests
-app.use(performanceMiddleware);
+// app.use(performanceMiddleware);
 
 // Enable Cross-Origin Resource Sharing (CORS)
 // This allows the frontend to make requests to the backend
