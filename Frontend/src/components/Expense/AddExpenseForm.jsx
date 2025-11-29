@@ -131,7 +131,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
             value={expense.description}
             onChange={({ target }) => handleChange("description", target.value)}
             placeholder="Optional description"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200"
             rows="3"
           />
         </div>
