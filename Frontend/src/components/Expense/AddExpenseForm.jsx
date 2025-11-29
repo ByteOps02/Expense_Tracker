@@ -7,6 +7,7 @@ import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 const AddExpenseForm = ({ onAddExpense }) => {
   // State for form fields, submission status, and errors
   const [expense, setExpense] = useState({
+    title: "",
     category: "",
     amount: "",
     date: new Date().toISOString().split("T")[0], // Default to today's date
@@ -36,8 +37,8 @@ const AddExpenseForm = ({ onAddExpense }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!expense.category.trim()) {
-      newErrors.category = "Expense category is required";
+    if (!expense.title.trim()) {
+      newErrors.title = "Expense title is required";
     }
 
     if (!expense.amount || parseFloat(expense.amount) <= 0) {
@@ -71,6 +72,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
         await onAddExpense(expense);
         // Reset the form after successful submission
         setExpense({
+          title: "",
           category: "",
           amount: "",
           date: new Date().toISOString().split("T")[0],
@@ -88,16 +90,9 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Add New Expense</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 text-center">Add New Expense</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          {/* Emoji picker for selecting an icon */}
-          <EmojiPickerPopup
-            icon={expense.icon}
-            onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
-          />
-
-          {/* Input fields for expense details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             value={expense.title}
             onChange={({ target }) => handleChange("title", target.value)}
@@ -106,6 +101,22 @@ const AddExpenseForm = ({ onAddExpense }) => {
             type="text"
             error={errors.title}
           />
+
+          <div className="flex items-end gap-2">
+            <Input
+              value={expense.category}
+              onChange={({ target }) => handleChange("category", target.value)}
+              label="Category"
+              placeholder="Utilities, Food, Entertainment"
+              type="text"
+              error={errors.category}
+              className="flex-grow"
+            />
+            <EmojiPickerPopup
+              icon={expense.icon}
+              onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+            />
+          </div>
 
           <Input
             value={expense.amount}
@@ -124,16 +135,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
             type="date"
             error={errors.date}
           />
-
-          <Input
-            value={expense.category}
-            onChange={({ target }) => handleChange("category", target.value)}
-            label="Category"
-            placeholder="Utilities, Food, Entertainment"
-            type="text"
-            error={errors.category}
-          />
         </div>
+        <div className="col-span-full">
+            <Input
+              value={expense.description}
+              onChange={({ target }) => handleChange("description", target.value)}
+              label="Description"
+              placeholder="Optional notes about this expense"
+              type="textarea"
+              error={errors.description}
+            />
+          </div>
 
         {/* Submit button */}
         <button

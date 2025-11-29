@@ -86,16 +86,9 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Add New Income</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 text-center">Add New Income</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          {/* Emoji picker for selecting an icon */}
-          <EmojiPickerPopup
-            icon={income.icon}
-            onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
-          />
-
-          {/* Input fields for income details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             value={income.source}
             onChange={({ target }) => handleChange("source", target.value)}
@@ -105,14 +98,21 @@ const AddIncomeForm = ({ onAddIncome }) => {
             error={errors.source}
           />
 
-          <Input
-            value={income.amount}
-            onChange={({ target }) => handleChange("amount", target.value)}
-            label="Amount"
-            placeholder="Enter amount"
-            type="number"
-            error={errors.amount}
-          />
+          <div className="flex items-end gap-2">
+            <Input
+              value={income.amount}
+              onChange={({ target }) => handleChange("amount", target.value)}
+              label="Amount"
+              placeholder="Enter amount"
+              type="number"
+              error={errors.amount}
+              className="flex-grow"
+            />
+            <EmojiPickerPopup
+              icon={income.icon}
+              onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+            />
+          </div>
 
           <Input
             value={income.date}
