@@ -85,52 +85,55 @@ const AddIncomeForm = ({ onAddIncome }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        {/* Emoji picker for selecting an icon */}
-        <EmojiPickerPopup
-          icon={income.icon}
-          onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
-        />
+    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Add New Income</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          {/* Emoji picker for selecting an icon */}
+          <EmojiPickerPopup
+            icon={income.icon}
+            onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
+          />
 
-        {/* Input fields for income details */}
-        <Input
-          value={income.source}
-          onChange={({ target }) => handleChange("source", target.value)}
-          label="Income Source"
-          placeholder="Freelance, Salary, etc"
-          type="text"
-          error={errors.source}
-        />
+          {/* Input fields for income details */}
+          <Input
+            value={income.source}
+            onChange={({ target }) => handleChange("source", target.value)}
+            label="Income Source"
+            placeholder="Freelance, Salary, etc"
+            type="text"
+            error={errors.source}
+          />
 
-        <Input
-          value={income.amount}
-          onChange={({ target }) => handleChange("amount", target.value)}
-          label="Amount"
-          placeholder="Enter amount"
-          type="number"
-          error={errors.amount}
-        />
+          <Input
+            value={income.amount}
+            onChange={({ target }) => handleChange("amount", target.value)}
+            label="Amount"
+            placeholder="Enter amount"
+            type="number"
+            error={errors.amount}
+          />
 
-        <Input
-          value={income.date}
-          onChange={({ target }) => handleChange("date", target.value)}
-          label="Date"
-          placeholder="Select date"
-          type="date"
-          error={errors.date}
-        />
-      </div>
+          <Input
+            value={income.date}
+            onChange={({ target }) => handleChange("date", target.value)}
+            label="Date"
+            placeholder="Select date"
+            type="date"
+            error={errors.date}
+          />
+        </div>
 
-      {/* Submit button */}
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? "Adding Income..." : "Add Income"}
-      </button>
-    </form>
+        {/* Submit button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+        >
+          {isSubmitting ? "Adding Income..." : "Add Income"}
+        </button>
+      </form>
+    </div>
   );
 };
 
