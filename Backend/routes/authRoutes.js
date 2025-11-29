@@ -7,6 +7,11 @@ const {
   registerUser,
   loginUser,
   getUserInfo,
+  changePassword,
+  enable2FA,
+  disable2FA,
+  get2FAStatus,
+  generate2FASecret,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadMiddleware");
 
@@ -24,6 +29,16 @@ router.post("/login", loginUser);
 // Route to get user information
 // This is a protected route, meaning the user must be authenticated to access it
 router.get("/getUser", Protect, getUserInfo);
+
+// Route for changing user password
+// This is a protected route
+router.post("/change-password", Protect, changePassword);
+
+// Routes for 2FA management
+router.post("/2fa/enable", Protect, enable2FA);
+router.post("/2fa/disable", Protect, disable2FA);
+router.get("/2fa/status", Protect, get2FAStatus);
+router.post("/2fa/generate-secret", Protect, generate2FASecret);
 
 // Route for uploading a profile image
 // This route uses the "upload" middleware to handle the file upload

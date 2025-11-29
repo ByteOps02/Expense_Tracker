@@ -18,6 +18,7 @@ const ManagePasskeys = () => {
   const [is2FAManaging, setIs2FAManaging] = useState(false); // State for loading during 2FA management
   const [recentActivities, setRecentActivities] = useState([]); // State for recent login activities
   const [isChangingPassword, setIsChangingPassword] = useState(false); // State for loading during password change
+  const [qrCodeImageUrl, setQrCodeImageUrl] = useState(null); // State for 2FA QR code image URL
 
   const getPasskeys = useCallback(async () => {
     try {
@@ -31,34 +32,36 @@ const ManagePasskeys = () => {
   // Placeholder function for fetching 2FA status
   const fetch2FAStatus = useCallback(async () => {
     try {
-      // Simulate API call
-      // In a real application, this would be an actual API call to your backend
-      const response = await new Promise(resolve => setTimeout(() => resolve({ data: { enabled: false } }), 500));
-      setIs2FAEnabled(response.data.enabled);
+      const response = await axiosInstance.get("/api/v1/auth/2fa/status");
+      setIs2FAEnabled(response.data.is2FAEnabled);
     } catch (err) {
       console.error("Failed to fetch 2FA status:", err);
-      // Optionally set an error state here
+      setError(err.response?.data?.message || "Failed to fetch 2FA status.");
     }
   }, []);
 
   // Placeholder function for fetching recent login activities
   const fetchRecentActivities = useCallback(async () => {
     try {
-      // Simulate API call
-      // In a real application, this would be an actual API call to your backend
-      const response = await new Promise(resolve => setTimeout(() => resolve({
-        data: [
-          { message: "Login from Chrome on Windows", timestamp: "November 29, 2025, 10:30 AM", status: "Successful" },
-          { message: "Login attempt from unknown device", timestamp: "November 29, 2025, 10:25 AM", status: "Failed" },
-          { message: "Login from Firefox on Mac", timestamp: "November 28, 2025, 09:00 AM", status: "Successful" },
-        ]
-      }), 700));
-      setRecentActivities(response.data);
+      const response = await axiosInstance.get("/api/v1/dashboard/recent-activities");
+      setRecentActivities(response.data.activities);
     } catch (err) {
       console.error("Failed to fetch recent activities:", err);
-      // Optionally set an error state here
+      setError(err.response?.data?.message || "Failed to fetch recent activities.");
     }
   }, []);
+
+  const generate2FASecret = async () => {
+    setIs2FAManaging(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/auth/2fa/generate-secret");
+      setQrCodeImageUrl(response.data.qrCodeImageUrl);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to generate 2FA secret.");
+    } finally {
+      setIs2FAManaging(false);
+    }
+  };
 
   useEffect(() => {
     getPasskeys();
@@ -105,32 +108,32 @@ const ManagePasskeys = () => {
   };
 
   // Placeholder function to enable 2FA
-  const enable2FA = async () => {
+  const enable2FA = async (token) => {
     setIs2FAManaging(true);
     try {
-      // Simulate API call to enable 2FA
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIs2FAEnabled(true);
+      await axiosInstance.post("/api/v1/auth/2fa/enable", { token });
+      await fetch2FAStatus();
+      setQrCodeImageUrl(null); // Clear QR code after enabling
+      setError(null);
       alert("Two-Factor Authentication Enabled!");
     } catch (err) {
-      console.error("Error enabling 2FA:", err);
-      alert("Failed to enable 2FA.");
+      setError(err.response?.data?.message || "Failed to enable 2FA.");
     } finally {
       setIs2FAManaging(false);
     }
   };
 
   // Placeholder function to disable 2FA
-  const disable2FA = async () => {
+  const disable2FA = async (token) => {
     setIs2FAManaging(true);
     try {
-      // Simulate API call to disable 2FA
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIs2FAEnabled(false);
+      await axiosInstance.post("/api/v1/auth/2fa/disable", { token });
+      await fetch2FAStatus();
+      setQrCodeImageUrl(null); // Ensure QR code is cleared
+      setError(null);
       alert("Two-Factor Authentication Disabled!");
     } catch (err) {
-      console.error("Error disabling 2FA:", err);
-      alert("Failed to disable 2FA.");
+      setError(err.response?.data?.message || "Failed to disable 2FA.");
     } finally {
       setIs2FAManaging(false);
     }
@@ -140,11 +143,8 @@ const ManagePasskeys = () => {
   const handleChangePassword = async ({ currentPassword, newPassword }) => {
     setIsChangingPassword(true);
     try {
-      // Simulate API call to change password
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log("Password changed successfully:", { currentPassword, newPassword });
-      // In a real app, you'd make an axios call here
-      // For example: await axiosInstance.post("/api/v1/auth/change-password", { currentPassword, newPassword });
+      await axiosInstance.post("/api/v1/auth/change-password", { currentPassword, newPassword });
+      setError(null);
       return { success: true, message: "Password changed successfully!" };
     } catch (err) {
       console.error("Error changing password:", err);
@@ -184,6 +184,8 @@ const ManagePasskeys = () => {
             onEnable2FA={enable2FA}
             onDisable2FA={disable2FA}
             isLoading={is2FAManaging}
+            qrCodeImageUrl={qrCodeImageUrl}
+            onGenerate2FASecret={generate2FASecret}
           />
 
           {/* Recent Login Activity Card */}
