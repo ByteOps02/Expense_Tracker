@@ -54,103 +54,89 @@ const Home = () => {
 
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className="flex flex-col items-center w-full lg:ml-2.5">
-        <div className="w-full max-w-7xl flex flex-col items-center gap-y-8">
-          {/* Top section with summary info cards */}
-          <div className="w-full flex flex-row flex-wrap justify-between gap-x-8 gap-y-8 animate-fadeIn">
-            <InfoCard
-              icon={<MdAccountBalanceWallet />}
-              label="Total Balance"
-              value={"₹" + addThousandsSeparator(dashboardData?.balance ?? 0)}
-              color="bg-purple-500"
-            />
-            <InfoCard
-              icon={<LuWalletMinimal />}
-              label="Total Income"
-              value={
-                "₹" +
-                addThousandsSeparator(
-                  dashboardData?.allIncomes?.reduce(
-                    (sum, i) => sum + i.amount,
-                    0,
-                  ) ?? 0,
-                )
-              }
-              color="bg-orange-500"
-            />
-            <InfoCard
-              icon={<LuHandCoins />}
-              label="Total Expense"
-              value={
-                "₹" +
-                addThousandsSeparator(
-                  dashboardData?.allExpenses?.reduce(
-                    (sum, e) => sum + e.amount,
-                    0,
-                  ) ?? 0,
-                )
-              }
-              color="bg-red-500"
-            />
-          </div>
+      <div className="w-full max-w-[1400px] mx-auto px-4">
+        {/* Top section with summary info cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 animate-fadeIn">
+          <InfoCard
+            icon={<MdAccountBalanceWallet />}
+            label="Total Balance"
+            value={"₹" + addThousandsSeparator(dashboardData?.balance ?? 0)}
+            color="bg-purple-500"
+          />
+          <InfoCard
+            icon={<LuWalletMinimal />}
+            label="Total Income"
+            value={
+              "₹" +
+              addThousandsSeparator(
+                dashboardData?.allIncomes?.reduce(
+                  (sum, i) => sum + i.amount,
+                  0,
+                ) ?? 0,
+              )
+            }
+            color="bg-orange-500"
+          />
+          <InfoCard
+            icon={<LuHandCoins />}
+            label="Total Expense"
+            value={
+              "₹" +
+              addThousandsSeparator(
+                dashboardData?.allExpenses?.reduce(
+                  (sum, e) => sum + e.amount,
+                  0,
+                ) ?? 0,
+              )
+            }
+            color="bg-red-500"
+          />
+        </div>
 
-          {/* Middle section with recent transactions and expenses */}
-          <div className="w-full flex flex-col md:flex-row gap-8 animate-slideIn">
-            <div className="flex-1 flex flex-col gap-8">
-              <RecentTransactions
-                transactions={dashboardData?.last5Transactions || []}
-                onSeeMore={() => navigate("/expense")}
-              />
-            </div>
-            <div className="flex-1 flex flex-col gap-8">
-              <ExpenseTransactions
-                transactions={dashboardData?.expenseLast30Days || []}
-                onSeeMore={() => navigate("/expense")}
-              />
-            </div>
-          </div>
+        {/* Middle section with recent transactions and expenses */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-slideIn">
+          <RecentTransactions
+            transactions={dashboardData?.last5Transactions || []}
+            onSeeMore={() => navigate("/expense")}
+          />
+          <ExpenseTransactions
+            transactions={dashboardData?.expenseLast30Days || []}
+            onSeeMore={() => navigate("/expense")}
+          />
+        </div>
 
-          {/* Financial overview and last 30 days expenses */}
-          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
-            <div className="w-full md:w-1/2">
-              <FinanceOverview
-                totalBalance={dashboardData?.balance ?? 0}
-                totalIncome={
-                  dashboardData?.allIncomes?.reduce(
-                    (sum, i) => sum + i.amount,
-                    0,
-                  ) ?? 0
-                }
-                totalExpense={
-                  dashboardData?.allExpenses?.reduce(
-                    (sum, e) => sum + e.amount,
-                    0,
-                  ) ?? 0
-                }
-              />
-            </div>
-            <div className="w-full md:w-1/2">
-              <Last30DaysExpenses
-                data={dashboardData?.expenseLast30Days || []}
-              />
-            </div>
-          </div>
+        {/* Financial overview and last 30 days expenses */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <FinanceOverview
+            totalBalance={dashboardData?.balance ?? 0}
+            totalIncome={
+              dashboardData?.allIncomes?.reduce(
+                (sum, i) => sum + i.amount,
+                0,
+              ) ?? 0
+            }
+            totalExpense={
+              dashboardData?.allExpenses?.reduce(
+                (sum, e) => sum + e.amount,
+                0,
+              ) ?? 0
+            }
+          />
+          <Last30DaysExpenses
+            data={dashboardData?.expenseLast30Days || []}
+          />
+        </div>
 
-          {/* Recent income with chart and recent income list */}
-          <div className="w-full flex flex-col md:flex-row gap-8 mt-4">
-            <div className="w-full md:w-1/2">
-              <RecentIncomeWithChart
-                data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
-                totalIncome={dashboardData?.totalIncomeLast60Days || 0}
-              />
-            </div>
-            <div className="w-full md:w-1/2">
-              <RecentIncome
-                transactions={dashboardData?.incomeLast60Days || []}
-                onSeeMore={() => navigate("./income")}
-              />
-            </div>
-          </div>
+        {/* Recent income with chart and recent income list */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <RecentIncomeWithChart
+            data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
+            totalIncome={dashboardData?.totalIncomeLast60Days || 0}
+          />
+          <RecentIncome
+            transactions={dashboardData?.incomeLast60Days || []}
+            onSeeMore={() => navigate("./income")}
+          />
         </div>
       </div>
     </DashboardLayout>
