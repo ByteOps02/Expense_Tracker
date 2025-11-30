@@ -85,7 +85,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Income Title */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Income Title <span className="text-green-500">*</span>
             </label>
             <div className="relative group">
@@ -95,10 +95,10 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 placeholder="e.g., Monthly Salary"
                 value={income.title}
                 onChange={(e) => handleChange("title", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                   errors.title
                     ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                    : "border-gray-200"
+                    : "border-gray-200 dark:border-gray-700"
                 }`}
               />
             </div>
@@ -115,7 +115,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
           {/* Source with Emoji */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Source <span className="text-green-500">*</span>
             </label>
             <div className="flex gap-3">
@@ -126,10 +126,10 @@ const AddIncomeForm = ({ onAddIncome }) => {
                   placeholder="e.g., Salary"
                   value={income.source}
                   onChange={(e) => handleChange("source", e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                     errors.source
                       ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                      : "border-gray-200"
+                      : "border-gray-200 dark:border-gray-700"
                   }`}
                 />
               </div>
@@ -154,7 +154,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Amount */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Amount <span className="text-green-500">*</span>
             </label>
             <div className="relative group">
@@ -164,10 +164,10 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 placeholder="0.00"
                 value={income.amount}
                 onChange={(e) => handleChange("amount", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
                   errors.amount
                     ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                    : "border-gray-200"
+                    : "border-gray-200 dark:border-gray-700"
                 }`}
                 step="0.01"
                 min="0"
@@ -195,7 +195,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
         {/* Note */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
             Note
           </label>
           <textarea
@@ -203,7 +203,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
             value={income.note}
             onChange={(e) => handleChange("note", e.target.value)}
             rows={3}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none"
           />
         </div>
 

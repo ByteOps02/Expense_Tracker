@@ -21,8 +21,8 @@ const InfoCard = ({ icon, label, value, color }) => {
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-500 mb-0.5">{label}</p>
-        <h4 className="text-2xl font-bold text-gray-900 truncate">{value}</h4>
+        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-0.5">{label}</p>
+        <h4 className="text-2xl font-bold text-gray-900 dark:text-white truncate">{value}</h4>
       </div>
     </div>
   );

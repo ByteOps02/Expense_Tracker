@@ -10,7 +10,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
   const { user } = useContext(UserContext);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Top navigation bar */}
       <Navbar activeMenu={activeMenu} />
       {/* Render the side menu and content only if the user is logged in */}
@@ -21,7 +21,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
             <SideMenu activeMenu={activeMenu} />
           </div>
           {/* Main content area */}
-          <div className="grow mx-5 pt-20 pb-8 bg-gray-50 min-h-[calc(100vh-61px)] lg:ml-64">
+          <div className="grow mx-5 pt-20 pb-8 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-61px)] lg:ml-64 transition-colors duration-300">
             {children}
           </div>
         </div>

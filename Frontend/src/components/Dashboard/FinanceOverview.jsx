@@ -14,17 +14,17 @@ const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) => {
   return (
     <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out flex flex-col">
       <div className="flex items-center justify-between">
-        <h5 className="text-lg font-semibold text-gray-900">
+        <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Financial Overview
         </h5>
       </div>
       <div className="flex-1 w-full mt-4 min-h-0 relative flex items-center justify-center">
         <ChartJsDoughnutChart data={balanceData} colors={COLORS} />
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-sm text-gray-500 font-medium">
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
             Total Balance
           </span>
-          <span className="text-2xl font-bold text-gray-900 mt-1">
+          <span className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
             ₹{addThousandsSeparator(totalBalance)}
           </span>
         </div>

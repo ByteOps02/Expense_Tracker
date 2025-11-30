@@ -27,7 +27,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
   };
 
   return (
-    <div className="w-64 h-full bg-white border-r border-gray-100 flex flex-col shadow-sm transition-all duration-300 lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
+    <div className="w-64 h-full bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col shadow-sm transition-all duration-300 lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
       
       {/* Profile section */}
       <div className="flex flex-col items-center justify-center gap-3 mt-8 mb-8 animate-fadeIn">
@@ -43,17 +43,17 @@ const SideMenu = ({ activeMenu, onClose }) => {
             <img
               src={user?.profileImageUrl}
               alt="Profile Image"
-              className="w-20 h-20 rounded-full object-cover shadow-md ring-4 ring-gray-50"
+              className="w-20 h-20 rounded-full object-cover shadow-md ring-4 ring-gray-50 dark:ring-gray-700"
             />
           )}
-          <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-400 border-2 border-white rounded-full"></div>
+          <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></div>
         </div>
 
         <div className="text-center">
-          <h5 className="text-gray-900 font-semibold text-base">
+          <h5 className="text-gray-900 dark:text-white font-semibold text-base">
             {user?.fullName || "User"}
           </h5>
-          <p className="text-gray-500 text-xs font-medium mt-0.5">
+          <p className="text-gray-500 dark:text-gray-400 text-xs font-medium mt-0.5">
             Free Member
           </p>
         </div>
@@ -66,8 +66,8 @@ const SideMenu = ({ activeMenu, onClose }) => {
             key={`menu_${index}`}
             className={`w-full flex items-center gap-3 text-sm py-3 px-4 rounded-xl transition-all duration-200 group ${
               activeMenu === item.label
-                ? "bg-purple-50 text-purple-700 font-semibold"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-semibold"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
             }`}
             onClick={() => handleClick(item.path)}
           >
@@ -75,8 +75,8 @@ const SideMenu = ({ activeMenu, onClose }) => {
               <item.icon
                 className={`text-lg ${
                   activeMenu === item.label
-                    ? "text-purple-600"
-                    : "text-gray-400 group-hover:text-gray-600"
+                    ? "text-purple-600 dark:text-purple-400"
+                    : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
                 }`}
               />
             )}
@@ -84,7 +84,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
             
              {/* Active Indicator */}
              {activeMenu === item.label && (
-              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600"></div>
+              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600 dark:bg-purple-400"></div>
             )}
           </button>
         ))}
@@ -92,7 +92,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
 
       {/* Footer/Logout Area could go here */}
       <div className="p-4 text-center">
-         <p className="text-xs text-gray-300">v1.0.0</p>
+         <p className="text-xs text-gray-300 dark:text-gray-600">v1.0.0</p>
       </div>
     </div>
   );

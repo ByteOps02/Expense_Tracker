@@ -32,7 +32,7 @@ const Last30DaysExpenses = ({ data }) => {
   return (
     <div className="card h-[400px] transition-all duration-300 ease-in-out flex flex-col">
       <div className="flex items-center justify-between px-4 pt-4">
-        <h5 className="text-lg font-semibold text-gray-900">
+        <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Last 30 Days Expenses
         </h5>
       </div>
@@ -42,9 +42,9 @@ const Last30DaysExpenses = ({ data }) => {
 
         {chartData.length > 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-sm text-gray-500 font-medium">Total Expense</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Expense</span>
 
-            <span className="text-2xl font-bold text-gray-900 mt-1">
+            <span className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
               ₹{addThousandsSeparator(totalExpense)}
             </span>
 
@@ -61,7 +61,7 @@ const Last30DaysExpenses = ({ data }) => {
                     display: "inline-block",
                   }}
                 />
-                <span className="text-sm text-gray-600">{topCategory.name}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">{topCategory.name}</span>
               </div>
             )}
           </div>

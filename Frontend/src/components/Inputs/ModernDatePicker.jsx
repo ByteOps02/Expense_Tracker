@@ -117,7 +117,7 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
 
   return (
     <div className="space-y-2" ref={datePickerRef}>
-      <label className="block text-sm font-semibold text-gray-700">
+      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
         Date <span className={`text-${colorTheme}-500`}>*</span>
       </label>
       <div className="relative">
@@ -130,10 +130,10 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
             readOnly
             value={formatDisplayDate(value)}
             onClick={() => setIsOpen(!isOpen)}
-            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 cursor-pointer ${
+            className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-white cursor-pointer ${
               error
                 ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                : `border-gray-200 ${colors.focus}`
+                : `border-gray-200 dark:border-gray-700 ${colors.focus}`
             }`}
           />
         </div>
@@ -154,18 +154,18 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute z-50 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 p-4 w-full min-w-[320px]"
+              className="absolute z-50 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-4 w-full min-w-[320px]"
             >
               {/* Month/Year Header */}
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
                   onClick={() => handleMonthChange(-1)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <LuChevronLeft className="w-5 h-5 text-gray-600" />
+                  <LuChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
                   {currentMonth.toLocaleDateString("en-US", {
                     month: "long",
                     year: "numeric",
@@ -174,9 +174,9 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                 <button
                   type="button"
                   onClick={() => handleMonthChange(1)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <LuChevronRight className="w-5 h-5 text-gray-600" />
+                  <LuChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
 
@@ -185,7 +185,7 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                 {weekDays.map((day) => (
                   <div
                     key={day}
-                    className="text-center text-xs font-semibold text-gray-500 py-2"
+                    className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 py-2"
                   >
                     {day}
                   </div>
@@ -208,8 +208,8 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                           : isSelected(date)
                             ? colors.selected
                             : isToday(date)
-                              ? `${colors.today} text-gray-900 ${colors.hover}`
-                              : `text-gray-700 ${colors.hover}`
+                              ? `${colors.today} text-gray-900 dark:text-white ${colors.hover} dark:hover:bg-gray-700`
+                              : `text-gray-700 dark:text-gray-300 ${colors.hover} dark:hover:bg-gray-700`
                       }
                     `}
                   >
@@ -219,18 +219,18 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
               </div>
 
               {/* Quick Actions */}
-              <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex gap-2">
                 <button
                   type="button"
                   onClick={() => handleDateSelect(new Date())}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors"
                 >
                   Today
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors"
                 >
                   Close
                 </button>
