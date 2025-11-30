@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
+import { LuSun, LuMoon } from "react-icons/lu";
 import axiosInstance from "../../utils/axiosInstance";
+import { useTheme } from "../../context/ThemeContext";
 import { API_PATHS } from "../../utils/apiPath";
 import uploadImage from "../../utils/uploadImage";
 import AuthBranding from "../../components/layouts/AuthBranding";
@@ -18,6 +20,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   /**
    * @desc    Handles the user sign-up process
@@ -73,6 +76,19 @@ const SignUp = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md space-y-6"
         >
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <LuSun className="text-xl text-yellow-500" />
+              ) : (
+                <LuMoon className="text-xl text-purple-600" />
+              )}
+            </button>
+          </div>
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Create an Account
