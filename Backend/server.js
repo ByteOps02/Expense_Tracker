@@ -22,6 +22,9 @@ const app = express();
 // Enable gzip compression for all responses to reduce bandwidth usage
 app.use(compression());
 
+// Trust the proxy (required for Vercel/Heroku/etc to pass secure cookies)
+app.set("trust proxy", 1);
+
 // Enable Cross-Origin Resource Sharing (CORS)
 // This allows the frontend to make requests to the backend
 app.use(
@@ -80,13 +83,14 @@ app.use((err, req, res, _next) => {
 });
 
 // Connect to MongoDB
-connectDB();
+// connectDB(); // Moved to local execution block
 
 // Export the app for Vercel
 module.exports = app;
 
 // Only listen if not running in Vercel (local development)
 if (require.main === module) {
+  connectDB();
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
