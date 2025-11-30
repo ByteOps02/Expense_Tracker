@@ -188,16 +188,16 @@
 }
 
 .card {
-  @apply bg-white p-6 rounded-2xl shadow-lg border border-gray-100;
+  @apply bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-btn {
-  @apply flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-purple-600 bg-gray-50 hover:bg-purple-50 px-4 py-2 rounded-lg border border-gray-200 transition-colors duration-200 cursor-pointer;
+  @apply flex items-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 bg-gray-50 dark:bg-gray-700 hover:bg-purple-50 dark:hover:bg-gray-600 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors duration-200 cursor-pointer;
 }
 
 .add-btn {
-  @apply flex items-center gap-2 text-sm font-semibold text-purple-600 whitespace-nowrap bg-purple-50 border border-purple-100 rounded-lg px-5 py-2.5 cursor-pointer hover:bg-purple-100 transition-colors duration-200;
+  @apply flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400 whitespace-nowrap bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800 rounded-lg px-5 py-2.5 cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors duration-200;
 }
 
 .add-btn-fill {

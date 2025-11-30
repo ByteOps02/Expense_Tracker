@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import UserProvider from "./context/UserContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -35,43 +36,45 @@ const App = () => {
 
       <ErrorBoundary>
         <UserProvider>
-          <div>
-            <Router>
-              <ErrorBoundary>
-                <Suspense
-                  fallback={
-                    <LoadingSpinner fullScreen text="Loading application..." />
-                  }
-                >
-                  <Routes>
-                    {/* Always redirect root to login */}
-                    <Route path="/" element={<Navigate to="/login" replace />} />
-
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<SignUp />} />
-
-                    {/* Protected routes */}
-                    <Route
-                      path="/dashboard"
-                      element={<ProtectedRoute Component={Home} />}
-                    />
-                    <Route
-                      path="/income"
-                      element={<ProtectedRoute Component={Income} />}
-                    />
-                    <Route
-                      path="/expense"
-                      element={<ProtectedRoute Component={Expense} />}
-                    />
-                    <Route
-                      path="/settings"
-                      element={<ProtectedRoute Component={Settings} />}
-                    />
-                  </Routes>
-                </Suspense>
-              </ErrorBoundary>
-            </Router>
-          </div>
+          <ThemeProvider>
+            <div>
+              <Router>
+                <ErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner fullScreen text="Loading application..." />
+                    }
+                  >
+                    <Routes>
+                      {/* Always redirect root to login */}
+                      <Route path="/" element={<Navigate to="/login" replace />} />
+  
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<SignUp />} />
+  
+                      {/* Protected routes */}
+                      <Route
+                        path="/dashboard"
+                        element={<ProtectedRoute Component={Home} />}
+                      />
+                      <Route
+                        path="/income"
+                        element={<ProtectedRoute Component={Income} />}
+                      />
+                      <Route
+                        path="/expense"
+                        element={<ProtectedRoute Component={Expense} />}
+                      />
+                      <Route
+                        path="/settings"
+                        element={<ProtectedRoute Component={Settings} />}
+                      />
+                    </Routes>
+                  </Suspense>
+                </ErrorBoundary>
+              </Router>
+            </div>
+          </ThemeProvider>
         </UserProvider>
       </ErrorBoundary>
 

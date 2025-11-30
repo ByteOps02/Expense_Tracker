@@ -9,14 +9,14 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
     <div className="relative inline-block">
       <button
         type="button"
-        className="flex items-center justify-center p-2 rounded-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm text-gray-700"
+        className="flex items-center justify-center p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm text-gray-700 dark:text-gray-300"
         onClick={() => setIsOpen(true)}
       >
         <div className="w-5 h-5 flex items-center justify-center mr-2">
           {icon ? (
             <img src={icon} alt="Icon" className="w-full h-full object-contain" />
           ) : (
-            <LuImage className="w-full h-full text-gray-500" />
+            <LuImage className="w-full h-full text-gray-500 dark:text-gray-400" />
           )}
         </div>
         {icon ? "Change" : "Pick"} Icon
@@ -27,9 +27,9 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
             className="absolute inset-0 bg-black/50"
             onClick={() => setIsOpen(false)}
           ></div>
-          <div className="relative bg-white rounded-lg shadow-xl">
+          <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl">
             <button
-              className="absolute -top-3 -right-3 z-10 bg-white hover:bg-red-50 text-red-500 hover:text-red-600 p-2 rounded-full shadow-lg border border-gray-200 transition-all duration-200 hover:scale-110"
+              className="absolute -top-3 -right-3 z-10 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 hover:text-red-600 p-2 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 transition-all duration-200 hover:scale-110"
               onClick={() => setIsOpen(false)}
               type="button"
             >
@@ -38,6 +38,7 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
 
             <EmojiPicker
               open={isOpen}
+              theme={document.documentElement.classList.contains("dark") ? "dark" : "light"}
               onEmojiClick={(emoji) => {
                 onSelect(emoji?.imageUrl || "");
                 setIsOpen(false);

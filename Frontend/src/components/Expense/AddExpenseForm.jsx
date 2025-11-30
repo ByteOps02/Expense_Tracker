@@ -85,7 +85,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           
           {/* Expense Title */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Expense Title <span className="text-red-500">*</span>
             </label>
             <div className="relative group">
@@ -95,8 +95,8 @@ const AddExpenseForm = ({ onAddExpense }) => {
                 placeholder="e.g., Grocery Shopping"
                 value={expense.title}
                 onChange={(e) => handleChange("title", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-                  errors.title ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200"
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
+                  errors.title ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200 dark:border-gray-700"
                 }`}
               />
             </div>
@@ -113,7 +113,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
           {/* Category with Emoji */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Category
             </label>
             <div className="flex gap-3">
@@ -124,7 +124,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
                   placeholder="e.g., Food, Travel"
                   value={expense.category}
                   onChange={(e) => handleChange("category", e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>
               <EmojiPickerPopup
@@ -140,7 +140,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
           
           {/* Amount */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Amount <span className="text-red-500">*</span>
             </label>
             <div className="relative group">
@@ -150,8 +150,8 @@ const AddExpenseForm = ({ onAddExpense }) => {
                 placeholder="0.00"
                 value={expense.amount}
                 onChange={(e) => handleChange("amount", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-                  errors.amount ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200"
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
+                  errors.amount ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200 dark:border-gray-700"
                 }`}
                 step="0.01"
                 min="0"
@@ -179,7 +179,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
         {/* Description */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
             Description
           </label>
           <textarea
@@ -187,7 +187,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
             value={expense.description}
             onChange={(e) => handleChange("description", e.target.value)}
             rows={3}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none"
           />
         </div>
 
