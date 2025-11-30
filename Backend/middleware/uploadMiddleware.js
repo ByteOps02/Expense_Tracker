@@ -1,32 +1,25 @@
-// Import necessary packages
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  // Set the destination folder for uploaded files
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  // Set the filename for uploaded files
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configure multer storage for Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "expense_tracker_uploads", // Folder name in Cloudinary
+    allowed_formats: ["jpg", "png", "jpeg"], // Allowed file formats
   },
 });
 
-// Configure multer file filter
-const fileFilter = (req, file, cb) => {
-  // Define the allowed file types
-  const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-  // Check if the uploaded file's mimetype is in the allowedTypes array
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only .jpeg, .jpg and .png formats are allowed"), false);
-  }
-};
-
-// Initialize multer with the storage and fileFilter configurations
-const upload = multer({ storage, fileFilter });
+// Initialize multer with the Cloudinary storage
+const upload = multer({ storage: storage });
 
 // Export the upload middleware
 module.exports = upload;

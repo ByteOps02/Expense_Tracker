@@ -50,29 +50,21 @@ app.use(
   }),
 );
 
-// Connect to the MongoDB database
-connectDB();
-
 // Define API routes
-// All authentication-related routes are prefixed with /api/v1/auth
 app.use("/api/v1/auth", authRoutes);
-// All expense-related routes are prefixed with /api/v1/expense
 app.use("/api/v1/expense", expenseRoutes);
-// All income-related routes are prefixed with /api/v1/income
 app.use("/api/v1/income", incomeRoutes);
-// All dashboard-related routes are prefixed with /api/v1/dashboard
 app.use("/api/v1/dashboard", dashboardRoutes);
 
-
-// Serve static files from the "uploads" directory
-// This is used to serve user-uploaded profile images
+// Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Serve frontend static files from the build directory
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
-// Any remaining requests are sent to the React app's index.html
-app.use((req, res) => {
+// Catch-all for React app (exclude API routes to avoid returning HTML for API 404s)
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });
 
@@ -82,10 +74,26 @@ app.use((err, req, res, _next) => {
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Connect to MongoDB and start server
+const startServer = async () => {
+  try {
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is missing in environment variables");
+    }
+    
+    await connectDB();
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 // Export the app for testing purposes
 module.exports = app;

@@ -47,12 +47,8 @@ router.post("/upload-image", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No File Uploaded" });
   }
-  // Construct the image URL
-  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
-    req.file.filename
-  }`;
-  // Return the image URL in the response
-  res.status(200).json({ imageUrl });
+  // Return the image URL from Cloudinary
+  res.status(200).json({ imageUrl: req.file.path });
 });
 
 // Export the router
