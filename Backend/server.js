@@ -50,6 +50,11 @@ app.use(
   }),
 );
 
+// Root route to check if server is running
+app.get("/", (req, res) => {
+  res.json({ message: "Server is running" });
+});
+
 // Define API routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/expense", expenseRoutes);
