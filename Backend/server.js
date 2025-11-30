@@ -80,11 +80,19 @@ app.use((req, res) => {
   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });
 
-// Define the port for the server
-const PORT = process.env.PORT || 5000;
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
-// Start the server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Connect to MongoDB
+connectDB();
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Export the app for testing purposes
 module.exports = app;
