@@ -6,6 +6,10 @@ const ExpenseSchema = new mongoose.Schema(
   {
     // Reference to the User model
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    // Title of the expense
+    title: { type: String, required: true },
+    // Icon for the expense category
+    icon: { type: String },
     // Amount of the expense
     amount: { type: Number, required: true },
     // Category of the expense

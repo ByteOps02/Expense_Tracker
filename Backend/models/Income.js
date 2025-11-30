@@ -6,6 +6,8 @@ const IncomeSchema = new mongoose.Schema(
   {
     // Reference to the User model
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    // Title of the income
+    title: { type: String, required: true },
     // Icon for the income source
     icon: { type: String },
     // Amount of the income

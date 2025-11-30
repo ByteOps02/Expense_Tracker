@@ -10,7 +10,6 @@ const session = require("express-session");
 
 // Import local modules
 const connectDB = require("./config/db");
-const performanceMiddleware = require("./middleware/performanceMiddleware");
 const authRoutes = require("./routes/authRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
@@ -22,9 +21,6 @@ const app = express();
 
 // Enable gzip compression for all responses to reduce bandwidth usage
 app.use(compression());
-
-// Custom middleware to monitor the performance of requests
-// app.use(performanceMiddleware);
 
 // Enable Cross-Origin Resource Sharing (CORS)
 // This allows the frontend to make requests to the backend
@@ -81,13 +77,10 @@ app.use((req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
-
-// Connect to MongoDB
-connectDB();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

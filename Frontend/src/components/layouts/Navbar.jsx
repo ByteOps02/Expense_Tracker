@@ -16,7 +16,7 @@ const Navbar = ({ activeMenu }) => {
   }, [openSideMenu]);
 
   return (
-    <div className="glass flex items-center justify-between border-b border-gray-100 py-3 px-6 fixed top-0 left-0 w-full z-50 transition-all duration-300">
+    <div className="bg-white shadow-lg flex items-center justify-between border-b border-gray-100 py-3 px-6 fixed top-0 left-0 w-full z-50 transition-all duration-300">
       <div className="flex items-center gap-5">
         <button
           className="block lg:hidden text-gray-600 hover:text-purple-600 p-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-100"
