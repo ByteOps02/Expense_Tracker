@@ -1,7 +1,6 @@
 // Import necessary packages and models
 const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
-const path = require("path");
 
 /**
  * @desc    Add a new income
@@ -11,9 +10,16 @@ const path = require("path");
 exports.addIncome = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { icon, amount, source, date, note } = req.body;
+    const { title, icon, amount, source, date, note } = req.body;
+
+    // Basic validation
+    if (!title || !amount || !source) {
+      return res.status(400).json({ message: "Please fill in all required fields" });
+    }
+
     const income = new Income({
       user: userId,
+      title,
       icon,
       amount,
       source,
@@ -22,11 +28,14 @@ exports.addIncome = async (req, res) => {
     });
     await income.save();
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(201).json({ message: "Income added successfully", income });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+       return res.status(400).json({ message: "Validation Error", error: err.message });
+    }
     res.status(500).json({ message: "Error adding income", error: err.message });
   }
 };
@@ -67,7 +76,7 @@ exports.deleteIncome = async (req, res) => {
       return res.status(404).json({ message: "Income not found" });
     }
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(200).json({ message: "Income deleted successfully" });
@@ -85,11 +94,11 @@ exports.updateIncome = async (req, res) => {
   try {
     const userId = req.user.id;
     const incomeId = req.params.id;
-    const { icon, amount, source, date, note } = req.body;
+    const { title, icon, amount, source, date, note } = req.body;
 
     const income = await Income.findOneAndUpdate(
       { _id: incomeId, user: userId },
-      { icon, amount, source, date, note },
+      { title, icon, amount, source, date, note },
       { new: true, runValidators: true },
     );
 
@@ -97,7 +106,7 @@ exports.updateIncome = async (req, res) => {
       return res.status(404).json({ message: "Income not found" });
     }
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(200).json({ message: "Income updated successfully", income });
@@ -139,13 +148,19 @@ exports.downloadIncomeExcel = async (req, res) => {
       });
     }
 
-    // Save the Excel file to the backend folder
-    const filePath = path.join(__dirname, "../incomes.xlsx");
-    await workbook.xlsx.writeFile(filePath);
+    // Set headers for the response
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=incomes.xlsx"
+    );
 
-    res
-      .status(200)
-      .json({ message: "Excel file saved to backend folder", filePath });
+    // Write the workbook to the response object
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (err) {
     res.status(500).json({ message: "Error exporting incomes", error: err.message });
   }

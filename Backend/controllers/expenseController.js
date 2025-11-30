@@ -1,7 +1,6 @@
 // Import necessary packages and models
 const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
-const path = require("path");
 
 /**
  * @desc    Add a new expense
@@ -11,9 +10,16 @@ const path = require("path");
 exports.addExpense = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { icon, amount, category, date, description } = req.body;
+    const { title, icon, amount, category, date, description } = req.body;
+
+    // Basic validation
+    if (!title || !amount || !category) {
+      return res.status(400).json({ message: "Please fill in all required fields" });
+    }
+
     const expense = new Expense({
       user: userId,
+      title,
       icon,
       amount,
       category,
@@ -22,11 +28,14 @@ exports.addExpense = async (req, res) => {
     });
     await expense.save();
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(201).json({ message: "Expense added successfully", expense });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: "Validation Error", error: err.message });
+    }
     res
       .status(500)
       .json({ message: "Error adding expense", error: err.message });
@@ -71,7 +80,7 @@ exports.deleteExpense = async (req, res) => {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(200).json({ message: "Expense deleted successfully" });
@@ -91,17 +100,17 @@ exports.updateExpense = async (req, res) => {
   try {
     const userId = req.user.id;
     const expenseId = req.params.id;
-    const { icon, amount, category, date, description } = req.body;
+    const { title, icon, amount, category, date, description } = req.body;
     const expense = await Expense.findOneAndUpdate(
       { _id: expenseId, user: userId },
-      { icon, amount, category, date, description },
+      { title, icon, amount, category, date, description },
       { new: true, runValidators: true },
     );
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    // Clear the cache for the dashboard data since it is now stale
+
 
 
     res.status(200).json({ message: "Expense updated successfully", expense });
@@ -145,13 +154,19 @@ exports.downloadExpenseExcel = async (req, res) => {
       });
     }
 
-    // Save the Excel file to the backend folder
-    const filePath = path.join(__dirname, "../expenses.xlsx");
-    await workbook.xlsx.writeFile(filePath);
+    // Set headers for the response
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=expenses.xlsx"
+    );
 
-    res
-      .status(200)
-      .json({ message: "Excel file saved to backend folder", filePath });
+    // Write the workbook to the response object
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (err) {
     res
       .status(500)
