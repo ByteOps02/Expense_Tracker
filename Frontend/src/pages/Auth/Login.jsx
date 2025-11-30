@@ -3,7 +3,9 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiMail, FiLock } from "react-icons/fi";
+import { LuSun, LuMoon } from "react-icons/lu";
 import { UserContext } from "../../context/UserContext";
+import { useTheme } from "../../context/ThemeContext";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import { validateEmail } from "../../utils/helper";
@@ -15,6 +17,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  const { theme, toggleTheme } = useTheme();
 
   // Get user context and navigation functions
   const { updateUser } = useContext(UserContext);
@@ -63,6 +67,19 @@ const Login = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md space-y-8"
         >
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <LuSun className="text-xl text-yellow-500" />
+              ) : (
+                <LuMoon className="text-xl text-purple-600" />
+              )}
+            </button>
+          </div>
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Welcome Back
