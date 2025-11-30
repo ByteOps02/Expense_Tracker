@@ -56,17 +56,17 @@ app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/income", incomeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
-// Serve static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+// Serve static files (Optional: mostly for local dev or if you keep backend/frontend together)
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
-// Catch-all for React app (exclude API routes to avoid returning HTML for API 404s)
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    return next();
-  }
-  res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
-});
+// Catch-all for React app - commented out for Vercel deployment as it handles routing
+// app.use((req, res, next) => {
+//   if (req.path.startsWith('/api')) {
+//     return next();
+//   }
+//   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
+// });
 
 // Error handling middleware
 app.use((err, req, res, _next) => {
@@ -74,26 +74,16 @@ app.use((err, req, res, _next) => {
   res.status(500).send('Something broke!');
 });
 
-// Connect to MongoDB and start server
-const startServer = async () => {
-  try {
-    if (!process.env.MONGO_URI) {
-      throw new Error("MONGO_URI is missing in environment variables");
-    }
-    
-    await connectDB();
+// Connect to MongoDB
+connectDB();
 
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error.message);
-    process.exit(1);
-  }
-};
-
-startServer();
-
-// Export the app for testing purposes
+// Export the app for Vercel
 module.exports = app;
+
+// Only listen if not running in Vercel (local development)
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
