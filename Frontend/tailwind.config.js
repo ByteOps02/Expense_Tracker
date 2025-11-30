@@ -32,8 +32,6 @@ export default {
           200: "#edf2f7",
           100: "#f7fafc",
         },
-        // Keep existing colors for backward compatibility if needed, 
-        // but ideally we transition to semantic names or the new primary scale.
         purple: {
           600: "#7b34dd",
           500: "#805ad5",
@@ -44,6 +42,7 @@ export default {
           600: "#d53f8c",
           500: "#ed64a6",
         },
+        // add other semantic colors here if needed
       },
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',

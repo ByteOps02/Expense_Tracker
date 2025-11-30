@@ -40,11 +40,30 @@
   }
 
   .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3.5 mb-4 mt-2 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:focus:border-primary-500;
+    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3.5 mb-4 mt-2 border border-gray-200 outline-none
+      focus:ring-2 focus:ring-primary-100 focus:border-primary-500
+      transition-all duration-200
+      dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600;
+    /* removed: dark:focus:ring-primary-600 dark:focus:border-primary-500 */
+  }
+
+  /* Focus styles handled via plain CSS to avoid @apply + variant issues */
+  .input-box:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12); /* primary-600-ish glow */
+    border-color: #7c3aed; /* primary-600 */
+  }
+
+  .dark .input-box:focus {
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18); /* primary-500-ish glow */
+    border-color: #8b5cf6; /* primary-500 */
   }
 
   .btn-primary {
-    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 p-[12px] rounded-xl my-1 hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-300 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 dark:bg-primary-600 dark:hover:bg-primary-700 dark:shadow-primary-300;
+    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 p-[12px] rounded-xl my-1
+      hover:bg-purple-700 hover:shadow-xl hover:shadow-purple-300
+      transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0
+      dark:bg-primary-600 dark:hover:bg-primary-700 dark:shadow-primary-300;
   }
 
   /* Custom animations */
@@ -132,6 +151,6 @@
   @apply flex items-center gap-2 text-sm font-semibold text-purple-600 whitespace-nowrap bg-purple-50 border border-purple-100 rounded-lg px-5 py-2.5 cursor-pointer hover:bg-purple-100 transition-colors duration-200;
 }
 
-  .add-btn-fill {
-    @apply text-white bg-purple-600 hover:bg-purple-700 border-transparent shadow-md shadow-purple-200;
-  }
+.add-btn-fill {
+  @apply text-white bg-purple-600 hover:bg-purple-700 border-transparent shadow-md shadow-purple-200;
+}
