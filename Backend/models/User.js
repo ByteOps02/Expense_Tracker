@@ -11,17 +11,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profileImageUrl: { type: String, default: null },
-    is2FAEnabled: { type: Boolean, default: false },
-    twoFASecret: { type: String, default: null },
-    twoFARecoveryCodes: { type: [String], default: [] },
-    recentLoginActivities: [
-      {
-        timestamp: { type: Date, default: Date.now },
-        ipAddress: { type: String },
-        userAgent: { type: String },
-        status: { type: String }, // e.g., "Successful", "Failed"
-      },
-    ],
+
 
   },
   // Enable timestamps (createdAt and updatedAt)
