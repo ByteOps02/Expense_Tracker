@@ -39,7 +39,7 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
       </div>
 
       {/* Placeholder for budget-specific charts or summaries */}
-      <div className="mt-4 p-4 bg-gray-50/50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
+      <div className="mt-4 p-6 bg-gray-50/50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
         <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Budget Summary</h6>
         <p className="text-gray-600 dark:text-gray-400">Detailed budget visualizations will appear here once data is available.</p>
       </div>

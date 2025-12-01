@@ -21,7 +21,7 @@ const TransactionInfoCard = ({
       : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-semibold";
 
   return (
-    <div className="group relative flex items-center gap-4 mt-2 p-3 rounded-xl transition-all duration-200 cursor-default border border-transparent">
+    <div className="group relative flex items-center gap-4 mt-2 rounded-xl transition-all duration-200 cursor-default border border-transparent">
       <div className="w-12 h-12 flex items-center justify-center text-xl text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-xl">
         {icon ? (
           <img src={icon} alt={title} className="w-6 h-6 object-contain" />
