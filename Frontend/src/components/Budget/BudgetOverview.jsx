@@ -1,5 +1,6 @@
 import React from "react";
 import { LuPlus } from "react-icons/lu";
+import ModernDatePicker from "../Inputs/ModernDatePicker";
 
 const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, reportEndDate, setReportEndDate }) => {
   return (
@@ -12,23 +13,19 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
 
         <div className="flex items-center space-x-4">
             <div>
-                <label htmlFor="reportStartDate" className="sr-only">Start Date</label>
-                <input
-                    type="date"
-                    id="reportStartDate"
+                <ModernDatePicker
+                    label="Start Date"
                     value={reportStartDate}
                     onChange={(e) => setReportStartDate(e.target.value)}
-                    className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200"
+                    colorTheme="purple"
                 />
             </div>
             <div>
-                <label htmlFor="reportEndDate" className="sr-only">End Date</label>
-                <input
-                    type="date"
-                    id="reportEndDate"
+                <ModernDatePicker
+                    label="End Date"
                     value={reportEndDate}
                     onChange={(e) => setReportEndDate(e.target.value)}
-                    className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200"
+                    colorTheme="purple"
                 />
             </div>
             <button className="add-btn flex-shrink-0" onClick={onAddBudget}>

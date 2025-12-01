@@ -19,26 +19,16 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
   const handleChange = (key, value) => {
     setExpense((prev) => ({ ...prev, [key]: value }));
-
-    if (errors[key]) {
-      setErrors((prev) => ({ ...prev, [key]: "" }));
-    }
+    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!expense.title.trim()) {
-      newErrors.title = "Expense title is required";
-    }
-
-    if (!expense.amount || parseFloat(expense.amount) <= 0) {
+    if (!expense.title.trim()) newErrors.title = "Expense title is required";
+    if (!expense.amount || parseFloat(expense.amount) <= 0)
       newErrors.amount = "Please enter a valid amount";
-    }
-
-    if (!expense.date) {
-      newErrors.date = "Date is required";
-    }
+    if (!expense.date) newErrors.date = "Date is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -46,14 +36,12 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
       await onAddExpense?.(expense);
-
       setExpense({
         title: "",
         category: "",
@@ -62,7 +50,6 @@ const AddExpenseForm = ({ onAddExpense }) => {
         description: "",
         icon: "",
       });
-
       setErrors({});
     } catch (error) {
       console.error("Error adding expense:", error);
@@ -78,140 +65,183 @@ const AddExpenseForm = ({ onAddExpense }) => {
       transition={{ duration: 0.3 }}
       className="w-full max-w-2xl mx-auto"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* Title & Category Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Expense Title */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Expense Title <span className="text-red-500">*</span>
-            </label>
-            <div className="relative group">
-              <LuTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
-              <input
-                type="text"
-                placeholder="e.g., Grocery Shopping"
-                value={expense.title}
-                onChange={(e) => handleChange("title", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
-                  errors.title ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200 dark:border-gray-700"
-                }`}
-              />
-            </div>
-            {errors.title && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 flex items-center gap-1"
-              >
-                {errors.title}
-              </motion.p>
-            )}
-          </div>
+      {/* FULL DARK CARD WRAPPER */}
+      <div
+        className="
+          bg-white dark:bg-gray-900 
+          text-gray-900 dark:text-gray-100 
+          border border-gray-200 dark:border-gray-700
+          p-6 rounded-2xl shadow-lg
+        "
+      >
+        <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Category with Emoji */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Category
-            </label>
-            <div className="flex gap-3">
-              <div className="relative group flex-1">
-                <LuFileText className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
+          {/* TITLE + CATEGORY */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Expense Title */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Expense Title <span className="text-red-500">*</span>
+              </label>
+
+              <div className="relative">
+                <LuTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
                 <input
                   type="text"
-                  placeholder="e.g., Food, Travel"
-                  value={expense.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                  placeholder="e.g., Grocery Shopping"
+                  value={expense.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className={`
+                    w-full pl-10 pr-4 py-3 rounded-xl
+                    bg-gray-100 dark:bg-gray-800
+                    text-gray-900 dark:text-gray-100
+                    placeholder-gray-400 dark:placeholder-gray-500
+                    border 
+                    ${
+                      errors.title
+                        ? "border-red-400"
+                        : "border-gray-300 dark:border-gray-700"
+                    }
+                    focus:outline-none focus:ring-2 
+                    focus:ring-red-300 dark:focus:ring-red-800
+                  `}
                 />
               </div>
-              <EmojiPickerPopup
-                icon={expense.icon}
-                onSelect={(icon) => handleChange("icon", icon)}
-              />
+
+              {errors.title && (
+                <p className="text-xs text-red-500">{errors.title}</p>
+              )}
+            </div>
+
+            {/* Category + Emoji */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Category
+              </label>
+
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <LuFileText className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
+                  <input
+                    type="text"
+                    placeholder="e.g., Food, Travel"
+                    value={expense.category}
+                    onChange={(e) => handleChange("category", e.target.value)}
+                    className="
+                      w-full pl-10 pr-4 py-3 rounded-xl
+                      bg-gray-100 dark:bg-gray-800
+                      text-gray-900 dark:text-gray-100
+                      placeholder-gray-400 dark:placeholder-gray-500
+                      border border-gray-300 dark:border-gray-700
+                      focus:outline-none focus:ring-2 
+                      focus:ring-red-300 dark:focus:ring-red-800
+                    "
+                  />
+                </div>
+
+                <EmojiPickerPopup
+                  icon={expense.icon}
+                  onSelect={(icon) => handleChange("icon", icon)}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Amount & Date Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Amount */}
+          {/* AMOUNT + DATE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Amount */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Amount <span className="text-red-500">*</span>
+              </label>
+
+              <div className="relative">
+                <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  value={expense.amount}
+                  onChange={(e) => handleChange("amount", e.target.value)}
+                  className={`
+                    w-full pl-10 pr-4 py-3 rounded-xl
+                    bg-gray-100 dark:bg-gray-800
+                    text-gray-900 dark:text-gray-100
+                    placeholder-gray-400 dark:placeholder-gray-500
+                    border 
+                    ${
+                      errors.amount
+                        ? "border-red-400"
+                        : "border-gray-300 dark:border-gray-700"
+                    }
+                    focus:outline-none focus:ring-2 
+                    focus:ring-red-300 dark:focus:ring-red-800
+                  `}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              {errors.amount && (
+                <p className="text-xs text-red-500">{errors.amount}</p>
+              )}
+            </div>
+
+            {/* Date Picker */}
+            <ModernDatePicker
+              value={expense.date}
+              onChange={(e) => handleChange("date", e.target.value)}
+              error={errors.date}
+              colorTheme="red"
+            />
+          </div>
+
+          {/* Description */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Amount <span className="text-red-500">*</span>
+              Description
             </label>
-            <div className="relative group">
-              <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
-              <input
-                type="number"
-                placeholder="0.00"
-                value={expense.amount}
-                onChange={(e) => handleChange("amount", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
-                  errors.amount ? "border-red-300 focus:ring-red-100 focus:border-red-500" : "border-gray-200 dark:border-gray-700"
-                }`}
-                step="0.01"
-                min="0"
-              />
-            </div>
-            {errors.amount && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 flex items-center gap-1"
-              >
-                {errors.amount}
-              </motion.p>
-            )}
+
+            <textarea
+              rows={3}
+              placeholder="Add notes about this expense (optional)"
+              value={expense.description}
+              onChange={(e) => handleChange("description", e.target.value)}
+              className="
+                w-full px-4 py-3 rounded-xl
+                bg-gray-100 dark:bg-gray-800
+                text-gray-900 dark:text-gray-100
+                placeholder-gray-400 dark:placeholder-gray-500
+                border border-gray-300 dark:border-gray-700
+                focus:outline-none focus:ring-2 
+                focus:ring-red-300 dark:focus:ring-red-800
+                resize-none
+              "
+            />
           </div>
 
-          {/* Date */}
-          <ModernDatePicker
-            value={expense.date}
-            onChange={(e) => handleChange("date", e.target.value)}
-            error={errors.date}
-            colorTheme="red"
-          />
-        </div>
-
-        {/* Description */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Description
-          </label>
-          <textarea
-            placeholder="Add notes about this expense (optional)"
-            value={expense.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            rows={3}
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-3.5 font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Adding Expense...
-            </span>
-          ) : (
-            "Add Expense"
-          )}
-        </motion.button>
-      </form>
+          {/* SUBMIT BUTTON */}
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={isSubmitting}
+            className="
+              w-full py-3.5 font-semibold text-white 
+              bg-gradient-to-r from-red-500 to-red-600 
+              hover:from-red-600 hover:to-red-700
+              rounded-xl transition-all shadow-lg 
+              disabled:opacity-50
+            "
+          >
+            {isSubmitting ? "Adding Expense..." : "Add Expense"}
+          </motion.button>
+        </form>
+      </div>
     </motion.div>
   );
 };
