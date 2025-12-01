@@ -6,7 +6,7 @@ import moment from "moment";
 
 const ExpenseTransactions = ({ transactions, onSeeMore }) => {
   return (
-    <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out">
+    <div className="card h-[400px] transition-all duration-300 ease-in-out">
       <div className="flex items-center justify-between ">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">Expenses</h5>
         <button className="card-btn" onClick={onSeeMore}>
@@ -26,7 +26,7 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
             return (
               <li
                 key={expense._id}
-                className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg mb-3 p-3 animate-fadeIn"
+                className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg mb-3 p-3"
                 style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <div className="flex items-center gap-3">
