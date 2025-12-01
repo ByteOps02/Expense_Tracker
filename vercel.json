@@ -13,30 +13,14 @@
       }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/v1/auth/(.*)",
-      "destination": "/Backend/api/index.js/$1"
+      "src": "/api/(.*)",
+      "dest": "/Backend/api/index.js"
     },
     {
-      "source": "/api/v1/expense/(.*)",
-      "destination": "/Backend/api/index.js/$1"
-    },
-    {
-      "source": "/api/v1/income/(.*)",
-      "destination": "/Backend/api/index.js/$1"
-    },
-    {
-      "source": "/api/v1/dashboard/(.*)",
-      "destination": "/Backend/api/index.js/$1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/Backend/api/index.js/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/Frontend/$1"
     }
   ]
 }
