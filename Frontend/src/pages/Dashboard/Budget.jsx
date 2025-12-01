@@ -172,8 +172,8 @@ const Budget = () => {
   const chartData = getChartData();
 
   return (
-    <DashboardLayout>
-      <div className="p-4 sm:p-6 lg:p-8">
+    <DashboardLayout activeMenu="Budget">
+      <div className="w-full max-w-[1400px] mx-auto px-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Budget Overview</h1>
 
         <div className="flex justify-between items-center mb-6">
@@ -181,9 +181,9 @@ const Budget = () => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={openAddModal}
-                className="add-btn" // Use the defined CSS class
+                className="add-btn"
             >
-                <LuPlus className="text-lg" /> {/* Add the Plus icon */}
+                <LuPlus className="text-lg" />
                 Add New Budget
             </motion.button>
             <div className="flex items-center space-x-4">
@@ -194,7 +194,7 @@ const Budget = () => {
                         id="reportStartDate"
                         value={reportStartDate}
                         onChange={(e) => setReportStartDate(e.target.value)}
-                        className="rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200"
                     />
                 </div>
                 <div>
@@ -204,7 +204,7 @@ const Budget = () => {
                         id="reportEndDate"
                         value={reportEndDate}
                         onChange={(e) => setReportEndDate(e.target.value)}
-                        className="rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200"
                     />
                 </div>
             </div>
@@ -212,17 +212,22 @@ const Budget = () => {
 
         {/* Budget vs Actual Chart */}
         {budgetReport.length > 0 && (
-            <div className="mb-8 p-4 bg-white dark:bg-gray-800 shadow rounded-lg">
+            <div className="card mb-6 animate-bounceIn">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Budget vs. Actual Spending</h2>
-                <ChartJsBarChart data={chartData} />
+                <div className="h-[300px]">
+                    <ChartJsBarChart data={chartData} />
+                </div>
             </div>
         )}
 
         {budgets.length === 0 ? (
-          <p className="text-gray-700 dark:text-gray-300">No budgets set yet. Add your first budget!</p>
+          <div className="card animate-bounceIn">
+            <p className="text-gray-700 dark:text-gray-300">No budgets set yet. Add your first budget!</p>
+          </div>
         ) : (
-          <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white my-4 px-6">Your Budgets</h2>
+          <div className="card animate-bounceIn">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your Budgets</h2>
+            <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
@@ -258,6 +263,7 @@ const Budget = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
