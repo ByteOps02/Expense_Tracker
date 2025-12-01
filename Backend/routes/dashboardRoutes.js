@@ -3,7 +3,7 @@ const express = require("express");
 
 // Import middleware and controllers
 const { Protect } = require("../middleware/authMiddleware");
-const { getDashboardSummary, getRecentActivities } = require("../controllers/dashboardController");
+const { getDashboardSummary, getDashboardExpenseSummary } = require("../controllers/dashboardController");
 
 // Initialize express router
 const router = express.Router();
@@ -12,9 +12,9 @@ const router = express.Router();
 // This is a protected route
 router.get("/", Protect, getDashboardSummary);
 
-// Route to get recent login activities
+// Route to get total expenses by category for the last 30 days
 // This is a protected route
-router.get("/recent-activities", Protect, getRecentActivities);
+router.get("/expense-summary-by-category", Protect, getDashboardExpenseSummary);
 
 // Export the router
 module.exports = router;
