@@ -149,7 +149,7 @@ const Budget = () => {
 
   return (
     <DashboardLayout activeMenu="Budget">
-      <div className="w-full max-w-[1400px] mx-auto px-4">
+      <div className="w-full max-w-[1400px] mx-auto px-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Budget Management</h1>
 
         <div className="space-y-6">

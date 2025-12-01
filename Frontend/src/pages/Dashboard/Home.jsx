@@ -54,7 +54,7 @@ const Home = () => {
 
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className="w-full max-w-[1400px] mx-auto px-4">
+      <div className="w-full max-w-[1400px] mx-auto px-6">
         {/* Top section with summary info cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           <InfoCard
