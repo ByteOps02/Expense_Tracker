@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { LuCalendar, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,53 +9,74 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const datePickerRef = useRef(null);
 
-  const selectedDate = value ? new Date(value) : null;
+  // ⛔ FIX: Prevent all timezone shifting
+  const selectedDate = value
+    ? (() => {
+        const [y, m, d] = value.split("-");
+        return new Date(Number(y), Number(m) - 1, Number(d));
+      })()
+    : null;
 
-  // Close calendar when clicking outside
+  // Close popup on outside click
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+    const handler = (e) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(e.target)) {
         setIsOpen(false);
       }
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const colorClasses = {
-    purple: {
-      focus: "focus:ring-purple-100 focus:border-purple-500",
-      icon: "group-focus-within:text-purple-600",
-      selected: "bg-purple-600 text-white hover:bg-purple-700",
-      today: "border-2 border-purple-600",
-      hover: "hover:bg-purple-50",
-    },
-    green: {
-      focus: "focus:ring-green-100 focus:border-green-500",
-      icon: "group-focus-within:text-green-600",
-      selected: "bg-green-600 text-white hover:bg-green-700",
-      today: "border-2 border-green-600",
-      hover: "hover:bg-green-50",
-    },
-    red: {
-      focus: "focus:ring-red-100 focus:border-red-500",
-      icon: "group-focus-within:text-red-600",
-      selected: "bg-red-600 text-white hover:bg-red-700",
-      today: "border-2 border-red-600",
-      hover: "hover:bg-red-50",
-    },
-  };
+  // 🎨 THEME SYSTEM + FALLBACK
+  const theme =
+    {
+      purple: {
+        glow: "shadow-[0_0_15px_rgba(139,92,246,0.3)]",
+        accent: "text-purple-600",
+        bgAccent: "bg-purple-600 hover:bg-purple-700",
+        ring: "focus:ring-purple-400/50",
+        hover: "hover:bg-purple-50 dark:hover:bg-purple-900/40",
+        today: "border-purple-600 text-purple-600 dark:text-purple-300",
+      },
+      green: {
+        glow: "shadow-[0_0_15px_rgba(34,197,94,0.3)]",
+        accent: "text-green-600",
+        bgAccent: "bg-green-600 hover:bg-green-700",
+        ring: "focus:ring-green-400/50",
+        hover: "hover:bg-green-50 dark:hover:bg-green-900/40",
+        today: "border-green-600 text-green-600 dark:text-green-300",
+      },
+      red: {
+        glow: "shadow-[0_0_15px_rgba(239,68,68,0.3)]",
+        accent: "text-red-600",
+        bgAccent: "bg-red-600 hover:bg-red-700",
+        ring: "focus:ring-red-400/50",
+        hover: "hover:bg-red-50 dark:hover:bg-red-900/40",
+        today: "border-red-600 text-red-600 dark:text-red-300",
+      },
+    }[colorTheme] || {
+      glow: "shadow-[0_0_15px_rgba(139,92,246,0.3)]",
+      accent: "text-purple-600",
+      bgAccent: "bg-purple-600 hover:bg-purple-700",
+      ring: "focus:ring-purple-400/50",
+      hover: "hover:bg-purple-50 dark:hover:bg-purple-900/40",
+      today: "border-purple-600 text-purple-600 dark:text-purple-300",
+    };
 
-  const colors = colorClasses[colorTheme] || colorClasses.purple;
-
+  // ⛔ FIX timezone issue when displaying date
   const formatDisplayDate = (date) => {
     if (!date) return "Select date";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+
+    const [y, m, d] = date.split("-");
+    return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }
+    );
   };
 
   const getDaysInMonth = (date) => {
@@ -61,175 +84,187 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
     const days = [];
-    // Add empty cells for days before month starts
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-    // Add actual days
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
+
+    for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
+    for (let d = 1; d <= lastDay.getDate(); d++)
+      days.push(new Date(year, month, d));
+
     return days;
   };
 
-  const handleDateSelect = (date) => {
-    if (date) {
-      const formattedDate = date.toISOString().split("T")[0];
-      onChange({ target: { value: formattedDate } });
-      setIsOpen(false);
-    }
+  // ⛔ FIX date −1 issue by NOT using .toISOString()
+  const handleSelect = (date) => {
+    if (!date) return;
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+
+    const formatted = `${y}-${m}-${d}`;
+
+    onChange({ target: { value: formatted } });
+    setIsOpen(false);
   };
 
-  const handleMonthChange = (direction) => {
+  const changeMonth = (dir) => {
     setCurrentMonth((prev) => {
       const newDate = new Date(prev);
-      newDate.setMonth(prev.getMonth() + direction);
+      newDate.setMonth(prev.getMonth() + dir);
       return newDate;
     });
   };
 
   const isToday = (date) => {
-    const today = new Date();
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+
     return (
       date &&
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
+      date.getDate() === t.getDate() &&
+      date.getMonth() === t.getMonth() &&
+      date.getFullYear() === t.getFullYear()
     );
   };
 
-  const isSelected = (date) => {
-    return (
-      date &&
-      selectedDate &&
-      date.getDate() === selectedDate.getDate() &&
-      date.getMonth() === selectedDate.getMonth() &&
-      date.getFullYear() === selectedDate.getFullYear()
-    );
-  };
+  const isSelected = (date) =>
+    date &&
+    selectedDate &&
+    date.getDate() === selectedDate.getDate() &&
+    date.getMonth() === selectedDate.getMonth() &&
+    date.getFullYear() === selectedDate.getFullYear();
 
   const days = getDaysInMonth(currentMonth);
   const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
   return (
     <div className="space-y-2" ref={datePickerRef}>
-      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-        Date <span className={`text-${colorTheme}-500`}>*</span>
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+        Date <span className={theme.accent}>*</span>
       </label>
-      <div className="relative">
-        <div className="relative group">
-          <LuCalendar
-            className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors ${colors.icon}`}
-          />
-          <input
-            type="text"
-            readOnly
-            value={formatDisplayDate(value)}
-            onClick={() => setIsOpen(!isOpen)}
-            className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-white cursor-pointer ${
-              error
-                ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                : `border-gray-200 dark:border-gray-700 ${colors.focus}`
-            }`}
-          />
-        </div>
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs text-red-500 flex items-center gap-1 mt-1"
-          >
-            {error}
-          </motion.p>
-        )}
 
+      {/* Input */}
+      <div className="relative">
+        <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+
+        <input
+          readOnly
+          value={formatDisplayDate(value)}
+          onClick={() => setIsOpen(!isOpen)}
+          className={`
+            w-full pl-10 pr-4 py-3 rounded-xl
+            bg-gray-50 dark:bg-gray-900
+            border border-gray-200 dark:border-gray-700
+            text-gray-900 dark:text-white
+            cursor-pointer transition-all
+            ${theme.ring}
+            ${isOpen ? theme.glow : ""}
+            ${error ? "border-red-400 ring-red-300/40" : ""}
+          `}
+        />
+
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+
+        {/* Calendar Popup */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute z-50 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-3 w-full min-w-[320px]"
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.18 }}
+              className="
+                absolute mt-2 w-full min-w-[320px]
+                bg-white/70 dark:bg-gray-800/70
+                backdrop-blur-xl rounded-xl shadow-2xl
+                p-4 border border-gray-200/40 dark:border-gray-700/40 z-50
+              "
             >
-              {/* Month/Year Header */}
-              <div className="flex items-center justify-between mb-4">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-4">
                 <button
-                  type="button"
-                  className="p-2 rounded-lg transition-colors"
+                  onClick={() => changeMonth(-1)}
+                  className="p-2 rounded-lg hover:bg-gray-200/60 dark:hover:bg-gray-700/60"
                 >
-                  <LuChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <LuChevronLeft size={20} />
                 </button>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
+
+                <h2 className="font-semibold text-gray-800 dark:text-white">
                   {currentMonth.toLocaleDateString("en-US", {
                     month: "long",
                     year: "numeric",
                   })}
-                </h3>
+                </h2>
+
                 <button
-                  type="button"
-                  onClick={() => handleMonthChange(1)}
-                  className="p-2 rounded-lg transition-colors"
+                  onClick={() => changeMonth(1)}
+                  className="p-2 rounded-lg hover:bg-gray-200/60 dark:hover:bg-gray-700/60"
                 >
-                  <LuChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <LuChevronRight size={20} />
                 </button>
               </div>
 
               {/* Week Days */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
+              <div className="grid grid-cols-7 mb-2">
                 {weekDays.map((day) => (
                   <div
                     key={day}
-                    className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 py-2"
+                    className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 py-1"
                   >
                     {day}
                   </div>
                 ))}
               </div>
 
-              {/* Calendar Days */}
+              {/* Calendar */}
               <div className="grid grid-cols-7 gap-1">
-                {days.map((date, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    disabled={!date}
-                    onClick={() => handleDateSelect(date)}
-                    className={`
-                      aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all
-                      ${
-                        !date
-                          ? "invisible"
-                          : isSelected(date)
-                            ? colors.selected
+                {days.map((date, index) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  const isFuture = date && date > today;
+
+                  return (
+                    <button
+                      key={index}
+                      disabled={!date}
+                      onClick={() => handleSelect(date)}
+                      className={`
+                        aspect-square rounded-lg flex items-center justify-center
+                        text-sm transition-all duration-150
+                        ${
+                          !date
+                            ? "invisible"
+                            : isSelected(date)
+                            ? `${theme.bgAccent} text-white shadow-md`
                             : isToday(date)
-                              ? `${colors.today} text-gray-900 dark:text-white ${colors.hover}`
-                              : `text-gray-700 dark:text-gray-300 ${colors.hover}`
-                      }
-                    `}
-                  >
-                    {date?.getDate()}
-                  </button>
-                ))}
+                            ? `border ${theme.today} bg-white dark:bg-gray-800 font-semibold`
+                            : isFuture
+                            ? `text-gray-400 dark:text-gray-600 opacity-60 ${theme.hover}`
+                            : `text-gray-700 dark:text-gray-300 ${theme.hover}`
+                        }
+                      `}
+                    >
+                      {date?.getDate()}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Quick Actions */}
-              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex gap-2">
+              {/* Bottom Actions */}
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-300/30 dark:border-gray-600/30">
                 <button
-                  type="button"
-                  onClick={() => handleDateSelect(new Date())}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
+                  onClick={() => handleSelect(new Date())}
+                  className="w-1/2 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 
+                    text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Today
                 </button>
+
                 <button
-                  type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
+                  className="w-1/2 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 
+                    text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Close
                 </button>

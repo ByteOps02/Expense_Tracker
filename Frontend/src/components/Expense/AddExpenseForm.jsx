@@ -4,7 +4,7 @@ import { LuIndianRupee, LuTag, LuFileText } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
-const AddExpenseForm = ({ onAddExpense }) => {
+const AddExpenseForm = ({ onAddExpense, closeModal }) => {
   const [expense, setExpense] = useState({
     title: "",
     category: "",
@@ -24,7 +24,6 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!expense.title.trim()) newErrors.title = "Expense title is required";
     if (!expense.amount || parseFloat(expense.amount) <= 0)
       newErrors.amount = "Please enter a valid amount";
@@ -42,6 +41,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
     try {
       await onAddExpense?.(expense);
+
       setExpense({
         title: "",
         category: "",
@@ -50,11 +50,28 @@ const AddExpenseForm = ({ onAddExpense }) => {
         description: "",
         icon: "",
       });
+
       setErrors({});
     } catch (error) {
       console.error("Error adding expense:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setExpense({
+      title: "",
+      category: "",
+      amount: "",
+      date: new Date().toISOString().split("T")[0],
+      description: "",
+      icon: "",
+    });
+    setErrors({});
+
+    if (closeModal) {
+      closeModal();
     }
   };
 
@@ -65,7 +82,6 @@ const AddExpenseForm = ({ onAddExpense }) => {
       transition={{ duration: 0.3 }}
       className="w-full max-w-2xl mx-auto"
     >
-      {/* FULL DARK CARD WRAPPER */}
       <div
         className="
           bg-white dark:bg-gray-900 
@@ -78,7 +94,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
 
           {/* TITLE + CATEGORY */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+            
             {/* Expense Title */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -94,17 +110,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
                   value={expense.title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   className={`
-                    w-full pl-10 pr-4 py-3 rounded-xl
+                    w-full pl-10 pr-4 py-2.5 rounded-xl
                     bg-gray-100 dark:bg-gray-800
                     text-gray-900 dark:text-gray-100
                     placeholder-gray-400 dark:placeholder-gray-500
-                    border 
+                    border
                     ${
                       errors.title
                         ? "border-red-400"
                         : "border-gray-300 dark:border-gray-700"
                     }
-                    focus:outline-none focus:ring-2 
+                    focus:outline-none focus:ring-2
                     focus:ring-red-300 dark:focus:ring-red-800
                   `}
                 />
@@ -131,12 +147,12 @@ const AddExpenseForm = ({ onAddExpense }) => {
                     value={expense.category}
                     onChange={(e) => handleChange("category", e.target.value)}
                     className="
-                      w-full pl-10 pr-4 py-3 rounded-xl
+                      w-full pl-10 pr-4 py-2.5 rounded-xl
                       bg-gray-100 dark:bg-gray-800
                       text-gray-900 dark:text-gray-100
                       placeholder-gray-400 dark:placeholder-gray-500
                       border border-gray-300 dark:border-gray-700
-                      focus:outline-none focus:ring-2 
+                      focus:outline-none focus:ring-2
                       focus:ring-red-300 dark:focus:ring-red-800
                     "
                   />
@@ -168,17 +184,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
                   value={expense.amount}
                   onChange={(e) => handleChange("amount", e.target.value)}
                   className={`
-                    w-full pl-10 pr-4 py-3 rounded-xl
+                    w-full pl-10 pr-4 py-2.5 rounded-xl
                     bg-gray-100 dark:bg-gray-800
                     text-gray-900 dark:text-gray-100
                     placeholder-gray-400 dark:placeholder-gray-500
-                    border 
+                    border
                     ${
                       errors.amount
                         ? "border-red-400"
                         : "border-gray-300 dark:border-gray-700"
                     }
-                    focus:outline-none focus:ring-2 
+                    focus:outline-none focus:ring-2
                     focus:ring-red-300 dark:focus:ring-red-800
                   `}
                   min="0"
@@ -191,16 +207,18 @@ const AddExpenseForm = ({ onAddExpense }) => {
               )}
             </div>
 
-            {/* Date Picker */}
+            {/* DATE PICKER */}
             <ModernDatePicker
+              label="Date"
               value={expense.date}
               onChange={(e) => handleChange("date", e.target.value)}
               error={errors.date}
               colorTheme="red"
+              inputClassName="py-2.5 h-11"
             />
           </div>
 
-          {/* Description */}
+          {/* DESCRIPTION */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
               Description
@@ -217,29 +235,47 @@ const AddExpenseForm = ({ onAddExpense }) => {
                 text-gray-900 dark:text-gray-100
                 placeholder-gray-400 dark:placeholder-gray-500
                 border border-gray-300 dark:border-gray-700
-                focus:outline-none focus:ring-2 
+                focus:outline-none focus:ring-2
                 focus:ring-red-300 dark:focus:ring-red-800
                 resize-none
               "
             />
           </div>
 
-          {/* SUBMIT BUTTON */}
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={isSubmitting}
-            className="
-              w-full py-3.5 font-semibold text-white 
-              bg-gradient-to-r from-red-500 to-red-600 
-              hover:from-red-600 hover:to-red-700
-              rounded-xl transition-all shadow-lg 
-              disabled:opacity-50
-            "
-          >
-            {isSubmitting ? "Adding Expense..." : "Add Expense"}
-          </motion.button>
+          {/* BUTTONS */}
+          <div className="flex justify-end space-x-3">
+            
+            {/* Cancel */}
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="
+                py-3 px-6 rounded-xl font-semibold
+                bg-gray-100 dark:bg-gray-700
+                text-gray-700 dark:text-gray-300
+                shadow-lg shadow-gray-200 dark:shadow-gray-900/30
+                transition-all
+              "
+            >
+              Cancel
+            </button>
+
+            {/* Add Expense (RED) */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="
+                py-3 px-6 rounded-xl font-semibold text-white
+                bg-gradient-to-r from-red-500 to-red-600
+                hover:from-red-600 hover:to-red-700
+                shadow-lg shadow-red-200 dark:shadow-red-900/40
+                transition-all
+                disabled:opacity-50
+              "
+            >
+              {isSubmitting ? "Adding Expense..." : "Add Expense"}
+            </button>
+          </div>
         </form>
       </div>
     </motion.div>
