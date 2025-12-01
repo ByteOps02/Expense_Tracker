@@ -85,7 +85,20 @@ app.use((err, req, res, _next) => {
 });
 
 // Connect to MongoDB
-connectDB();
+async function initializeDatabase() {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("Failed to connect to MongoDB on startup:", err.message);
+    // In a serverless environment, crashing here might lead to cold start issues
+    // but the error message will be logged. For a robust solution,
+    // consider handling this more gracefully (e.g., returning a 503 for routes
+    // that depend on DB, or retrying connection).
+    // For now, let's just log and allow the app to attempt to start,
+    // as subsequent DB operations will fail anyway and get caught by their own try/catch.
+  }
+}
+initializeDatabase();
 
 // Only listen if not running in Vercel (local development)
 if (require.main === module) {
