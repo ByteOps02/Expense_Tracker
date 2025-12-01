@@ -128,20 +128,36 @@ exports.getDashboardSummary = async (req, res) => {
 };
 
 /**
- * @desc    Get recent login activities
- * @route   GET /api/v1/dashboard/recent-activities
+ * @desc    Get total expenses by category for the last 30 days
+ * @route   GET /api/v1/dashboard/expense-summary-by-category
  * @access  Private
  */
-exports.getRecentActivities = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("recentLoginActivities");
+exports.getDashboardExpenseSummary = async (req, res) => {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    try {
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+        const summary = await Expense.aggregate([
+            {
+                $match: {
+                    user: userId,
+                    date: { $gte: thirtyDaysAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: "$category",
+                    totalAmount: { $sum: "$amount" }
+                }
+            },
+            {
+                $sort: { totalAmount: -1 }
+            }
+        ]);
+        res.status(200).json(summary);
+    } catch (error) {
+        console.error("Error fetching expense summary by category:", error);
+        res.status(500).json({ message: "Failed to fetch expense summary", error: error.message });
     }
-
-    res.status(200).json({ activities: user.recentLoginActivities.sort((a, b) => b.timestamp - a.timestamp) });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching recent activities", error: err.message });
-  }
 };
