@@ -85,14 +85,13 @@ app.use((err, req, res, _next) => {
 });
 
 // Connect to MongoDB
-// connectDB(); // Moved to local execution block
+connectDB();
 
 // Export the app for Vercel
 module.exports = app;
 
 // Only listen if not running in Vercel (local development)
 if (require.main === module) {
-  connectDB();
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

@@ -8,7 +8,7 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddIncomeForm from "../../components/Income/AddIncomeForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserAuth } from "../../../hooks/useUserAuth";
+import { useUserAuth } from "../../hooks/useUserAuth";
 
 // Income page component
 const Income = () => {

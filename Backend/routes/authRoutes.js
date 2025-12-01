@@ -42,7 +42,7 @@ router.post("/2fa/generate-secret", Protect, generate2FASecret);
 
 // Route for uploading a profile image
 // This route uses the "upload" middleware to handle the file upload
-router.post("/upload-image", upload.single("image"), (req, res) => {
+router.post("/upload-image", Protect, upload.single("image"), (req, res) => {
   // If no file is uploaded, return an error
   if (!req.file) {
     return res.status(400).json({ message: "No File Uploaded" });
