@@ -18,6 +18,7 @@ const ExpenseSchema = new mongoose.Schema(
     date: { type: Date, default: Date.now },
     // Optional description for the expense
     description: { type: String },
+    notes: { type: String },
   },
   // Enable timestamps (createdAt and updatedAt)
   { timestamps: true },
