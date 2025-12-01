@@ -16,23 +16,23 @@
   "rewrites": [
     {
       "source": "/api/v1/auth/(.*)",
-      "destination": "/Backend/api/index.js"
+      "destination": "/Backend/api/index.js/$1"
     },
     {
       "source": "/api/v1/expense/(.*)",
-      "destination": "/Backend/api/index.js"
+      "destination": "/Backend/api/index.js/$1"
     },
     {
       "source": "/api/v1/income/(.*)",
-      "destination": "/Backend/api/index.js"
+      "destination": "/Backend/api/index.js/$1"
     },
     {
       "source": "/api/v1/dashboard/(.*)",
-      "destination": "/Backend/api/index.js"
+      "destination": "/Backend/api/index.js/$1"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/Backend/api/index.js"
+      "destination": "/Backend/api/index.js/$1"
     },
     {
       "source": "/(.*)",
