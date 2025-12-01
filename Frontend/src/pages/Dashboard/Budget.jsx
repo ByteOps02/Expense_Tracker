@@ -3,6 +3,7 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import Modal from '../../components/layouts/Modal';
 import { UserContext } from '../../context/UserContext';
 import axiosInstance from '../../utils/axiosInstance';
+import { API_PATHS } from '../../utils/apiPath';
 import BudgetOverview from '../../components/Budget/BudgetOverview';
 import BudgetList from '../../components/Budget/BudgetList';
 import AddBudgetForm from '../../components/Budget/AddBudgetForm'; // Will be created in next step
@@ -38,10 +39,10 @@ const Budget = () => {
   const fetchBudgetsAndReport = async () => {
     setLoading(true);
     try {
-      const budgetsResponse = await axiosInstance.get('/api/v1/budgets');
+      const budgetsResponse = await axiosInstance.get(API_PATHS.BUDGET.GET_ALL_BUDGETS);
       setBudgets(budgetsResponse.data);
 
-      const reportResponse = await axiosInstance.get(`/api/v1/budgets/report/actual-vs-budget?startDate=${reportStartDate}&endDate=${reportEndDate}`);
+      const reportResponse = await axiosInstance.get(`${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`);
       setBudgetReport(reportResponse.data);
 
     } catch (err) {
@@ -103,9 +104,9 @@ const Budget = () => {
     e.preventDefault();
     try {
       if (editingBudget) {
-        await axiosInstance.put(`/api/v1/budgets/${editingBudget._id}`, formData);
+        await axiosInstance.put(API_PATHS.BUDGET.UPDATE_BUDGET(editingBudget._id), formData);
       } else {
-        await axiosInstance.post('/api/v1/budgets', formData);
+        await axiosInstance.post(API_PATHS.BUDGET.ADD_BUDGET, formData);
       }
       fetchBudgetsAndReport();
       closeModal();
@@ -118,7 +119,7 @@ const Budget = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this budget?')) {
       try {
-        await axiosInstance.delete(`/api/v1/budgets/${id}`);
+        await axiosInstance.delete(API_PATHS.BUDGET.DELETE_BUDGET(id));
         fetchBudgetsAndReport();
       }
       catch (err) {

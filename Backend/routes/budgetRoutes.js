@@ -15,12 +15,12 @@ router.route('/')
     .post(Protect, createBudget)
     .get(Protect, getBudgets);
 
+// New route for budget vs actual report
+router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
+
 router.route('/:id')
     .get(Protect, getBudget)
     .put(Protect, updateBudget)
     .delete(Protect, deleteBudget);
-
-// New route for budget vs actual report
-router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
 
 module.exports = router;

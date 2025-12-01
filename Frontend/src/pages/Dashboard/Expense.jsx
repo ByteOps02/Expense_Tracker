@@ -9,7 +9,7 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserAuth } from "../../../hooks/useUserAuth";
+import { useUserAuth } from "../../hooks/useUserAuth";
 
 // Expense page component
 const Expense = () => {
