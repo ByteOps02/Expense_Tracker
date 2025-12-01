@@ -56,7 +56,7 @@ const Home = () => {
     <DashboardLayout activeMenu="Dashboard">
       <div className="w-full max-w-[1400px] mx-auto px-4">
         {/* Top section with summary info cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 animate-fadeIn">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           <InfoCard
             icon={<MdAccountBalanceWallet />}
             label="Total Balance"
@@ -94,7 +94,7 @@ const Home = () => {
         </div>
 
         {/* Middle section with recent transactions and expenses */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-slideIn">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <RecentTransactions
             transactions={dashboardData?.last5Transactions || []}
             onSeeMore={() => navigate("/expense")}

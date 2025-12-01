@@ -4,7 +4,7 @@ import moment from "moment";
 
 const RecentIncome = ({ transactions, onSeeMore }) => {
   return (
-    <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out">
+    <div className="card h-[400px] transition-all duration-300 ease-in-out">
       <div className="flex items-center justify-between ">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">Income</h5>
         <button className="card-btn" onClick={onSeeMore}>
@@ -16,7 +16,7 @@ const RecentIncome = ({ transactions, onSeeMore }) => {
           {transactions?.slice(0, 4)?.map((item, idx) => (
             <li
               key={item._id}
-              className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg mb-3 p-3 animate-fadeIn"
+              className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg mb-3 p-3"
               style={{ animationDelay: `${idx * 80}ms` }}
             >
               <div className="flex items-center gap-3">

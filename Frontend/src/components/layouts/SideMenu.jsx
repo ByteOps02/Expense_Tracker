@@ -30,7 +30,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
     <div className="w-64 h-full bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col shadow-sm transition-all duration-300 lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
       
       {/* Profile section */}
-      <div className="flex flex-col items-center justify-center gap-3 mt-8 mb-8 animate-fadeIn">
+      <div className="flex flex-col items-center justify-center gap-3 mt-8 mb-8">
         <div className="relative">
           {!user?.profileImageUrl ? (
             <CharAvatar

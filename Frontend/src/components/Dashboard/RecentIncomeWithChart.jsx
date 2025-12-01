@@ -11,7 +11,7 @@ const RecentIncomeWithChart = ({ data, totalIncome }) => {
   );
 
   return (
-    <div className="card animate-bounceIn h-[400px] transition-all duration-300 ease-in-out flex flex-col">
+    <div className="card h-[400px] transition-all duration-300 ease-in-out flex flex-col">
       <div className="flex items-center justify-between">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Last 60 Days Income
