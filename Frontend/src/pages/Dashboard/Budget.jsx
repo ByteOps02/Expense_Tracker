@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { motion } from 'framer-motion'; // Import motion
+import { LuTag, LuWallet, LuCalendar } from 'react-icons/lu'; // Import icons
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import Modal from '../../components/layouts/Modal';
 import { UserContext } from '../../context/UserContext';
 import axiosInstance from '../../utils/axiosInstance';
-import ChartJsBarChart from '../../components/Charts/ChartJsBarChart'; // Import Bar Chart
+import ChartJsBarChart from '../../components/Charts/ChartJsBarChart';
+import ModernDatePicker from '../../components/Inputs/ModernDatePicker'; // Import ModernDatePicker
+
 
 // Helper to format currency
 const formatCurrency = (amount) => {
@@ -16,7 +20,7 @@ const formatCurrency = (amount) => {
 const Budget = () => {
   const { user } = useContext(UserContext);
   const [budgets, setBudgets] = useState([]);
-  const [budgetReport, setBudgetReport] = useState([]); // State for budget vs actual report
+  const [budgetReport, setBudgetReport] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +28,7 @@ const Budget = () => {
 
   const [reportStartDate, setReportStartDate] = useState(() => {
     const d = new Date();
-    d.setMonth(d.getMonth() - 1); // Default to last month
+    d.setMonth(d.getMonth() - 1);
     return d.toISOString().split('T')[0];
   });
   const [reportEndDate, setReportEndDate] = useState(new Date().toISOString().split('T')[0]);
@@ -58,14 +62,18 @@ const Budget = () => {
 
   useEffect(() => {
     fetchBudgetsAndReport();
-  }, [reportStartDate, reportEndDate]); // Refetch when date range changes
+  }, [reportStartDate, reportEndDate]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (key, value) => { // Modified handleChange to accept key and value directly
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [key]: value,
     }));
+  };
+
+  const handleInputChange = (e) => { // New handler for standard input elements
+    const { name, value, type, checked } = e.target;
+    handleChange(name, type === 'checkbox' ? checked : value);
   };
 
   const openAddModal = () => {
@@ -73,8 +81,8 @@ const Budget = () => {
     setFormData({
       category: '',
       amount: '',
-      startDate: '',
-      endDate: '',
+      startDate: new Date().toISOString().split('T')[0], // Default current date
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0], // Default one month later
       isRecurring: false,
       recurrenceType: '',
     });
@@ -127,7 +135,6 @@ const Budget = () => {
     }
   };
 
-  // Prepare data for the bar chart
   const getChartData = () => {
     const labels = budgetReport.map(item => item.category);
     const budgetAmounts = budgetReport.map(item => item.budgetAmount);
@@ -170,12 +177,14 @@ const Budget = () => {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Budget Overview</h1>
 
         <div className="flex justify-between items-center mb-6">
-            <button
+            <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={openAddModal}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                className="w-auto py-3.5 px-6 font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
             >
                 Add New Budget
-            </button>
+            </motion.button>
             <div className="flex items-center space-x-4">
                 <div>
                     <label htmlFor="reportStartDate" className="sr-only">Start Date</label>
@@ -235,7 +244,7 @@ const Budget = () => {
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${budget.remaining < 0 ? 'text-red-500' : 'text-green-500'}`}>{formatCurrency(budget.remaining)}</td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${budget.status === 'overspent' ? 'text-red-500' : 'text-green-500'}`}>{budget.status.replace('_', ' ')}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {new Date(budget.startDate).toLocaleDateString()} - {new Date(budget.startDate).toLocaleDateString()}
+                      {new Date(budget.startDate).toLocaleDateString()} - {new Date(budget.endDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {budget.isRecurring ? budget.recurrenceType : 'No'}
@@ -253,76 +262,83 @@ const Budget = () => {
 
         {/* Add/Edit Budget Modal */}
         <Modal isOpen={isModalOpen} onClose={closeModal} title={editingBudget ? 'Edit Budget' : 'Add New Budget'}>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-              <input
-                type="text"
-                name="category"
-                id="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6"> {/* Changed space-y-4 to space-y-6 for consistency */}
+            {/* Category */}
+            <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Category <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                    <LuTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
+                    <input
+                        type="text"
+                        name="category"
+                        id="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                        required
+                    />
+                </div>
             </div>
-            <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
-              <input
-                type="number"
-                name="amount"
-                id="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                required
-                min="0"
-              />
+
+            {/* Amount */}
+            <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Amount <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                    <LuWallet className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-600 transition-colors" />
+                    <input
+                        type="number"
+                        name="amount"
+                        id="amount"
+                        value={formData.amount}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                        required
+                        min="0"
+                    />
+                </div>
             </div>
-            <div>
-              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                id="startDate"
+
+            {/* Start Date */}
+            <ModernDatePicker
+                label="Start Date"
                 value={formData.startDate}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                id="endDate"
+                onChange={(e) => handleChange("startDate", e.target.value)}
+                name="startDate"
+                colorTheme="purple"
+            />
+            {/* End Date */}
+            <ModernDatePicker
+                label="End Date"
                 value={formData.endDate}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-text-white"
-                required
-              />
-            </div>
+                onChange={(e) => handleChange("endDate", e.target.value)}
+                name="endDate"
+                colorTheme="purple"
+            />
+
             <div className="flex items-center">
               <input
                 id="isRecurring"
                 name="isRecurring"
                 type="checkbox"
                 checked={formData.isRecurring}
-                onChange={handleChange}
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
+                onChange={handleInputChange}
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
               />
               <label htmlFor="isRecurring" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">Is Recurring?</label>
             </div>
             {formData.isRecurring && (
-              <div>
-                <label htmlFor="recurrenceType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Recurrence Type</label>
+              <div className="space-y-2">
+                <label htmlFor="recurrenceType" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Recurrence Type</label>
                 <select
                   name="recurrenceType"
                   id="recurrenceType"
                   value={formData.recurrenceType}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   required={formData.isRecurring}
                 >
                   <option value="">Select Type</option>
@@ -334,19 +350,23 @@ const Budget = () => {
               </div>
             )}
             <div className="flex justify-end space-x-2">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={closeModal}
-                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:hover:bg-gray-700 sm:text-sm"
+                className="w-auto py-3.5 px-6 font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 shadow-lg shadow-gray-200 dark:shadow-gray-900/30"
               >
                 Cancel
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+                className="w-auto py-3.5 px-6 font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 {editingBudget ? 'Update Budget' : 'Add Budget'}
-              </button>
+              </motion.button>
             </div>
           </form>
         </Modal>
