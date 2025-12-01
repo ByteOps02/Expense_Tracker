@@ -256,8 +256,8 @@ const Budget = () => {
                       {budget.isRecurring ? budget.recurrenceType : 'No'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onClick={() => openEditModal(budget)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-600 mr-4">Edit</button>
-                      <button onClick={() => handleDelete(budget._id)} className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600">Delete</button>
+                      <button onClick={() => openEditModal(budget)} className="text-indigo-600 dark:text-indigo-400 mr-4">Edit</button>
+                      <button onClick={() => handleDelete(budget._id)} className="text-red-600 dark:text-red-400">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -362,7 +362,7 @@ const Budget = () => {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={closeModal}
-                className="w-auto py-3.5 px-6 font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 shadow-lg shadow-gray-200 dark:shadow-gray-900/30"
+                className="w-auto py-3.5 px-6 font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-200 shadow-lg shadow-gray-200 dark:shadow-gray-900/30"
               >
                 Cancel
               </motion.button>

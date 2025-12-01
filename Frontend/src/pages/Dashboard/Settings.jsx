@@ -103,7 +103,7 @@ const Settings = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="px-6 py-2.5 font-medium text-white bg-purple-600 dark:bg-purple-600 rounded-xl hover:bg-purple-700 dark:hover:bg-purple-700 transition-colors duration-200 shadow-lg shadow-purple-200 dark:shadow-none cursor-pointer"
+              className="px-6 py-2.5 font-medium text-white bg-purple-600 dark:bg-purple-600 rounded-xl transition-colors duration-200 shadow-lg shadow-purple-200 dark:shadow-none cursor-pointer"
             >
               Change Password
             </motion.button>

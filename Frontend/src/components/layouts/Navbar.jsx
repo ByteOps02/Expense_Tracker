@@ -22,7 +22,7 @@ const Navbar = ({ activeMenu }) => {
     <div className="bg-white dark:bg-gray-800 shadow-lg flex items-center justify-between border-b border-gray-100 dark:border-gray-700 py-3 px-6 fixed top-0 left-0 w-full z-50 transition-all duration-300">
       <div className="flex items-center gap-5">
         <button
-          className="block lg:hidden text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 p-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+          className="block lg:hidden text-gray-600 dark:text-gray-300 p-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
           onClick={() => {
             setOpenSideMenu(!openSideMenu);
           }}
@@ -40,7 +40,7 @@ const Navbar = ({ activeMenu }) => {
 
       <button
         onClick={toggleTheme}
-        className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+        className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors duration-200"
         aria-label="Toggle Theme"
       >
         {theme === "dark" ? (

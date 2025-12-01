@@ -79,7 +79,7 @@ const SignUp = () => {
           <div className="flex justify-end mb-4">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors duration-200"
               aria-label="Toggle Theme"
             >
               {theme === "dark" ? (
@@ -160,7 +160,7 @@ const SignUp = () => {
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:underline"
+              className="font-semibold text-purple-600 dark:text-purple-400"
             >
               Sign In
             </Link>

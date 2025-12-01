@@ -160,8 +160,7 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
-                  onClick={() => handleMonthChange(-1)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
                 >
                   <LuChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
@@ -174,7 +173,7 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                 <button
                   type="button"
                   onClick={() => handleMonthChange(1)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
                 >
                   <LuChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
@@ -208,8 +207,8 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                           : isSelected(date)
                             ? colors.selected
                             : isToday(date)
-                              ? `${colors.today} text-gray-900 dark:text-white ${colors.hover} dark:hover:bg-gray-700`
-                              : `text-gray-700 dark:text-gray-300 ${colors.hover} dark:hover:bg-gray-700`
+                              ? `${colors.today} text-gray-900 dark:text-white ${colors.hover}`
+                              : `text-gray-700 dark:text-gray-300 ${colors.hover}`
                       }
                     `}
                   >
@@ -223,14 +222,14 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
                 <button
                   type="button"
                   onClick={() => handleDateSelect(new Date())}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   Today
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   Close
                 </button>
