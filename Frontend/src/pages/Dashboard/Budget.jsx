@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion } from 'framer-motion'; // Import motion
-import { LuTag, LuWallet, LuCalendar } from 'react-icons/lu'; // Import icons
+import { LuTag, LuWallet, LuCalendar, LuPlus } from 'react-icons/lu'; // Import icons
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import Modal from '../../components/layouts/Modal';
 import { UserContext } from '../../context/UserContext';
@@ -181,8 +181,9 @@ const Budget = () => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={openAddModal}
-                className="w-auto py-3.5 px-6 font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="add-btn" // Use the defined CSS class
             >
+                <LuPlus className="text-lg" /> {/* Add the Plus icon */}
                 Add New Budget
             </motion.button>
             <div className="flex items-center space-x-4">
