@@ -14,6 +14,7 @@ const authRoutes = require("./routes/authRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 
 
 // Initialize express app
@@ -63,6 +64,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/income", incomeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/budgets", budgetRoutes);
 
 // Serve static files (Optional: mostly for local dev or if you keep backend/frontend together)
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
