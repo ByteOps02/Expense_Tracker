@@ -15,6 +15,7 @@ module.exports = async (req, res) => {
       return res.status(500).send("Database connection failed.");
     }
   }
+  console.log(`Incoming Request: ${req.method} ${req.url}`);
   // Let the Express app handle the request
   return app(req, res);
 };
