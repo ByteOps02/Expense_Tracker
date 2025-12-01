@@ -67,7 +67,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
             className={`w-full flex items-center gap-3 text-sm py-3 px-4 rounded-xl transition-all duration-200 group ${
               activeMenu === item.label
                 ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-semibold"
-                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                : "text-gray-600 dark:text-gray-300"
             }`}
             onClick={() => handleClick(item.path)}
           >
