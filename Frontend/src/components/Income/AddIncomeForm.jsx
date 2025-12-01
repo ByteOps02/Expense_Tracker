@@ -4,7 +4,7 @@ import { LuIndianRupee, LuBriefcase } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
-const AddIncomeForm = ({ onAddIncome }) => {
+const AddIncomeForm = ({ onAddIncome, closeModal }) => {
   const [income, setIncome] = useState({
     title: "",
     source: "",
@@ -13,6 +13,7 @@ const AddIncomeForm = ({ onAddIncome }) => {
     note: "",
     icon: "",
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -39,9 +40,9 @@ const AddIncomeForm = ({ onAddIncome }) => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     try {
       await onAddIncome?.(income);
+
       setIncome({
         title: "",
         source: "",
@@ -50,12 +51,17 @@ const AddIncomeForm = ({ onAddIncome }) => {
         note: "",
         icon: "",
       });
+
       setErrors({});
     } catch (error) {
       console.error("Error adding income:", error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCancel = () => {
+    if (closeModal) closeModal();
   };
 
   return (
@@ -65,7 +71,6 @@ const AddIncomeForm = ({ onAddIncome }) => {
       transition={{ duration: 0.3 }}
       className="w-full max-w-2xl mx-auto"
     >
-      {/* FULL DARK CARD WRAPPER */}
       <div
         className="
           bg-white dark:bg-gray-900
@@ -75,11 +80,13 @@ const AddIncomeForm = ({ onAddIncome }) => {
         "
       >
         <form onSubmit={handleSubmit} className="space-y-6">
+
           {/* TITLE + SOURCE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
             {/* Income Title */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label className="block text-sm font-semibold">
                 Income Title <span className="text-green-500">*</span>
               </label>
 
@@ -92,10 +99,9 @@ const AddIncomeForm = ({ onAddIncome }) => {
                   value={income.title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   className={`
-                    w-full pl-10 pr-4 py-3 rounded-xl
+                    w-full pl-10 pr-4 py-2.5 rounded-xl
                     bg-gray-100 dark:bg-gray-800
                     text-gray-900 dark:text-gray-100
-                    placeholder-gray-400 dark:placeholder-gray-500
                     border
                     ${
                       errors.title
@@ -108,12 +114,14 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 />
               </div>
 
-              {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-xs text-red-500">{errors.title}</p>
+              )}
             </div>
 
             {/* Source + Emoji */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label className="block text-sm font-semibold">
                 Source <span className="text-green-500">*</span>
               </label>
 
@@ -123,14 +131,13 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
                   <input
                     type="text"
-                    placeholder="e.g., Salary"
+                    placeholder="e.g., Company, Freelance"
                     value={income.source}
                     onChange={(e) => handleChange("source", e.target.value)}
                     className={`
-                      w-full pl-10 pr-4 py-3 rounded-xl
+                      w-full pl-10 pr-4 py-2.5 rounded-xl
                       bg-gray-100 dark:bg-gray-800
                       text-gray-900 dark:text-gray-100
-                      placeholder-gray-400 dark:placeholder-gray-500
                       border
                       ${
                         errors.source
@@ -157,9 +164,10 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
           {/* AMOUNT + DATE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
             {/* Amount */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label className="block text-sm font-semibold">
                 Amount <span className="text-green-500">*</span>
               </label>
 
@@ -172,10 +180,9 @@ const AddIncomeForm = ({ onAddIncome }) => {
                   value={income.amount}
                   onChange={(e) => handleChange("amount", e.target.value)}
                   className={`
-                    w-full pl-10 pr-4 py-3 rounded-xl
+                    w-full pl-10 pr-4 py-2.5 rounded-xl
                     bg-gray-100 dark:bg-gray-800
                     text-gray-900 dark:text-gray-100
-                    placeholder-gray-400 dark:placeholder-gray-500
                     border
                     ${
                       errors.amount
@@ -197,18 +204,18 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
             {/* Date Picker */}
             <ModernDatePicker
+              label="Date"
               value={income.date}
               onChange={(e) => handleChange("date", e.target.value)}
               error={errors.date}
               colorTheme="green"
+              inputClassName="py-2.5 h-11"
             />
           </div>
 
           {/* Note */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Note
-            </label>
+            <label className="block text-sm font-semibold">Note</label>
 
             <textarea
               rows={3}
@@ -219,7 +226,6 @@ const AddIncomeForm = ({ onAddIncome }) => {
                 w-full px-4 py-3 rounded-xl
                 bg-gray-100 dark:bg-gray-800
                 text-gray-900 dark:text-gray-100
-                placeholder-gray-400 dark:placeholder-gray-500
                 border border-gray-300 dark:border-gray-700
                 focus:outline-none focus:ring-2
                 focus:ring-green-300 dark:focus:ring-green-800
@@ -228,22 +234,37 @@ const AddIncomeForm = ({ onAddIncome }) => {
             />
           </div>
 
-          {/* SUBMIT BUTTON */}
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={isSubmitting}
-            className="
-              w-full py-3.5 font-semibold text-white
-              bg-gradient-to-r from-green-500 to-green-600
-              hover:from-green-600 hover:to-green-700
-              rounded-xl transition-all shadow-lg
-              disabled:opacity-50
-            "
-          >
-            {isSubmitting ? "Adding Income..." : "Add Income"}
-          </motion.button>
+          {/* BUTTONS - same as AddExpenseForm */}
+          <div className="flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="
+                py-3 px-6 rounded-xl font-semibold
+                bg-gray-100 dark:bg-gray-700
+                text-gray-700 dark:text-gray-300
+                shadow-lg shadow-gray-200 dark:shadow-gray-900/30
+                transition-all
+              "
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="
+                py-3 px-6 rounded-xl font-semibold text-white
+                bg-gradient-to-r from-green-500 to-green-600
+                hover:from-green-600 hover:to-green-700
+                shadow-lg shadow-green-200 dark:shadow-green-900/40
+                transition-all
+                disabled:opacity-50
+              "
+            >
+              {isSubmitting ? "Adding Income..." : "Add Income"}
+            </button>
+          </div>
         </form>
       </div>
     </motion.div>
