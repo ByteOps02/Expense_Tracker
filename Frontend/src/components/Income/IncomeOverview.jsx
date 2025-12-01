@@ -10,15 +10,16 @@ import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
 const IncomeOverview = ({ transactions, onAddIncome }) => {
   const barChartData = useMemo(
     () => prepareIncomeBarChartData(transactions),
-    [transactions],
+    [transactions]
   );
+
   const sourceChartData = useMemo(
     () => prepareCategoryData(transactions, "source"),
-    [transactions],
+    [transactions]
   );
 
   return (
-    <div className="card lg:ml-2.5">
+    <div className="card w-full"> 
       <div className="flex items-center justify-between mb-6">
         <div>
           <h5 className="text-lg font-semibold text-gray-900">
@@ -29,13 +30,15 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
           </p>
         </div>
 
-        <button className="add-btn" onClick={onAddIncome}>
+        <button className="add-btn flex-shrink-0" onClick={onAddIncome}>
           <LuPlus className="text-lg" />
           Add Income
         </button>
       </div>
 
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
         {/* Bar Chart Section */}
         <div className="lg:col-span-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
           <h6 className="text-sm font-semibold text-gray-700 mb-4">
@@ -59,6 +62,7 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
             )}
           </div>
         </div>
+
       </div>
     </div>
   );

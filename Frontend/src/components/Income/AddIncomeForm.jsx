@@ -18,30 +18,17 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
   const handleChange = (key, value) => {
     setIncome((prev) => ({ ...prev, [key]: value }));
-
-    if (errors[key]) {
-      setErrors((prev) => ({ ...prev, [key]: "" }));
-    }
+    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!income.title.trim()) {
-      newErrors.title = "Income title is required";
-    }
-
-    if (!income.source.trim()) {
-      newErrors.source = "Income source is required";
-    }
-
-    if (!income.amount || parseFloat(income.amount) <= 0) {
+    if (!income.title.trim()) newErrors.title = "Income title is required";
+    if (!income.source.trim()) newErrors.source = "Income source is required";
+    if (!income.amount || parseFloat(income.amount) <= 0)
       newErrors.amount = "Please enter a valid amount";
-    }
-
-    if (!income.date) {
-      newErrors.date = "Date is required";
-    }
+    if (!income.date) newErrors.date = "Date is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -49,14 +36,12 @@ const AddIncomeForm = ({ onAddIncome }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
       await onAddIncome?.(income);
-
       setIncome({
         title: "",
         source: "",
@@ -80,166 +65,187 @@ const AddIncomeForm = ({ onAddIncome }) => {
       transition={{ duration: 0.3 }}
       className="w-full max-w-2xl mx-auto"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title & Source Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Income Title */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Income Title <span className="text-green-500">*</span>
-            </label>
-            <div className="relative group">
-              <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
-              <input
-                type="text"
-                placeholder="e.g., Monthly Salary"
-                value={income.title}
-                onChange={(e) => handleChange("title", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
-                  errors.title
-                    ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                    : "border-gray-200 dark:border-gray-700"
-                }`}
-              />
-            </div>
-            {errors.title && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500 flex items-center gap-1"
-              >
-                {errors.title}
-              </motion.p>
-            )}
-          </div>
+      {/* FULL DARK CARD WRAPPER */}
+      <div
+        className="
+          bg-white dark:bg-gray-900
+          text-gray-900 dark:text-gray-100
+          border border-gray-200 dark:border-gray-700
+          p-6 rounded-2xl shadow-lg
+        "
+      >
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* TITLE + SOURCE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Income Title */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Income Title <span className="text-green-500">*</span>
+              </label>
 
-          {/* Source with Emoji */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Source <span className="text-green-500">*</span>
-            </label>
-            <div className="flex gap-3">
-              <div className="relative group flex-1">
-                <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
+              <div className="relative">
+                <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
                 <input
                   type="text"
-                  placeholder="e.g., Salary"
-                  value={income.source}
-                  onChange={(e) => handleChange("source", e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
-                    errors.source
-                      ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                      : "border-gray-200 dark:border-gray-700"
-                  }`}
+                  placeholder="e.g., Monthly Salary"
+                  value={income.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className={`
+                    w-full pl-10 pr-4 py-3 rounded-xl
+                    bg-gray-100 dark:bg-gray-800
+                    text-gray-900 dark:text-gray-100
+                    placeholder-gray-400 dark:placeholder-gray-500
+                    border
+                    ${
+                      errors.title
+                        ? "border-red-400"
+                        : "border-gray-300 dark:border-gray-700"
+                    }
+                    focus:outline-none focus:ring-2
+                    focus:ring-green-300 dark:focus:ring-green-800
+                  `}
                 />
               </div>
-              <EmojiPickerPopup
-                icon={income.icon}
-                onSelect={(icon) => handleChange("icon", icon)}
-              />
-            </div>
-            {errors.source && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500"
-              >
-                {errors.source}
-              </motion.p>
-            )}
-          </div>
-        </div>
 
-        {/* Amount & Date Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Amount */}
+              {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+            </div>
+
+            {/* Source + Emoji */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Source <span className="text-green-500">*</span>
+              </label>
+
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
+                  <input
+                    type="text"
+                    placeholder="e.g., Salary"
+                    value={income.source}
+                    onChange={(e) => handleChange("source", e.target.value)}
+                    className={`
+                      w-full pl-10 pr-4 py-3 rounded-xl
+                      bg-gray-100 dark:bg-gray-800
+                      text-gray-900 dark:text-gray-100
+                      placeholder-gray-400 dark:placeholder-gray-500
+                      border
+                      ${
+                        errors.source
+                          ? "border-red-400"
+                          : "border-gray-300 dark:border-gray-700"
+                      }
+                      focus:outline-none focus:ring-2
+                      focus:ring-green-300 dark:focus:ring-green-800
+                    `}
+                  />
+                </div>
+
+                <EmojiPickerPopup
+                  icon={income.icon}
+                  onSelect={(icon) => handleChange("icon", icon)}
+                />
+              </div>
+
+              {errors.source && (
+                <p className="text-xs text-red-500">{errors.source}</p>
+              )}
+            </div>
+          </div>
+
+          {/* AMOUNT + DATE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Amount */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Amount <span className="text-green-500">*</span>
+              </label>
+
+              <div className="relative">
+                <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  value={income.amount}
+                  onChange={(e) => handleChange("amount", e.target.value)}
+                  className={`
+                    w-full pl-10 pr-4 py-3 rounded-xl
+                    bg-gray-100 dark:bg-gray-800
+                    text-gray-900 dark:text-gray-100
+                    placeholder-gray-400 dark:placeholder-gray-500
+                    border
+                    ${
+                      errors.amount
+                        ? "border-red-400"
+                        : "border-gray-300 dark:border-gray-700"
+                    }
+                    focus:outline-none focus:ring-2
+                    focus:ring-green-300 dark:focus:ring-green-800
+                  `}
+                  step="0.01"
+                  min="0"
+                />
+              </div>
+
+              {errors.amount && (
+                <p className="text-xs text-red-500">{errors.amount}</p>
+              )}
+            </div>
+
+            {/* Date Picker */}
+            <ModernDatePicker
+              value={income.date}
+              onChange={(e) => handleChange("date", e.target.value)}
+              error={errors.date}
+              colorTheme="green"
+            />
+          </div>
+
+          {/* Note */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Amount <span className="text-green-500">*</span>
+              Note
             </label>
-            <div className="relative group">
-              <LuIndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors" />
-              <input
-                type="number"
-                placeholder="0.00"
-                value={income.amount}
-                onChange={(e) => handleChange("amount", e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${
-                  errors.amount
-                    ? "border-red-300 focus:ring-red-100 focus:border-red-500"
-                    : "border-gray-200 dark:border-gray-700"
-                }`}
-                step="0.01"
-                min="0"
-              />
-            </div>
-            {errors.amount && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-500"
-              >
-                {errors.amount}
-              </motion.p>
-            )}
+
+            <textarea
+              rows={3}
+              placeholder="Add notes about this income (optional)"
+              value={income.note}
+              onChange={(e) => handleChange("note", e.target.value)}
+              className="
+                w-full px-4 py-3 rounded-xl
+                bg-gray-100 dark:bg-gray-800
+                text-gray-900 dark:text-gray-100
+                placeholder-gray-400 dark:placeholder-gray-500
+                border border-gray-300 dark:border-gray-700
+                focus:outline-none focus:ring-2
+                focus:ring-green-300 dark:focus:ring-green-800
+                resize-none
+              "
+            />
           </div>
 
-          {/* Date */}
-          <ModernDatePicker
-            value={income.date}
-            onChange={(e) => handleChange("date", e.target.value)}
-            error={errors.date}
-            colorTheme="green"
-          />
-        </div>
-
-        {/* Note */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Note
-          </label>
-          <textarea
-            placeholder="Add notes about this income (optional)"
-            value={income.note}
-            onChange={(e) => handleChange("note", e.target.value)}
-            rows={3}
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 focus:border-green-500 dark:focus:border-green-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-3.5 font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Adding Income...
-            </span>
-          ) : (
-            "Add Income"
-          )}
-        </motion.button>
-      </form>
+          {/* SUBMIT BUTTON */}
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={isSubmitting}
+            className="
+              w-full py-3.5 font-semibold text-white
+              bg-gradient-to-r from-green-500 to-green-600
+              hover:from-green-600 hover:to-green-700
+              rounded-xl transition-all shadow-lg
+              disabled:opacity-50
+            "
+          >
+            {isSubmitting ? "Adding Income..." : "Add Income"}
+          </motion.button>
+        </form>
+      </div>
     </motion.div>
   );
 };

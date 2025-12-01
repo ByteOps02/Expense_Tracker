@@ -154,7 +154,7 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute z-50 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-4 w-full min-w-[320px]"
+              className="absolute z-50 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-3 w-full min-w-[320px]"
             >
               {/* Month/Year Header */}
               <div className="flex items-center justify-between mb-4">
