@@ -187,7 +187,7 @@ const Expense = () => {
           onClose={() => setOpenAddExpenseModal(false)}
           title="Add Expense"
         >
-          <AddExpenseForm onAddExpense={handleAddExpense} />
+          <AddExpenseForm onAddExpense={handleAddExpense} closeModal={() => setOpenAddExpenseModal(false)} />
         </Modal>
       </div>
     </DashboardLayout>
