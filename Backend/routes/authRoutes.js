@@ -1,6 +1,5 @@
 // Import necessary packages
 const express = require("express");
-const rateLimit = require("express-rate-limit");
 const cloudinary = require("cloudinary").v2;
 
 // Import middleware and controllers
@@ -33,23 +32,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Rate limiter for login and register endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit to 5 attempts per windowMs
-  message: "Too many authentication attempts, please try again later.",
-  skipSuccessfulRequests: false,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 // Route for user registration
 // This route is used to create a new user account
-router.post("/register", authLimiter, validateRegister, handleValidationErrors, registerUser);
+router.post("/register", validateRegister, handleValidationErrors, registerUser);
 
 // Route for user login
 // This route is used to authenticate a user and get a JWT token
-router.post("/login", authLimiter, validateLogin, handleValidationErrors, loginUser);
+router.post("/login", validateLogin, handleValidationErrors, loginUser);
 
 // Route to get user information
 // This is a protected route, meaning the user must be authenticated to access it
