@@ -1,6 +1,7 @@
 // Import necessary packages and models
 const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
+const mongoose = require("mongoose");
 
 /**
  * @desc    Add a new income
@@ -68,9 +69,13 @@ exports.deleteIncome = async (req, res) => {
   try {
     const userId = req.user.id;
     const incomeId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(incomeId)) {
+      return res.status(400).json({ message: "Invalid income id" });
+    }
+
     const income = await Income.findOneAndDelete({
-      _id: incomeId,
-      user: userId,
+      _id: mongoose.Types.ObjectId(incomeId),
+      user: mongoose.Types.ObjectId(userId),
     });
     if (!income) {
       return res.status(404).json({ message: "Income not found" });
@@ -96,9 +101,15 @@ exports.updateIncome = async (req, res) => {
     const incomeId = req.params.id;
     const { title, icon, amount, source, date, note } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(incomeId)) {
+      return res.status(400).json({ message: "Invalid income id" });
+    }
+
+    const updatePayload = { title, icon, amount, source, date, note };
+
     const income = await Income.findOneAndUpdate(
-      { _id: incomeId, user: userId },
-      { title, icon, amount, source, date, note },
+      { _id: mongoose.Types.ObjectId(incomeId), user: mongoose.Types.ObjectId(userId) },
+      updatePayload,
       { new: true, runValidators: true },
     );
 

@@ -7,6 +7,12 @@ const cors = require("cors");
 const path = require("path");
 const compression = require("compression");
 const session = require("express-session");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const cookieParser = require("cookie-parser");
+const csurf = require("csurf");
 
 // Import local modules
 const connectDB = require("./config/db");
@@ -22,6 +28,15 @@ const app = express();
 
 // Enable gzip compression for all responses to reduce bandwidth usage
 app.use(compression());
+
+// Set secure HTTP headers
+app.use(helmet());
+
+// Data sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// Prevent XSS attacks
+app.use(xss());
 
 // Trust the proxy (required for Vercel/Heroku/etc to pass secure cookies)
 app.set("trust proxy", 1);
@@ -53,6 +68,35 @@ app.use(
     },
   }),
 );
+
+// Apply rate limiting to all API routes
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
+
+// Cookie parser needed for CSRF protection when using cookie-based tokens
+app.use(cookieParser());
+
+// Enable CSRF protection in production only to avoid breaking local dev clients
+if (process.env.NODE_ENV === 'production') {
+  app.use(csurf({ cookie: true }));
+  // expose token on a cookie for client to read and use in requests
+  app.use((req, res, next) => {
+    try {
+      res.cookie('XSRF-TOKEN', req.csrfToken(), {
+        httpOnly: false,
+        sameSite: 'Lax',
+      });
+    } catch (e) {
+      // If no session/csrf token is available, ignore and continue
+    }
+    next();
+  });
+}
 
 // Root route to check if server is running
 app.get("/", (req, res) => {
