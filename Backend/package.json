@@ -15,7 +15,7 @@
     "base64url": "^3.0.1",
     "bcryptjs": "^3.0.2",
     "cbor": "^10.0.11",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.7.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
