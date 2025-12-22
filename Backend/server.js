@@ -4,7 +4,6 @@ require("dotenv").config();
 // Import necessary packages
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const compression = require("compression");
 const session = require("express-session");
 const helmet = require("helmet");
@@ -50,21 +49,38 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Stricter rate limiting for authentication endpoints
-const authLimiter = rateLimit({
+// Stricter rate limiting for authentication endpoints (login and register)
+const loginRegisterLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 login attempts per windowMs
-  message: "Too many login attempts, please try again later.",
+  max: 5, // limit each IP to 5 login/register attempts per windowMs
+  message: "Too many login or registration attempts from this IP, please try again later.",
   skipSuccessfulRequests: false,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Apply general rate limiting
-app.use(generalLimiter);
+// Rate limiting for image uploads
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // Limit each IP to 20 upload attempts per windowMs
+  message: "Too many image upload attempts from this IP, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Trust the proxy (required for Vercel/Heroku/etc to pass secure cookies)
 app.set("trust proxy", 1);
+
+// Apply general rate limiting to all requests except auth and upload
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/v1/auth/login") || req.path.startsWith("/api/v1/auth/register")) {
+    return loginRegisterLimiter(req, res, next);
+  }
+  if (req.path.startsWith("/api/v1/auth/upload-image")) {
+    return uploadLimiter(req, res, next);
+  }
+  return generalLimiter(req, res, next);
+});
 
 // Parse incoming JSON requests
 app.use(express.json());

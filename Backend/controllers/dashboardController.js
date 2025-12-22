@@ -1,7 +1,6 @@
 // Import necessary models
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
-const User = require("../models/User"); // Import User model
 const mongoose = require("mongoose");
 
 /**

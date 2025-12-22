@@ -113,7 +113,7 @@ const SignUp = () => {
                   <FiUser className="absolute top-3.5 left-3 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Enter Full Name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
@@ -127,7 +127,7 @@ const SignUp = () => {
                 <FiMail className="absolute top-3.5 left-3 text-gray-400" />
                 <input
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder="user@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
