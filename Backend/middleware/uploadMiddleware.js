@@ -1,25 +1,19 @@
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Configure multer to use memory storage
+const storage = multer.memoryStorage();
 
-// Configure multer storage for Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "expense_tracker_uploads", // Folder name in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg"], // Allowed file formats
+// Initialize multer with memory storage and file filter
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
+    if (allowedFormats.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file format. Only JPEG, PNG, and JPG are allowed."), false);
+    }
   },
 });
 
-// Initialize multer with the Cloudinary storage
-const upload = multer({ storage: storage });
-
-// Export the upload middleware
 module.exports = upload;

@@ -4,7 +4,7 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
-import { UserContext } from "../../context/UserContext";
+import { UserContext } from "../../context/UserContextDefinition";
 import InfoCard from "../../components/Cards/InfoCard";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { addThousandsSeparator } from "../../utils/helper";

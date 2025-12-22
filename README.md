@@ -129,9 +129,7 @@ cd Expense_Tracker
 ```bash
 cd Backend
 npm install
-# Install recommended security middlewares
-npm install helmet express-rate-limit express-mongo-sanitize xss-clean cookie-parser csurf
-# Copy Backend/.env.example -> Backend/.env and populate values
+# Create a `.env` file in the Backend directory, populating it with the necessary environment variables as detailed in the 'Environment Variables' section.
 npm run dev
 ```
 
@@ -168,32 +166,27 @@ The frontend will typically run on `http://localhost:5173` and the backend on `h
 
 ## 🔑 Environment Variables
 
-Template `.env.example` files have been added to both `Backend/` and `Frontend/`. Copy the appropriate example to a `.env` (or `.env.local`) file and fill in real values before running the app.
-
 ### Backend Environment Variables
 
-Copy `Backend/.env.example` to `Backend/.env` and populate the values. Important variables include:
+Create a `.env` file in the `Backend/` directory with the following variables:
 
-- `MONGO_URI` — MongoDB connection string (do NOT commit credentials)
-- `JWT_SECRET` — Secret for signing JWT tokens
-- `SESSION_SECRET` — Secret for express-session cookies
-- `CLIENT_URL` — Frontend origin for CORS
-- `NODE_ENV` / `PORT`
-- **Cloudinary Configuration** (for image uploads):
-  - `CLOUDINARY_CLOUD_NAME` — Your Cloudinary cloud name
-  - `CLOUDINARY_API_KEY` — Your Cloudinary API key
-  - `CLOUDINARY_API_SECRET` — Your Cloudinary API secret (do NOT commit)
-
-To get Cloudinary credentials:
-1. Sign up at [Cloudinary](https://cloudinary.com/)
-2. Navigate to your Dashboard
-3. Copy your **Cloud Name**, **API Key**, and **API Secret** from the Account Details section
+```
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+PORT=5000                # Optional, defaults to 5000
+CLIENT_URL=http://localhost:5173  # Frontend URL for CORS
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
 ### Frontend Environment Variables
 
-Copy `Frontend/.env.example` to `Frontend/.env` (or `.env.local`) and set:
+Create a `.env` file in the `Frontend/` directory with the following variables:
 
-- `VITE_BASE_URL` — URL for the backend API (e.g. `http://localhost:5000`)
+```
+VITE_BASE_URL=http://localhost:5000 # URL of the backend API
+```
 
 ---
 

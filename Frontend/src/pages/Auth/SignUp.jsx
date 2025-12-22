@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import { LuSun, LuMoon } from "react-icons/lu";
 import axiosInstance from "../../utils/axiosInstance";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 import { API_PATHS } from "../../utils/apiPath";
 import uploadImage from "../../utils/uploadImage";
 import AuthBranding from "../../components/layouts/AuthBranding";
@@ -37,20 +37,25 @@ const SignUp = () => {
     setError(null);
 
     try {
-      let profileImageUrl = "";
-      // If a profile picture is selected, upload it first
-      if (profilePic) {
-        const imgUploadRes = await uploadImage(profilePic);
-        profileImageUrl = imgUploadRes.imageUrl || "";
-      }
-
-      // Make API call to register the user
-      const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+      const requestBody = {
         fullName,
         email,
         password,
-        profileImageUrl,
-      });
+      };
+
+      // If a profile picture is selected, upload it and add it to the request
+      if (profilePic) {
+        const imgUploadRes = await uploadImage(profilePic);
+        if (imgUploadRes && imgUploadRes.imageUrl) {
+          requestBody.profileImageUrl = imgUploadRes.imageUrl;
+        }
+      }
+
+      // Make API call to register the user
+      const response = await axiosInstance.post(
+        API_PATHS.AUTH.REGISTER,
+        requestBody
+      );
 
       // On success, store the token and navigate to the dashboard
       const { token } = response.data;
@@ -59,6 +64,7 @@ const SignUp = () => {
         navigate("/dashboard");
       }
     } catch (err) {
+      console.error("Sign up error response:", err.response);
       setError(
         err.response?.data?.message || "Sign up failed. Please try again.",
       );

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import Modal from '../../components/layouts/Modal';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContextDefinition';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPath';
 import BudgetOverview from '../../components/Budget/BudgetOverview';
@@ -11,8 +11,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 
 
 const Budget = () => {
-  const { user } = useContext(UserContext);
-  const [budgets, setBudgets] = useState([]);
   const [budgetReport, setBudgetReport] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,11 +34,11 @@ const Budget = () => {
     recurrenceType: '',
   });
 
-  const fetchBudgetsAndReport = async () => {
+  const fetchBudgetsAndReport = useCallback(async () => {
     setLoading(true);
     try {
-      const budgetsResponse = await axiosInstance.get(API_PATHS.BUDGET.GET_ALL_BUDGETS);
-      setBudgets(budgetsResponse.data);
+      // const budgetsResponse = await axiosInstance.get(API_PATHS.BUDGET.GET_ALL_BUDGETS);
+      // setBudgets(budgetsResponse.data);
 
       const reportResponse = await axiosInstance.get(`${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`);
       setBudgetReport(reportResponse.data);
@@ -51,11 +49,11 @@ const Budget = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [reportStartDate, reportEndDate]);
 
   useEffect(() => {
     fetchBudgetsAndReport();
-  }, [reportStartDate, reportEndDate]);
+  }, [fetchBudgetsAndReport]);
 
   const handleChange = (key, value) => {
     setFormData((prev) => ({
