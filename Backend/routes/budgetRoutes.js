@@ -1,4 +1,5 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { Protect } = require('../middleware/authMiddleware');
 const {
     createBudget,
@@ -8,19 +9,36 @@ const {
     deleteBudget,
     getBudgetVsActual
 } = require('../controllers/budgetController');
+const {
+    handleValidationErrors,
+    validateBudget,
+    validateMongoId,
+} = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
+// Rate limiter for budget endpoints
+const budgetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // Limit to 30 requests per windowMs per IP
+  message: "Too many requests to budget endpoints, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiter to all routes
+router.use(budgetLimiter);
+
 router.route('/')
-    .post(Protect, createBudget)
+    .post(Protect, validateBudget, handleValidationErrors, createBudget)
     .get(Protect, getBudgets);
 
 // New route for budget vs actual report
 router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
 
 router.route('/:id')
-    .get(Protect, getBudget)
-    .put(Protect, updateBudget)
-    .delete(Protect, deleteBudget);
+    .get(Protect, validateMongoId, handleValidationErrors, getBudget)
+    .put(Protect, validateMongoId, validateBudget, handleValidationErrors, updateBudget)
+    .delete(Protect, validateMongoId, handleValidationErrors, deleteBudget);
 
 module.exports = router;

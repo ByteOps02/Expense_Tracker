@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { LuSun, LuMoon } from "react-icons/lu";
 import SideMenu from "./SideMenu";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../hooks/useTheme";
 
 const Navbar = ({ activeMenu }) => {
   const [openSideMenu, setOpenSideMenu] = useState(false);

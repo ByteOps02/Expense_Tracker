@@ -3,11 +3,6 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 
-// simple email validator to prevent NoSQL injection via crafted objects
-const isValidEmail = (email) => {
-  return typeof email === 'string' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-};
-
 /**
  * @desc    Generate JWT token
  * @param   {string} id - User ID
@@ -31,10 +26,6 @@ exports.registerUser = async (req, res) => {
   // Basic validation to check for missing fields
   if (!fullName || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
-  }
-
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
   }
 
   try {
@@ -76,10 +67,6 @@ exports.loginUser = async (req, res) => {
   // Basic validation to check for missing fields
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password are required" });
-  }
-
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
   }
 
   try {

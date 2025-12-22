@@ -1,5 +1,7 @@
 // Import necessary packages
 const express = require("express");
+const rateLimit = require("express-rate-limit");
+const cloudinary = require("cloudinary").v2;
 
 // Import middleware and controllers
 const { Protect } = require("../middleware/authMiddleware");
@@ -14,17 +16,40 @@ const {
   generate2FASecret,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadMiddleware");
+const {
+  handleValidationErrors,
+  validateRegister,
+  validateLogin,
+  validateChangePassword,
+} = require("../middleware/validationMiddleware");
 
 // Initialize express router
 const router = express.Router();
 
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Rate limiter for login and register endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit to 5 attempts per windowMs
+  message: "Too many authentication attempts, please try again later.",
+  skipSuccessfulRequests: false,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Route for user registration
 // This route is used to create a new user account
-router.post("/register", registerUser);
+router.post("/register", authLimiter, validateRegister, handleValidationErrors, registerUser);
 
 // Route for user login
 // This route is used to authenticate a user and get a JWT token
-router.post("/login", loginUser);
+router.post("/login", authLimiter, validateLogin, handleValidationErrors, loginUser);
 
 // Route to get user information
 // This is a protected route, meaning the user must be authenticated to access it
@@ -32,7 +57,7 @@ router.get("/getUser", Protect, getUserInfo);
 
 // Route for changing user password
 // This is a protected route
-router.post("/change-password", Protect, changePassword);
+router.post("/change-password", Protect, validateChangePassword, handleValidationErrors, changePassword);
 
 // Routes for 2FA management
 router.post("/2fa/enable", Protect, enable2FA);
@@ -42,14 +67,26 @@ router.post("/2fa/generate-secret", Protect, generate2FASecret);
 
 // Route for uploading a profile image
 // This route uses the "upload" middleware to handle the file upload
-// Note: This route is public to allow users to upload profile pictures during sign-up
 router.post("/upload-image", upload.single("image"), (req, res) => {
-  // If no file is uploaded, return an error
   if (!req.file) {
     return res.status(400).json({ message: "No File Uploaded" });
   }
-  // Return the image URL from Cloudinary
-  res.status(200).json({ imageUrl: req.file.path });
+
+  const uploadStream = cloudinary.uploader.upload_stream(
+    {
+      folder: "expense_tracker_uploads",
+    },
+    (error, result) => {
+      if (error) {
+        // Log the error for debugging
+        console.error("Cloudinary Upload Error:", error);
+        return res.status(500).json({ message: "Failed to upload image", error });
+      }
+      res.status(200).json({ imageUrl: result.secure_url });
+    }
+  );
+
+  uploadStream.end(req.file.buffer);
 });
 
 // Export the router

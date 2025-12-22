@@ -1,8 +1,6 @@
 // Import necessary packages
-import React, { useState, createContext } from "react";
-
-// Create a new context for user data
-export const UserContext = createContext();
+import React, { useState, useCallback } from "react";
+import { UserContext } from "./UserContextDefinition";
 
 // Create a provider component for the UserContext
 const UserProvider = ({ children }) => {
@@ -13,16 +11,16 @@ const UserProvider = ({ children }) => {
    * @desc    Function to update the user data in the context
    * @param   {object} userData - The new user data
    */
-  const updateUser = (userData) => {
+  const updateUser = useCallback((userData) => {
     setUser(userData);
-  };
+  }, []);
 
   /**
    * @desc    Function to clear the user data from the context
    */
-  const clearUser = () => {
+  const clearUser = useCallback(() => {
     setUser(null);
-  };
+  }, []);
 
   return (
     // Provide the user data and functions to the children components

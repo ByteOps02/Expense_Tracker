@@ -1,7 +1,6 @@
 // Import necessary packages and models
 const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
-const mongoose = require("mongoose");
 
 /**
  * @desc    Add a new expense
@@ -73,13 +72,9 @@ exports.deleteExpense = async (req, res) => {
   try {
     const userId = req.user.id;
     const expenseId = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(expenseId)) {
-      return res.status(400).json({ message: "Invalid expense id" });
-    }
-
     const expense = await Expense.findOneAndDelete({
-      _id: mongoose.Types.ObjectId(expenseId),
-      user: mongoose.Types.ObjectId(userId),
+      _id: expenseId,
+      user: userId,
     });
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
@@ -106,15 +101,9 @@ exports.updateExpense = async (req, res) => {
     const userId = req.user.id;
     const expenseId = req.params.id;
     const { title, icon, amount, category, date, description } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(expenseId)) {
-      return res.status(400).json({ message: "Invalid expense id" });
-    }
-
-    const updatePayload = { title, icon, amount, category, date, description };
-
     const expense = await Expense.findOneAndUpdate(
-      { _id: mongoose.Types.ObjectId(expenseId), user: mongoose.Types.ObjectId(userId) },
-      updatePayload,
+      { _id: expenseId, user: userId },
+      { title, icon, amount, category, date, description },
       { new: true, runValidators: true },
     );
     if (!expense) {

@@ -9,10 +9,6 @@ const compression = require("compression");
 const session = require("express-session");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const mongoSanitize = require("express-mongo-sanitize");
-const xss = require("xss-clean");
-const cookieParser = require("cookie-parser");
-const csurf = require("csurf");
 
 // Import local modules
 const connectDB = require("./config/db");
@@ -29,74 +25,65 @@ const app = express();
 // Enable gzip compression for all responses to reduce bandwidth usage
 app.use(compression());
 
-// Set secure HTTP headers
-app.use(helmet());
+// Apply Helmet middleware for security headers
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
-// Data sanitization against NoSQL injection
-app.use(mongoSanitize());
+// Enable Cross-Origin Resource Sharing (CORS) early
+// This allows the frontend to make requests to the backend, including preflight OPTIONS requests
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // Allow requests from the client URL
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"], // Allowed headers
+    credentials: true, // Allow credentials
+  }),
+);
 
-// Prevent XSS attacks
-app.use(xss());
+// Rate limiting for general API endpoints
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Stricter rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 login attempts per windowMs
+  message: "Too many login attempts, please try again later.",
+  skipSuccessfulRequests: false,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply general rate limiting
+app.use(generalLimiter);
 
 // Trust the proxy (required for Vercel/Heroku/etc to pass secure cookies)
 app.set("trust proxy", 1);
-
-// Enable Cross-Origin Resource Sharing (CORS)
-// This allows the frontend to make requests to the backend
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "*", // Allow requests from the client URL or any origin
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
-  }),
-);
 
 // Parse incoming JSON requests
 app.use(express.json());
 
 // Configure express-session middleware
-// This is used for session management, particularly for biometric authentication
+// This is used for session management and CSRF protection
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "secret", // Secret used to sign the session ID cookie
+    secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production", // Secret used to sign the session ID cookie
     resave: false, // Don't save session if unmodified
     saveUninitialized: true, // Save uninitialized sessions
     cookie: {
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
       httpOnly: true, // Prevent client-side access to the cookie
       maxAge: 1000 * 60 * 10, // Cookie expiration time (10 minutes)
+      sameSite: "strict", // CSRF protection
     },
   }),
 );
-
-// Apply rate limiting to all API routes
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/', apiLimiter);
-
-// Cookie parser needed for CSRF protection when using cookie-based tokens
-app.use(cookieParser());
-
-// Enable CSRF protection in production only to avoid breaking local dev clients
-if (process.env.NODE_ENV === 'production') {
-  app.use(csurf({ cookie: true }));
-  // expose token on a cookie for client to read and use in requests
-  app.use((req, res, next) => {
-    try {
-      res.cookie('XSRF-TOKEN', req.csrfToken(), {
-        httpOnly: false,
-        sameSite: 'Lax',
-      });
-    } catch (e) {
-      // If no session/csrf token is available, ignore and continue
-    }
-    next();
-  });
-}
 
 // Root route to check if server is running
 app.get("/", (req, res) => {
