@@ -8,7 +8,6 @@ A modern, full-stack web application designed for comprehensive personal income 
 
 ---
 
-[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-informational?logo=node.js)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)](https://react.dev/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
@@ -122,7 +121,7 @@ Expense_Tracker/
 
 ### 1. Clone the repository
 ```bash
-git clone <repo-url>
+git clone https://github.com/ByteOps02/Expense_Tracker.git
 cd Expense_Tracker
 ```
 
@@ -257,9 +256,3 @@ The `Frontend/vercel.json` file configures the React frontend to be deployed as 
 ## 🤝 Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
