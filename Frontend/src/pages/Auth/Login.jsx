@@ -47,7 +47,7 @@ const Login = () => {
 
       // On success, store the token, update the user context, and navigate to the dashboard
       localStorage.setItem("token", response.data.token);
-      updateUser(response.data.user);
+      updateUser(response.data.data.user);
       navigate("/dashboard");
     } catch (err) {
       setError(

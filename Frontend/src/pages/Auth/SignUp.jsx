@@ -1,5 +1,5 @@
 // Import necessary packages and components
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
@@ -7,6 +7,7 @@ import { LuSun, LuMoon } from "react-icons/lu";
 import axiosInstance from "../../utils/axiosInstance";
 import { useTheme } from "../../hooks/useTheme";
 import { API_PATHS } from "../../utils/apiPath";
+import { UserContext } from "../../context/UserContextDefinition";
 import uploadImage from "../../utils/uploadImage";
 import AuthBranding from "../../components/layouts/AuthBranding";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
@@ -18,9 +19,11 @@ const SignUp = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { updateUser } = useContext(UserContext);
 
   /**
    * @desc    Handles the user sign-up process
@@ -30,8 +33,13 @@ const SignUp = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !confirmPassword) {
       setError("All fields are required.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
       return;
     }
     setError(null);
@@ -41,6 +49,7 @@ const SignUp = () => {
         fullName,
         email,
         password,
+        confirmPassword,
       };
 
       // If a profile picture is selected, upload it and add it to the request
@@ -57,10 +66,11 @@ const SignUp = () => {
         requestBody
       );
 
-      // On success, store the token and navigate to the dashboard
-      const { token } = response.data;
+      // On success, store the token, update user context and navigate to the dashboard
+      const { token, data } = response.data;
       if (token) {
         localStorage.setItem("token", token);
+        updateUser(data.user);
         navigate("/dashboard");
       }
     } catch (err) {
@@ -144,6 +154,21 @@ const SignUp = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                  autoComplete="new-password"
+                />
+              </div>
+            </div>
+
+            <div>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
+               <div className="relative">
+                <FiLock className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   autoComplete="new-password"
                 />

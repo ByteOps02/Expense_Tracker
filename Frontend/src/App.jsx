@@ -21,6 +21,7 @@ const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
 const Budget = lazy(() => import("./pages/Dashboard/Budget"));
+const RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransactionsPage"));
 
 /**
  * @desc Protected Route wrapper
@@ -73,6 +74,10 @@ const App = () => {
                       <Route
                         path="/budget"
                         element={<ProtectedRoute Component={Budget} />}
+                      />
+                      <Route
+                        path="/recent-transactions"
+                        element={<ProtectedRoute Component={RecentTransactionsPage} />}
                       />
                     </Routes>
                   </Suspense>

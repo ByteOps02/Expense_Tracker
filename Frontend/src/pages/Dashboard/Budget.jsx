@@ -41,7 +41,7 @@ const Budget = () => {
       // setBudgets(budgetsResponse.data);
 
       const reportResponse = await axiosInstance.get(`${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`);
-      setBudgetReport(reportResponse.data);
+      setBudgetReport(reportResponse.data.data.report);
 
     } catch (err) {
       setError('Failed to fetch data.');

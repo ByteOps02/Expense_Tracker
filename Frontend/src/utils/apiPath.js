@@ -33,4 +33,7 @@ export const API_PATHS = {
   IMAGE: {
     UPLOAD_IMAGE: "/api/v1/auth/upload-image",
   },
+  TRANSACTIONS: {
+    GET_ALL_TRANSACTIONS: "/api/v1/transactions",
+  },
 };
