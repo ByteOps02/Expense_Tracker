@@ -3,8 +3,6 @@
 A comprehensive, full-stack web application for personal finance management, designed to help users track income, manage expenses, and monitor budgets with an intuitive and responsive interface.
 
 ---
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-informational?logo=node.js)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)](https://react.dev/)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -189,7 +187,3 @@ The `Frontend/` directory contains the React application. Ensure the `VITE_BASE_
 Contributions are welcome! Please open an issue first to discuss any major changes or new features you'd like to implement. For direct code contributions, please submit a pull request.
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
