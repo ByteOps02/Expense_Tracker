@@ -7,7 +7,7 @@ import { LuUser, LuUpload, LuTrash } from "react-icons/lu";
  * @param {File|null} image - The current image file (if any)
  * @param {Function} setImage - Setter for the image file
  */
-const ProfilePhotoSelector = ({ image, setImage }) => {
+const ProfilePhotoSelector = ({ image, setImage, currentImage }) => {
   const inputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -15,13 +15,14 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
   useEffect(() => {
     if (image) {
       const url = URL.createObjectURL(image);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewUrl(url);
       return () => URL.revokeObjectURL(url);
+    } else if (currentImage) {
+      setPreviewUrl(currentImage);
     } else {
       setPreviewUrl(null);
     }
-  }, [image]);
+  }, [image, currentImage]);
 
   // Handle file input change
   const handleImageChange = (event) => {
@@ -51,7 +52,7 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
         onChange={handleImageChange}
         aria-label="Choose profile photo"
       />
-      {!image ? (
+      {!previewUrl ? (
         <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full relative">
           <LuUser
             className="w-20 h-20 text-gray-400"
@@ -76,10 +77,10 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
           <button
             type="button"
             className="absolute top-0 right-0 bg-white rounded-full p-2 shadow-md hover:bg-gray-200 focus:outline-none transition-all duration-300"
-            onClick={handleRemoveImage}
-            aria-label="Remove profile photo"
+            onClick={image ? handleRemoveImage : onChooseFile}
+            aria-label={image ? "Remove profile photo" : "Change profile photo"}
           >
-            <LuTrash className="w-6 h-6 text-red-600" />
+            {image ? <LuTrash className="w-6 h-6 text-red-600" /> : <LuUpload className="w-6 h-6 text-blue-600" />}
           </button>
         </div>
       )}
