@@ -38,7 +38,7 @@ const Expense = () => {
         console.log("Expense added successfully. Response:", response.data);
         setExpenseData((prevExpenses) => [
           ...prevExpenses,
-          response.data.expense,
+          response.data.data.expense,
         ]);
         setOpenAddExpenseModal(false);
       }
@@ -112,8 +112,8 @@ const Expense = () => {
 
       console.log("Expense API Response:", response.data);
 
-      if (response.data && response.data.expenses) {
-        setExpenseData(response.data.expenses);
+      if (response.data && response.data.data.expenses) {
+        setExpenseData(response.data.data.expenses);
       } else {
         console.log("No expense data found in response");
         setExpenseData([]);

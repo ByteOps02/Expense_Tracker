@@ -11,6 +11,7 @@
     "build": "cd Frontend && npm run build"
   },
   "devDependencies": {
+    "baseline-browser-mapping": "^2.9.11",
     "concurrently": "^8.0.0"
   }
 }

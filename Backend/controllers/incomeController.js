@@ -1,167 +1,136 @@
 // Import necessary packages and models
 const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
+const asyncHandler = require("../utils/asyncHandler");
+const AppError = require("../utils/AppError");
 
 /**
  * @desc    Add a new income
  * @route   POST /api/v1/income
  * @access  Private
  */
-exports.addIncome = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { title, icon, amount, source, date, note } = req.body;
+exports.addIncome = asyncHandler(async (req, res, next) => {
+  const { title, icon, amount, source, date, note } = req.body;
 
-    // Basic validation
-    if (!title || !amount || !source) {
-      return res.status(400).json({ message: "Please fill in all required fields" });
-    }
+  const income = await Income.create({
+    user: req.user.id,
+    title,
+    icon,
+    amount,
+    source,
+    date,
+    note,
+  });
 
-    const income = new Income({
-      user: userId,
-      title,
-      icon,
-      amount,
-      source,
-      date,
-      note,
-    });
-    await income.save();
-
-
-
-
-    res.status(201).json({ message: "Income added successfully", income });
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-       return res.status(400).json({ message: "Validation Error", error: err.message });
-    }
-    res.status(500).json({ message: "Error adding income", error: err.message });
-  }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      income,
+    },
+  });
+});
 
 /**
  * @desc    Get all incomes for the logged-in user
  * @route   GET /api/v1/income
  * @access  Private
  */
-exports.getAllIncome = async (req, res) => {
-  try {
-    const userId = req.user.id;
+exports.getAllIncome = asyncHandler(async (req, res, next) => {
+  const incomes = await Income.find({ user: req.user.id })
+    .sort({ date: -1 })
+    .lean();
 
-    const incomes = await Income.find({ user: userId })
-      .sort({ date: -1 })
-      .lean();
-
-    res.status(200).json({ incomes });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching incomes", error: err.message });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    results: incomes.length,
+    data: {
+      incomes,
+    },
+  });
+});
 
 /**
  * @desc    Delete an income
  * @route   DELETE /api/v1/income/:id
  * @access  Private
  */
-exports.deleteIncome = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const incomeId = req.params.id;
-    const income = await Income.findOneAndDelete({
-      _id: incomeId,
-      user: userId,
-    });
-    if (!income) {
-      return res.status(404).json({ message: "Income not found" });
-    }
+exports.deleteIncome = asyncHandler(async (req, res, next) => {
+  const income = await Income.findOneAndDelete({
+    _id: req.params.id,
+    user: req.user.id,
+  });
 
-
-
-
-    res.status(200).json({ message: "Income deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Error deleting income", error: err.message });
+  if (!income) {
+    return next(new AppError("No income found with that ID for this user", 404));
   }
-};
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
 
 /**
  * @desc    Update an income
  * @route   PUT /api/v1/income/:id
  * @access  Private
  */
-exports.updateIncome = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const incomeId = req.params.id;
-    const { title, icon, amount, source, date, note } = req.body;
+exports.updateIncome = asyncHandler(async (req, res, next) => {
+  const { title, icon, amount, source, date, note } = req.body;
 
-    const income = await Income.findOneAndUpdate(
-      { _id: incomeId, user: userId },
-      { title, icon, amount, source, date, note },
-      { new: true, runValidators: true },
-    );
+  const income = await Income.findOneAndUpdate(
+    { _id: req.params.id, user: req.user.id },
+    { title, icon, amount, source, date, note },
+    { new: true, runValidators: true },
+  );
 
-    if (!income) {
-      return res.status(404).json({ message: "Income not found" });
-    }
-
-
-
-
-    res.status(200).json({ message: "Income updated successfully", income });
-  } catch (err) {
-    res.status(500).json({ message: "Error updating income", error: err.message });
+  if (!income) {
+    return next(new AppError("No income found with that ID for this user", 404));
   }
-};
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      income,
+    },
+  });
+});
 
 /**
  * @desc    Download all incomes as an Excel file
  * @route   GET /api/v1/income/download-excel
  * @access  Private
  */
-exports.downloadIncomeExcel = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const incomes = await Income.find({ user: userId }).lean();
-    if (!incomes.length) {
-      return res.status(404).json({ message: "No incomes found to export" });
-    }
-
-    // Create a new Excel workbook and worksheet
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Incomes");
-
-    // Prepare data for Excel by removing unwanted fields
-    const data = incomes.map(
-      ({ _id, user: _user, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...rest }) => ({ ...rest }),
-    );
-
-    // Add headers to the worksheet
-    if (data.length > 0) {
-      const headers = Object.keys(data[0]);
-      worksheet.addRow(headers);
-
-      // Add data rows to the worksheet
-      data.forEach((income) => {
-        worksheet.addRow(Object.values(income));
-      });
-    }
-
-    // Set headers for the response
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=incomes.xlsx"
-    );
-
-    // Write the workbook to the response object
-    await workbook.xlsx.write(res);
-    res.end();
-  } catch (err) {
-    res.status(500).json({ message: "Error exporting incomes", error: err.message });
+exports.downloadIncomeExcel = asyncHandler(async (req, res, next) => {
+  const incomes = await Income.find({ user: req.user.id }).lean();
+  if (!incomes.length) {
+    return next(new AppError("No incomes found to export", 404));
   }
-};
+
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Incomes");
+
+  const data = incomes.map(
+    ({ _id, user, __v, createdAt, updatedAt, ...rest }) => rest
+  );
+
+  if (data.length > 0) {
+    const headers = Object.keys(data[0]);
+    worksheet.addRow(headers);
+    data.forEach((income) => {
+      worksheet.addRow(Object.values(income));
+    });
+  }
+
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=incomes.xlsx"
+  );
+
+  await workbook.xlsx.write(res);
+  res.end();
+});

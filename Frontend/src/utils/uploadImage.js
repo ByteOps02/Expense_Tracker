@@ -15,7 +15,7 @@ const uploadImage = async (imageFile) => {
       },
     },
   );
-  return response.data;
+  return response.data.data;
 };
 
 export default uploadImage;

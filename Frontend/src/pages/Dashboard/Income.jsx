@@ -34,7 +34,7 @@ const Income = () => {
 
       if (response.data) {
         console.log("Income added successfully:", response.data);
-        setIncomeData((prevIncomes) => [...prevIncomes, response.data.income]);
+        setIncomeData((prevIncomes) => [...prevIncomes, response.data.data.income]);
         setOpenAddIncomeModal(false);
       }
     } catch (error) {
@@ -103,8 +103,8 @@ const Income = () => {
 
       console.log("Income API Response:", response.data);
 
-      if (response.data && response.data.incomes) {
-        setIncomeData(response.data.incomes);
+      if (response.data && response.data.data.incomes) {
+        setIncomeData(response.data.data.incomes);
       } else {
         console.log("No income data found in response");
         setIncomeData([]);

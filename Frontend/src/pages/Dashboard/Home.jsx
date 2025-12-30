@@ -31,7 +31,7 @@ const Home = () => {
     const fetchDashboardData = async () => {
       try {
         const res = await axiosInstance.get(`${API_PATHS.DASHBOARD.GET_DATA}`);
-        setDashboardData(res.data);
+        setDashboardData(res.data.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
@@ -40,8 +40,8 @@ const Home = () => {
     const fetchUserInfo = async () => {
       try {
         const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
-        if (res.data && res.data.user) {
-          updateUser(res.data.user);
+        if (res.data && res.data.data.user) {
+          updateUser(res.data.data.user);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -97,7 +97,7 @@ const Home = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <RecentTransactions
             transactions={dashboardData?.last5Transactions || []}
-            onSeeMore={() => navigate("/expense")}
+            onSeeMore={() => navigate("/recent-transactions")}
           />
           <ExpenseTransactions
             transactions={dashboardData?.expenseLast30Days || []}
@@ -130,12 +130,12 @@ const Home = () => {
         {/* Recent income with chart and recent income list */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <RecentIncomeWithChart
-            data={dashboardData?.incomeLast60Days?.slice(0, 4) || []}
-            totalIncome={dashboardData?.totalIncomeLast60Days || 0}
+            data={dashboardData?.incomeLast30Days?.slice(0, 4) || []}
+            totalIncome={dashboardData?.totalIncomeLast30Days || 0}
           />
           <RecentIncome
-            transactions={dashboardData?.incomeLast60Days || []}
-            onSeeMore={() => navigate("./income")}
+            transactions={dashboardData?.incomeLast30Days || []}
+            onSeeMore={() => navigate("/income")}
           />
         </div>
       </div>
