@@ -86,6 +86,32 @@ exports.getUserInfo = asyncHandler(async (req, res, next) => {
 });
 
 /**
+ * @desc    Update user information
+ * @route   PUT /api/v1/auth/update
+ * @access  Private
+ */
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const { fullName, email, profileImageUrl } = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    { fullName, email, profileImageUrl },
+    { new: true, runValidators: true }
+  ).select("-password");
+
+  if (!updatedUser) {
+    return next(new AppError("User not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: updatedUser,
+    },
+  });
+});
+
+/**
  * @desc    Change user password
  * @route   POST /api/v1/auth/change-password
  * @access  Private

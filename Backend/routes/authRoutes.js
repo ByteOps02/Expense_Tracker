@@ -7,6 +7,7 @@ const {
   registerUser,
   loginUser,
   getUserInfo,
+  updateUser,
   changePassword,
   uploadProfileImage,
 } = require("../controllers/authController");
@@ -16,6 +17,7 @@ const {
   validateRegister,
   validateLogin,
   validateChangePassword,
+  validateUpdateUser,
 } = require("../middleware/validationMiddleware");
 
 // Initialize express router
@@ -32,6 +34,10 @@ router.post("/login", validateLogin, handleValidationErrors, loginUser);
 // Route to get user information
 // This is a protected route, meaning the user must be authenticated to access it
 router.get("/getUser", Protect, getUserInfo);
+
+// Route to update user information
+// This is a protected route
+router.put("/update", Protect, validateUpdateUser, handleValidationErrors, updateUser);
 
 // Route for changing user password
 // This is a protected route

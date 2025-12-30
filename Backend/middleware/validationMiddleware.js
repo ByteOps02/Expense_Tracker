@@ -158,6 +158,23 @@ const validateChangePassword = [
     .isLength({ min: 8 }).withMessage("New password must be at least 8 characters"),
 ];
 
+const validateUpdateUser = [
+  body("fullName")
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 255 }).withMessage("Full name must be between 2 and 255 characters")
+    .escape(),
+  body("email")
+    .optional()
+    .trim()
+    .isEmail().withMessage("Must be a valid email")
+    .normalizeEmail(),
+  body("profileImageUrl")
+    .optional()
+    .trim()
+    .isURL().withMessage("Profile image URL must be a valid URL"),
+];
+
 /**
  * ID validation rules
  */
@@ -174,5 +191,6 @@ module.exports = {
   validateRegister,
   validateLogin,
   validateChangePassword,
+  validateUpdateUser,
   validateMongoId,
 };
