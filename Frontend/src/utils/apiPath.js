@@ -36,5 +36,6 @@ export const API_PATHS = {
   },
   TRANSACTIONS: {
     GET_ALL_TRANSACTIONS: "/api/v1/transactions",
+    DOWNLOAD_EXCEL: "/api/v1/transactions/download-excel",
   },
 };
