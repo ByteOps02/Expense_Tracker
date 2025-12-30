@@ -40,12 +40,13 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified Origin.";
-        return callback(new Error(msg), false);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        // Log the disallowed origin for debugging
+        console.error(`CORS: Origin '${origin}' not allowed.`);
+        callback(null, false); // Explicitly disallow the origin
       }
-      return callback(null, true);
     },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allowed HTTP methods
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"], // Allowed headers
