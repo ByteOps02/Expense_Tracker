@@ -376,7 +376,7 @@ Open your browser and navigate to `http://localhost:5173` to access the expense 
 
 | Variable                     | Description                                | Example Value |
 |:---------                    |:------------                               |:--------------|
-| `MONGO_URI`                  | MongoDB connection string (Atlas or local) | `mongodb+srv://user:pass@cluster.mongodb.net/expense_tracker` |
+| `MONGO_URI`                  | MongoDB connection string (Atlas or local) | `mongodb+srv://username:password@your-cluster.mongodb.net/expense_tracker` |
 | `JWT_SECRET`                 | Secret key for JWT token signing           | `your_super_secret_jwt_key_min_32_chars` |
 | `PORT`                       | Backend server port                        | `5000` |
 | `CLIENT_URL`                 | Frontend application URL(s) for CORS       | `http://localhost:5173` or `http://localhost:5173,https://yourdomain.com` |
@@ -387,13 +387,13 @@ Open your browser and navigate to `http://localhost:5173` to access the expense 
 
 **Example `.env` file:**
 ```env
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/expense_tracker
+MONGO_URI=mongodb+srv://username:password@your-cluster.mongodb.net/expense_tracker
 JWT_SECRET=your_super_secret_jwt_key_min_32_characters_recommended
 PORT=5000
 CLIENT_URL=http://localhost:5173
-CLOUDINARY_CLOUD_NAME=dxxxxxx
-CLOUDINARY_API_KEY=1234567890
-CLOUDINARY_API_SECRET=abcdefghijklmnop
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 NODE_ENV=development
 ```
 

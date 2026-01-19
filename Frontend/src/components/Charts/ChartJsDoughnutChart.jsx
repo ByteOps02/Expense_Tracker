@@ -18,9 +18,6 @@ const ChartJsDoughnutChart = ({ data, colors }) => {
     );
   }
 
-  // Expecting data to be an array of objects with { name: string, amount: number }
-  // or mapping from the existing format if passed directly.
-
   const defaultColors = [
     "#8b5cf6", // Purple
     "#ec4899", // Pink
@@ -46,7 +43,7 @@ const ChartJsDoughnutChart = ({ data, colors }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: "75%", // Thinner ring
+    cutout: "75%", 
     plugins: {
       legend: {
         position: "bottom",

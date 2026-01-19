@@ -14,7 +14,6 @@ import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 
 // SignUp component
 const SignUp = () => {
-  // State variables for form fields and error handling
   const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +31,6 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!fullName || !email || !password || !confirmPassword) {
       setError("All fields are required.");
       return;

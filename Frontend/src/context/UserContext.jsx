@@ -1,10 +1,6 @@
-// Import necessary packages
 import React, { useState, useCallback } from "react";
 import { UserContext } from "./UserContextDefinition";
-
-// Create a provider component for the UserContext
 const UserProvider = ({ children }) => {
-  // State to store the user data
   const [user, setUser] = useState(null);
 
   /**
@@ -23,7 +19,6 @@ const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    // Provide the user data and functions to the children components
     <UserContext.Provider value={{ user, updateUser, clearUser }}>
       {children}
     </UserContext.Provider>

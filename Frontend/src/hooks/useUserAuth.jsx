@@ -12,7 +12,6 @@ export const useUserAuth = () => {
     let isMounted = true;
 
     const fetchUserInfo = async () => {
-      // Check if token exists
       const token = localStorage.getItem("token");
       if (!token) {
         if (isMounted) {
@@ -22,7 +21,6 @@ export const useUserAuth = () => {
         return;
       }
 
-      // If user data is not available or incomplete, fetch it
       if (!user || !user.fullName) {
         try {
           const response = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);

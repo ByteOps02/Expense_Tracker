@@ -1,7 +1,4 @@
-// Import necessary packages
 const express = require("express");
-
-// Import middleware and controllers
 const { Protect } = require("../middleware/authMiddleware");
 const {
   registerUser,
@@ -20,7 +17,6 @@ const {
   validateUpdateUser,
 } = require("../middleware/validationMiddleware");
 
-// Initialize express router
 const router = express.Router();
 
 // Route for user registration
@@ -47,5 +43,4 @@ router.post("/change-password", Protect, validateChangePassword, handleValidatio
 // This route uses the "upload" middleware to handle the file upload
 router.post("/upload-image", upload.single("image"), uploadProfileImage);
 
-// Export the router
 module.exports = router;

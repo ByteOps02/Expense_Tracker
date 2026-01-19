@@ -1,7 +1,6 @@
 import React from "react";
 
 const InfoCard = ({ icon, label, value, color }) => {
-  // Define color variants mapping
   const colorVariants = {
     "bg-purple-500": "bg-purple-100 text-purple-600",
     "bg-orange-500": "bg-orange-100 text-orange-600",
@@ -10,7 +9,6 @@ const InfoCard = ({ icon, label, value, color }) => {
     "bg-blue-500": "bg-blue-100 text-blue-600",
   };
 
-  // Get the corresponding classes or fallback to gray
   const colorClasses = colorVariants[color] || "bg-gray-100 text-gray-600";
 
   return (

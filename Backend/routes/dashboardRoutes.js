@@ -1,12 +1,8 @@
-// Import necessary packages
 const express = require("express");
 const rateLimit = require("express-rate-limit");
-
-// Import middleware and controllers
 const { Protect } = require("../middleware/authMiddleware");
 const { getDashboardSummary, getDashboardExpenseSummary } = require("../controllers/dashboardController");
 
-// Initialize express router
 const router = express.Router();
 
 // Rate limiter for dashboard endpoints

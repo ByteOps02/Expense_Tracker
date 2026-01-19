@@ -1,8 +1,5 @@
-// Import necessary packages
 const express = require("express");
 const rateLimit = require("express-rate-limit");
-
-// Import middleware and controllers
 const { Protect } = require("../middleware/authMiddleware");
 const {
   addIncome,
@@ -17,7 +14,6 @@ const {
   validateMongoId,
 } = require("../middleware/validationMiddleware");
 
-// Initialize express router
 const router = express.Router();
 
 // Rate limiter for income endpoints
@@ -52,5 +48,4 @@ router.delete("/:id", Protect, validateMongoId, handleValidationErrors, deleteIn
 // This is a protected route
 router.get("/download-excel", Protect, downloadIncomeExcel);
 
-// Export the router
 module.exports = router;

@@ -1,6 +1,5 @@
 import React from "react";
 
-// Helper function to get initials from full name
 const getInitials = (name) => {
   if (!name) return "";
   const names = name.trim().split(" ");

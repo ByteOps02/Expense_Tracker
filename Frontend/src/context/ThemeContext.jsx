@@ -7,11 +7,8 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    // Remove both classes to start fresh
     root.classList.remove("light", "dark");
-    // Add the current theme class
     root.classList.add(theme);
-    // Persist to local storage
     localStorage.setItem("theme", theme);
   }, [theme]);
 

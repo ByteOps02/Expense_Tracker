@@ -1,4 +1,3 @@
-// Import necessary packages and components
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -13,14 +12,12 @@ import AuthBranding from "../../components/layouts/AuthBranding";
 
 // Login component
 const Login = () => {
-  // State variables for email, password, error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   const { theme, toggleTheme } = useTheme();
 
-  // Get user context and navigation functions
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 

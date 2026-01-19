@@ -1,5 +1,3 @@
-// src/pages/Expense/index.jsx  (or wherever your file lives)
-// Import necessary packages and components
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import ExpenseOverview from "../../components/Expense/ExpenseOverview";

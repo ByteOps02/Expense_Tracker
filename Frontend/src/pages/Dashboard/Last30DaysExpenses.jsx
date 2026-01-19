@@ -5,24 +5,18 @@ import { addThousandsSeparator, prepareCategoryData } from "../../utils/helper";
 const COLORS = ["#875CF5", "#FA2C37", "#FF6900", "#4ADE80", "#3B82F6"];
 
 const Last30DaysExpenses = ({ data }) => {
-  // prepare chart data as [{ name, amount }, ...] (adjust if your helper returns different keys)
   const chartData = useMemo(() => prepareCategoryData(data, "category") || [], [data]);
-
-  // total expense (summing raw transactions)
   const totalExpense = useMemo(
     () => (data?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0),
     [data],
   );
-
-  // pick top category by amount (safeguard empty list)
+  
   const topCategory = useMemo(() => {
     if (!chartData || chartData.length === 0) return null;
-    // if your prepareCategoryData already sorts, you can skip sorting — this sorts defensively
     const sorted = [...chartData].sort((a, b) => (b.amount || 0) - (a.amount || 0));
     return sorted[0];
   }, [chartData]);
 
-  // get color for a category based on original index in chartData (preserves consistent color mapping)
   const getColorForCategory = (category) => {
     if (!category) return COLORS[0];
     const idx = chartData.findIndex((c) => c.name === category.name);

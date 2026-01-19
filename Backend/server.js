@@ -1,6 +1,3 @@
-// Load environment variables from .env file
-require("dotenv").config();
-
 // Import necessary packages
 const express = require("express");
 const cors = require("cors");
@@ -17,6 +14,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const globalErrorHandler = require('./middleware/errorMiddleware');
+const { sanitizeMongoParams } = require("./middleware/validationMiddleware");
 
 
 // Initialize express app
@@ -98,6 +96,9 @@ app.use((req, res, next) => {
 
 // Parse incoming JSON requests
 app.use(express.json());
+
+// Sanitize MongoDB parameters to prevent NoSQL injection
+app.use(sanitizeMongoParams);
 
 // Root route to check if server is running
 app.get("/", (req, res) => {

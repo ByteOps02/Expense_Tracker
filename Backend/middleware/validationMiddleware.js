@@ -21,6 +21,27 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 /**
+ * Middleware to sanitize MongoDB query parameters
+ * Prevents NoSQL injection attacks
+ */
+const sanitizeMongoParams = (req, res, next) => {
+  // Sanitize req.params
+  Object.keys(req.params).forEach((key) => {
+    if (typeof req.params[key] === 'string') {
+      req.params[key] = req.params[key].trim();
+    }
+  });
+
+  Object.keys(req.query).forEach((key) => {
+    if (typeof req.query[key] === 'string') {
+      req.query[key] = req.query[key].trim();
+    }
+  });
+  
+  next();
+};
+
+/**
  * Income validation rules
  */
 const validateIncome = [
@@ -185,6 +206,7 @@ const validateMongoId = [
 
 module.exports = {
   handleValidationErrors,
+  sanitizeMongoParams,
   validateIncome,
   validateExpense,
   validateBudget,
