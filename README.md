@@ -374,26 +374,35 @@ Open your browser and navigate to `http://localhost:5173` to access the expense 
 
 ### Backend (`Backend/.env`)
 
+> **⚠️ Important:** Never commit `.env` files with actual credentials. Copy `.env.example` to `.env` and fill in your actual values.
+
 | Variable                     | Description                                | Example Value |
 |:---------                    |:------------                               |:--------------|
-| `MONGO_URI`                  | MongoDB connection string (Atlas or local) | `mongodb+srv://username:password@your-cluster.mongodb.net/expense_tracker` |
-| `JWT_SECRET`                 | Secret key for JWT token signing           | `your_super_secret_jwt_key_min_32_chars` |
+| `MONGO_URI`                  | MongoDB connection string (Atlas or local) | `mongodb+srv://your_username:your_password@your_cluster.mongodb.net/expense_tracker` |
+| `JWT_SECRET`                 | Secret key for JWT token signing           | `your_super_secret_jwt_key_min_32_characters_recommended` |
 | `PORT`                       | Backend server port                        | `5000` |
 | `CLIENT_URL`                 | Frontend application URL(s) for CORS       | `http://localhost:5173` or `http://localhost:5173,https://yourdomain.com` |
 | `CLOUDINARY_CLOUD_NAME`      | Cloudinary cloud name                      | `your_cloud_name` |
-| `CLOUDINARY_API_KEY`         | Cloudinary API key                         | `1234567890123456` |
+| `CLOUDINARY_API_KEY`         | Cloudinary API key                         | `your_api_key` |
 | `CLOUDINARY_API_SECRET`      | Cloudinary API secret                      | `your_api_secret_key` |
 | `NODE_ENV`                   | Environment mode                           | `development` or `production` |
 
+**Setup Instructions:**
+1. Copy the example file: `cp Backend/.env.example Backend/.env`
+2. Fill in your actual values from the services:
+   - MongoDB Atlas credentials
+   - JWT secret (generate with: `openssl rand -base64 32`)
+   - Cloudinary credentials
+
 **Example `.env` file:**
 ```env
-MONGO_URI=mongodb+srv://username:password@your-cluster.mongodb.net/expense_tracker
+MONGO_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/expense_tracker
 JWT_SECRET=your_super_secret_jwt_key_min_32_characters_recommended
 PORT=5000
 CLIENT_URL=http://localhost:5173
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_API_SECRET=your_api_secret_key
 NODE_ENV=development
 ```
 

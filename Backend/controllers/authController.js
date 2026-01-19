@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const cloudinary = require("../config/cloudinary");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { validateEmail, validateObjectId } = require("../utils/queryValidator");
 
 /**
  * @desc    Generate JWT token
@@ -24,8 +25,11 @@ const generateToken = (id) => {
  */
 exports.registerUser = asyncHandler(async (req, res, next) => {
   const { fullName, email, password, profileImageUrl } = req.body;
+  
+  // Validate email format
+  const validEmail = validateEmail(email);
 
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email: validEmail });
   if (existingUser) {
     return next(new AppError("Email already in use", 400));
   }
@@ -53,8 +57,11 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
  */
 exports.loginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+  
+  // Validate email format
+  const validEmail = validateEmail(email);
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email: validEmail }).select('+password');
   if (!user || !(await user.comparePassword(password))) {
     return next(new AppError("Invalid credentials", 401));
   }
@@ -92,9 +99,12 @@ exports.getUserInfo = asyncHandler(async (req, res, next) => {
  */
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const { fullName, email, profileImageUrl } = req.body;
+  
+  // Validate user ID
+  const userId = validateObjectId(req.user.id, 'User ID');
 
   const updatedUser = await User.findByIdAndUpdate(
-    req.user.id,
+    userId,
     { fullName, email, profileImageUrl },
     { new: true, runValidators: true }
   ).select("-password");

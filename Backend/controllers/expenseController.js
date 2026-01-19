@@ -3,6 +3,7 @@ const Expense = require("../models/Expense");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { validateObjectId } = require("../utils/queryValidator");
 
 /**
  * @desc    Add a new expense
@@ -55,9 +56,13 @@ exports.getAllExpenses = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.deleteExpense = asyncHandler(async (req, res, next) => {
+  // Validate expense ID and user ID
+  const expenseId = validateObjectId(req.params.id, 'Expense ID');
+  const userId = validateObjectId(req.user.id, 'User ID');
+  
   const expense = await Expense.findOneAndDelete({
-    _id: req.params.id,
-    user: req.user.id,
+    _id: expenseId,
+    user: userId,
   });
 
   if (!expense) {
@@ -77,9 +82,13 @@ exports.deleteExpense = asyncHandler(async (req, res, next) => {
  */
 exports.updateExpense = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, category, date, description } = req.body;
+  
+  // Validate expense ID and user ID
+  const expenseId = validateObjectId(req.params.id, 'Expense ID');
+  const userId = validateObjectId(req.user.id, 'User ID');
 
   const expense = await Expense.findOneAndUpdate(
-    { _id: req.params.id, user: req.user.id },
+    { _id: expenseId, user: userId },
     { title, icon, amount, category, date, description },
     { new: true, runValidators: true },
   );

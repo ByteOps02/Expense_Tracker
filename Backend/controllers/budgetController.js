@@ -2,6 +2,7 @@ const Budget = require('../models/Budget');
 const mongoose = require('mongoose');
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { validateObjectId } = require("../utils/queryValidator");
 
 // @desc    Create a new budget
 // @route   POST /api/v1/budgets
@@ -46,7 +47,11 @@ exports.getBudgets = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/budgets/:id
 // @access  Private
 exports.getBudget = asyncHandler(async (req, res, next) => {
-    const budget = await Budget.findOne({ _id: req.params.id, user: req.user.id });
+    // Validate budget ID and user ID
+    const budgetId = validateObjectId(req.params.id, 'Budget ID');
+    const userId = validateObjectId(req.user.id, 'User ID');
+    
+    const budget = await Budget.findOne({ _id: budgetId, user: userId });
 
     if (!budget) {
         return next(new AppError("No budget found with that ID for this user", 404));
@@ -64,8 +69,12 @@ exports.getBudget = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1/budgets/:id
 // @access  Private
 exports.updateBudget = asyncHandler(async (req, res, next) => {
+    // Validate budget ID and user ID
+    const budgetId = validateObjectId(req.params.id, 'Budget ID');
+    const userId = validateObjectId(req.user.id, 'User ID');
+    
     const budget = await Budget.findOneAndUpdate(
-        { _id: req.params.id, user: req.user.id },
+        { _id: budgetId, user: userId },
         req.body,
         { new: true, runValidators: true }
     );
@@ -86,7 +95,11 @@ exports.updateBudget = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/budgets/:id
 // @access  Private
 exports.deleteBudget = asyncHandler(async (req, res, next) => {
-    const budget = await Budget.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+    // Validate budget ID and user ID
+    const budgetId = validateObjectId(req.params.id, 'Budget ID');
+    const userId = validateObjectId(req.user.id, 'User ID');
+    
+    const budget = await Budget.findOneAndDelete({ _id: budgetId, user: userId });
 
     if (!budget) {
         return next(new AppError("No budget found with that ID for this user", 404));

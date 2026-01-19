@@ -3,6 +3,7 @@ const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { validateObjectId } = require("../utils/queryValidator");
 
 /**
  * @desc    Add a new income
@@ -55,9 +56,13 @@ exports.getAllIncome = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.deleteIncome = asyncHandler(async (req, res, next) => {
+  // Validate income ID and user ID
+  const incomeId = validateObjectId(req.params.id, 'Income ID');
+  const userId = validateObjectId(req.user.id, 'User ID');
+  
   const income = await Income.findOneAndDelete({
-    _id: req.params.id,
-    user: req.user.id,
+    _id: incomeId,
+    user: userId,
   });
 
   if (!income) {
@@ -77,9 +82,13 @@ exports.deleteIncome = asyncHandler(async (req, res, next) => {
  */
 exports.updateIncome = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, source, date, note } = req.body;
+  
+  // Validate income ID and user ID
+  const incomeId = validateObjectId(req.params.id, 'Income ID');
+  const userId = validateObjectId(req.user.id, 'User ID');
 
   const income = await Income.findOneAndUpdate(
-    { _id: req.params.id, user: req.user.id },
+    { _id: incomeId, user: userId },
     { title, icon, amount, source, date, note },
     { new: true, runValidators: true },
   );
