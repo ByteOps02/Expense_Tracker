@@ -8,6 +8,7 @@ import {
 
 const TransactionInfoCard = ({
   title,
+  category,
   icon,
   date,
   amount,
@@ -33,6 +34,7 @@ const TransactionInfoCard = ({
       <div className="flex-1 flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-900 dark:text-white font-medium">{title}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{category}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{date}</p>
         </div>
       </div>

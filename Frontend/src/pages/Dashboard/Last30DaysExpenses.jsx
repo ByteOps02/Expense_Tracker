@@ -1,11 +1,11 @@
 import React, { useMemo, memo } from "react";
 import ChartJsDoughnutChart from "../../components/Charts/ChartJsDoughnutChart";
-import { addThousandsSeparator, prepareCategoryData } from "../../utils/helper";
+import { addThousandsSeparator, prepareTitleAndCategoryData } from "../../utils/helper";
 
 const COLORS = ["#875CF5", "#FA2C37", "#FF6900", "#4ADE80", "#3B82F6"];
 
 const Last30DaysExpenses = ({ data }) => {
-  const chartData = useMemo(() => prepareCategoryData(data, "category") || [], [data]);
+  const chartData = useMemo(() => prepareTitleAndCategoryData(data) || [], [data]);
   const totalExpense = useMemo(
     () => (data?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0),
     [data],

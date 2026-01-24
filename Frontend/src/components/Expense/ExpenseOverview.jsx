@@ -2,14 +2,14 @@ import React, { useMemo } from "react";
 import { LuPlus } from "react-icons/lu";
 import {
   prepareExpenseLineChartData,
-  prepareCategoryData,
+  prepareTitleAndCategoryData,
 } from "../../utils/helper";
 import ChartJsLineChart from "../Charts/ChartJsLineChart";
 import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
 
 const ExpenseOverview = ({ transactions, onAddExpense }) => {
   const lineChartData = useMemo(() => prepareExpenseLineChartData(transactions), [transactions]);
-  const categoryChartData = useMemo(() => prepareCategoryData(transactions, "category"), [transactions]);
+  const categoryChartData = useMemo(() => prepareTitleAndCategoryData(transactions), [transactions]);
 
   return (
     <div className="card w-full">

@@ -33,7 +33,7 @@ const ChartJsLineChart = ({ data }) => {
   }
 
   const chartData = {
-    labels: data.map((item) => item.month || item.category),
+    labels: data.map((item) => item.name || item.month || item.category),
     datasets: [
       {
         label: "Amount",

@@ -33,7 +33,7 @@ app.use(helmet({
 
 // Enable Cross-Origin Resource Sharing (CORS) early
 // This allows the frontend to make requests to the backend, including preflight OPTIONS requests
-const allowedOrigins = (process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : ["http://localhost:5173"])
+const allowedOrigins = (process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : ["http://localhost:5173", "http://localhost:5174"])
   .map(url => url.trim()); // Trim whitespace from each URL
 
 app.use(

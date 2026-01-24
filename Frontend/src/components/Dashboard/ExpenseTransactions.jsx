@@ -1,12 +1,11 @@
 import React from "react";
 import { LuArrowRight } from "react-icons/lu";
 import { LuWalletMinimal, LuHandCoins } from "react-icons/lu";
-import TransactionInfoCard from "../Cards/TransactionInfoCard";
 import moment from "moment";
 
 const ExpenseTransactions = ({ transactions, onSeeMore }) => {
   return (
-    <div className="card h-[400px] transition-all duration-300 ease-in-out">
+    <div className="card h-[450px] transition-all duration-300 ease-in-out">
       <div className="flex items-center justify-between ">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">Expenses</h5>
         <button className="card-btn" onClick={onSeeMore}>
@@ -14,7 +13,7 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
         </button>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4">
         <ul>
           {transactions?.slice(0, 4)?.map((expense, idx) => {
             const isIncome = expense.type === "income";
@@ -33,6 +32,9 @@ const ExpenseTransactions = ({ transactions, onSeeMore }) => {
                   {icon}
                   <div>
                     <div className="font-medium text-gray-800 dark:text-gray-200">
+                      {expense.title}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {expense.category}
                     </div>
                     <div className="text-xs text-gray-400 dark:text-gray-500">

@@ -4,7 +4,6 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserAuth } from "../../hooks/useUserAuth";
 import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
 
 import { LuDownload } from "react-icons/lu";
@@ -12,8 +11,6 @@ import { LuDownload } from "react-icons/lu";
 // RecentTransactionsPage component
 
 const RecentTransactionsPage = () => {
-  // Ensure user is authenticated before loading data
-  useUserAuth();
   // State variables for transaction data and loading state
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -115,7 +112,8 @@ const RecentTransactionsPage = () => {
                 <div className="flex flex-col space-y-4">
                   {transactions.map((transaction) => {
                     const isIncome = transaction.source;
-                    const title = isIncome
+                    const title = transaction.title;
+                    const category = isIncome
                       ? transaction.source
                       : transaction.category;
                     const type = isIncome ? "income" : "expense";
@@ -125,6 +123,7 @@ const RecentTransactionsPage = () => {
                         key={transaction._id}
                         {...transaction}
                         title={title}
+                        category={category}
                         type={type}
                         hideDeleteBtn={true}
                       />

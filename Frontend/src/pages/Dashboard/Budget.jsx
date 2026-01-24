@@ -26,6 +26,7 @@ const Budget = () => {
 
 
   const [formData, setFormData] = useState({
+    title: '',
     category: '',
     amount: '',
     startDate: '',
@@ -70,6 +71,7 @@ const Budget = () => {
   const openAddModal = () => {
     setEditingBudget(null);
     setFormData({
+      title: '',
       category: '',
       amount: '',
       startDate: new Date().toISOString().split('T')[0],
@@ -83,6 +85,7 @@ const Budget = () => {
   const openEditModal = (budget) => {
     setEditingBudget(budget);
     setFormData({
+      title: budget.title,
       category: budget.category,
       amount: budget.amount,
       startDate: budget.startDate ? new Date(budget.startDate).toISOString().split('T')[0] : '',

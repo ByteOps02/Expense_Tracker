@@ -1,7 +1,6 @@
 // Import necessary packages and components
 import React, { useState, useEffect, useContext } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
-import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import { UserContext } from "../../context/UserContextDefinition";
@@ -19,9 +18,6 @@ import RecentIncome from "../../components/Dashboard/RecentIncome";
 
 // Home component for the dashboard
 const Home = () => {
-  // Custom hook to ensure user is authenticated
-  useUserAuth();
-
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
   const { updateUser } = useContext(UserContext);
@@ -37,19 +33,7 @@ const Home = () => {
       }
     };
 
-    const fetchUserInfo = async () => {
-      try {
-        const res = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
-        if (res.data && res.data.data.user) {
-          updateUser(res.data.data.user);
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
     fetchDashboardData();
-    fetchUserInfo();
   }, [updateUser]);
 
   return (

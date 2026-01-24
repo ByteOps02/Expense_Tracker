@@ -11,13 +11,13 @@ const AppError = require("../utils/AppError");
  * @access  Private
  */
 exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
-  const userId = new mongoose.Types.ObjectId(req.user.id);
+  const userId = req.user.id;
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const [incomeStats, expenseStats] = await Promise.all([
     Income.aggregate([
-      { $match: { user: userId } },
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
           allIncomes: [{ $sort: { date: -1 } }],
@@ -39,7 +39,7 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       },
     ]),
     Expense.aggregate([
-      { $match: { user: userId } },
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
           allExpenses: [{ $sort: { date: -1 } }],
@@ -66,8 +66,8 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
   const expenseData = expenseStats[0];
 
   const last5Transactions = [
-    ...incomeData.last5Incomes,
-    ...expenseData.last5Expenses,
+    ...(incomeData.last5Incomes || []),
+    ...(expenseData.last5Expenses || []),
   ]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
@@ -92,6 +92,11 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       last5Transactions,
       balance,
     },
+    debug: {
+      userId,
+      incomeStats,
+      expenseStats,
+    }
   });
 });
 
@@ -104,12 +109,12 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
 exports.getDashboardExpenseSummary = asyncHandler(async (req, res, next) => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const userId = new mongoose.Types.ObjectId(req.user.id);
+    const userId = req.user.id;
 
     const summary = await Expense.aggregate([
         {
             $match: {
-                user: userId,
+                user: new mongoose.Types.ObjectId(userId),
                 date: { $gte: thirtyDaysAgo }
             }
         },

@@ -4,7 +4,7 @@ import moment from "moment";
 
 const RecentIncome = ({ transactions, onSeeMore }) => {
   return (
-    <div className="card h-[400px] transition-all duration-300 ease-in-out">
+    <div className="card h-[450px] transition-all duration-300 ease-in-out">
       <div className="flex items-center justify-between ">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">Income</h5>
         <button className="card-btn" onClick={onSeeMore}>
@@ -26,7 +26,8 @@ const RecentIncome = ({ transactions, onSeeMore }) => {
                   <LuWalletMinimal className="text-2xl text-gray-400" />
                 )}
                 <div>
-                  <div className="font-medium text-gray-800 dark:text-gray-200">{item.source}</div>
+                  <div className="font-medium text-gray-800 dark:text-gray-200">{item.title}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{item.source}</div>
                   <div className="text-xs text-gray-400 dark:text-gray-500">
                     {moment(item.date).format("DD MMM, YYYY")}
                   </div>

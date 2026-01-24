@@ -8,10 +8,11 @@ const { validateObjectId } = require("../utils/queryValidator");
 // @route   POST /api/v1/budgets
 // @access  Private
 exports.createBudget = asyncHandler(async (req, res, next) => {
-    const { category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
+    const { title, category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
 
     const newBudget = await Budget.create({
         user: req.user.id,
+        title,
         category,
         amount,
         startDate,
@@ -155,6 +156,7 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         {
             $project: {
                 _id: 1,
+                title: 1,
                 category: 1,
                 budgetAmount: '$amount',
                 startDate: 1,

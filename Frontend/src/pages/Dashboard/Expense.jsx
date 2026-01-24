@@ -7,13 +7,9 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserAuth } from "../../hooks/useUserAuth";
 
 // Expense page component
 const Expense = () => {
-  // Ensure user is authenticated before loading data
-  useUserAuth();
-
   // State variables for expense data, loading state, and modal visibility
   const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(true);

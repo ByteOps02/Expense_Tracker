@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
-import { addThousandsSeparator, prepareCategoryData } from "../../utils/helper";
+import { addThousandsSeparator, prepareTitleAndCategoryData } from "../../utils/helper";
 
 const COLORS = ["#875CF5", "#FA2C37", "#FF6900", "#4ADE80", "#3B82F6"];
 
 const RecentIncomeWithChart = ({ data, totalIncome }) => {
   const chartData = useMemo(
-    () => prepareCategoryData(data, "source"),
+    () => prepareTitleAndCategoryData(data),
     [data],
   );
 

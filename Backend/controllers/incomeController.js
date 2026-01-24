@@ -11,7 +11,7 @@ const { validateObjectId } = require("../utils/queryValidator");
  * @access  Private
  */
 exports.addIncome = asyncHandler(async (req, res, next) => {
-  const { title, icon, amount, source, date, note } = req.body;
+  const { title, icon, amount, source, category, date, note } = req.body;
 
   const income = await Income.create({
     user: req.user.id,
@@ -19,6 +19,7 @@ exports.addIncome = asyncHandler(async (req, res, next) => {
     icon,
     amount,
     source,
+    category,
     date,
     note,
   });
@@ -81,7 +82,7 @@ exports.deleteIncome = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.updateIncome = asyncHandler(async (req, res, next) => {
-  const { title, icon, amount, source, date, note } = req.body;
+  const { title, icon, amount, source, category, date, note } = req.body;
   
   // Validate income ID and user ID
   const incomeId = validateObjectId(req.params.id, 'Income ID');
@@ -89,7 +90,7 @@ exports.updateIncome = asyncHandler(async (req, res, next) => {
 
   const income = await Income.findOneAndUpdate(
     { _id: incomeId, user: userId },
-    { title, icon, amount, source, date, note },
+    { title, icon, amount, source, category, date, note },
     { new: true, runValidators: true },
   );
 

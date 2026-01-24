@@ -43,7 +43,7 @@ const ChartJsDoughnutChart = ({ data, colors }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: "75%", 
+    cutout: "75%",
     plugins: {
       legend: {
         position: "bottom",

@@ -58,6 +58,11 @@ const validateIncome = [
     .notEmpty().withMessage("Source is required")
     .isLength({ max: 255 }).withMessage("Source must not exceed 255 characters")
     .escape(),
+  body("category")
+    .trim()
+    .notEmpty().withMessage("Category is required")
+    .isLength({ max: 255 }).withMessage("Category must not exceed 255 characters")
+    .escape(),
   body("date")
     .optional()
     .isISO8601().withMessage("Date must be a valid date"),
@@ -107,6 +112,11 @@ const validateExpense = [
  * Budget validation rules
  */
 const validateBudget = [
+  body("title")
+    .trim()
+    .notEmpty().withMessage("Title is required")
+    .isLength({ max: 255 }).withMessage("Title must not exceed 255 characters")
+    .escape(),
   body("category")
     .trim()
     .notEmpty().withMessage("Category is required")

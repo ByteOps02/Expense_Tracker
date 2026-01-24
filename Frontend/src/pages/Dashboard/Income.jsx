@@ -8,13 +8,9 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddIncomeForm from "../../components/Income/AddIncomeForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useUserAuth } from "../../hooks/useUserAuth";
 
 // Income page component
 const Income = () => {
-  // Ensure user is authenticated before loading data
-  useUserAuth();
-
   // State variables for income data, loading state, and modal visibility
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(true);

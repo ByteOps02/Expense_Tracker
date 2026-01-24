@@ -131,3 +131,18 @@ export const prepareCategoryData = (data = [], key = "category") => {
     amount,
   }));
 };
+
+export const prepareTitleAndCategoryData = (data = []) => {
+  if (!Array.isArray(data)) return [];
+
+  const grouped = data.reduce((acc, item) => {
+    const label = `${item.title} (${item.category || "N/A"})`;
+    acc[label] = (acc[label] || 0) + (item.amount || 0);
+    return acc;
+  }, {});
+
+  return Object.entries(grouped).map(([label, amount]) => ({
+    name: label,
+    amount,
+  }));
+};

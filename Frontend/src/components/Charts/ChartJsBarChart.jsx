@@ -29,7 +29,7 @@ const ChartJsBarChart = ({ data }) => {
   }
 
   const chartData = {
-    labels: data.map((item) => item.month || item.source || item.category),
+    labels: data.map((item) => item.name || item.month || item.source || item.category),
     datasets: [
       {
         label: "Amount",

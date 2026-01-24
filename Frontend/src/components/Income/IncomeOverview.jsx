@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { LuPlus } from "react-icons/lu";
 import {
   prepareIncomeBarChartData,
-  prepareCategoryData,
+  prepareTitleAndCategoryData,
 } from "../../utils/helper";
 import ChartJsBarChart from "../Charts/ChartJsBarChart";
 import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
@@ -14,7 +14,7 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
   );
 
   const sourceChartData = useMemo(
-    () => prepareCategoryData(transactions, "source"),
+    () => prepareTitleAndCategoryData(transactions),
     [transactions]
   );
 

@@ -1,5 +1,5 @@
 // Import necessary packages and components
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import UserProvider from "./context/UserContext.jsx";
+import { UserContext } from "./context/UserContextDefinition";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -25,11 +26,17 @@ const RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransa
 
 /**
  * @desc Protected Route wrapper
- *       Only allows access if token exists
+ *       Shows a loading spinner while checking auth state.
+ *       Redirects to login if user is not authenticated.
  */
 const ProtectedRoute = ({ Component }) => {
-  const token = localStorage.getItem("token");
-  return token ? <Component /> : <Navigate to="/login" replace />;
+  const { user, loading } = useContext(UserContext);
+
+  if (loading) {
+    return <LoadingSpinner fullScreen text="Authenticating..." />;
+  }
+
+  return user ? <Component /> : <Navigate to="/login" replace />;
 };
 
 // Main App component
