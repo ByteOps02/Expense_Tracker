@@ -493,7 +493,7 @@ Both directories contain `vercel.json` files configured for optimal deployment:
 - Configures serverless function routes
 - Sets build directory and output settings
 
-**Frontend (Frontend/vercel.json):**
+**Frontend (Frontend/vercel.json):</b>
 - Configures static site settings
 - Sets up rewrites for client-side routing
 
@@ -629,12 +629,6 @@ Contributions are welcome! Please follow these guidelines:
 - Use Prettier for code formatting
 - Write meaningful commit messages
 - Add comments for complex logic
-
----
-
-## 📝 License
-
-This project is licensed under the ISC License - see the LICENSE file for details.
 
 ---
 
