@@ -112,11 +112,6 @@ const validateExpense = [
  * Budget validation rules
  */
 const validateBudget = [
-  body("title")
-    .trim()
-    .notEmpty().withMessage("Title is required")
-    .isLength({ max: 255 }).withMessage("Title must not exceed 255 characters")
-    .escape(),
   body("category")
     .trim()
     .notEmpty().withMessage("Category is required")
@@ -137,7 +132,15 @@ const validateBudget = [
   body("recurrenceType")
     .optional()
     .trim()
-    .isIn(["daily", "weekly", "monthly", "yearly"]).withMessage("Invalid recurrence type"),
+    .isIn(["daily", "weekly", "monthly", "annually"]).withMessage("Invalid recurrence type"),
+  body("endDate")
+    .custom((endDate, { req }) => {
+      const startDate = req.body.startDate;
+      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+        throw new Error('End date must be after or equal to start date');
+      }
+      return true;
+    }),
 ];
 
 /**

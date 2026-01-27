@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -6,10 +6,13 @@ import {
   Legend,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { ThemeContext } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ChartJsDoughnutChart = ({ data, colors }) => {
+  const { theme } = useContext(ThemeContext);
+
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-gray-400 text-sm">
@@ -55,7 +58,7 @@ const ChartJsDoughnutChart = ({ data, colors }) => {
             family: "'Plus Jakarta Sans', sans-serif",
             size: 12,
           },
-          color: "#4b5563",
+          color: theme === "dark" ? "#e2e8f0" : "#4b5563",
         },
       },
       tooltip: {

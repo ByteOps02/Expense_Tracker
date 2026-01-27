@@ -13,7 +13,7 @@ const router = express.Router();
 // Rate limiter for expense endpoints
 const expenseLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit to 30 requests per windowMs per IP
+  max: 1000, // Limit to 1000 requests per windowMs per IP (Development: relaxed)
   message: "Too many requests to expense endpoints, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,

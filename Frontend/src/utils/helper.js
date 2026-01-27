@@ -136,7 +136,7 @@ export const prepareTitleAndCategoryData = (data = []) => {
   if (!Array.isArray(data)) return [];
 
   const grouped = data.reduce((acc, item) => {
-    const label = `${item.title} (${item.category || "N/A"})`;
+    const label = `${item.title} (${item.category || item.source || "N/A"})`;
     acc[label] = (acc[label] || 0) + (item.amount || 0);
     return acc;
   }, {});

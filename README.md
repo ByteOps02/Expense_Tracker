@@ -14,13 +14,14 @@ A comprehensive, full-stack web application for personal finance management, des
 
 ## ✨ Features
 
-- 🔐 **Secure Authentication:** JWT-based user registration and login with `bcryptjs` for secure password storage and user profile picture uploads to Cloudinary.
-- 🖐️ **Biometric Authentication:** WebAuthn integration for enhanced security and a passwordless login experience using `base64url` and `cbor` libraries.
+- 🔐 **Secure Authentication:** JWT-based login with **Show/Hide Password** toggle, biometric support (WebAuthn), and secure profile management.
 - 📊 **Interactive Dashboard:** Real-time financial overview with recent transactions and data visualization through multiple chart types (bar, line, doughnut charts).
 - 💰 **Complete Income & Expense Management:** Full CRUD operations for financial records with categorization, dates, descriptions, and notes.
 - 💵 **Budget Tracking:** Create and manage budgets with recurring options (daily, weekly, monthly, annually) to monitor spending limits.
 - 📈 **Advanced Analytics:** Multiple visualization options including Recharts and Chart.js for comprehensive financial insights.
-- 📱 **Responsive & Modern UI:** Built with React 19 and Tailwind CSS for a mobile-first, intuitive user experience with Framer Motion animations.
+- 🔍 **Advanced Filtering:** Powerful search and date range filtering for precise transaction tracking.
+- 📄 **PDF Reports:** Generate professional PDF reports with embedded charts and transaction tables.
+- 📱 **Enhanced UI/UX:** v2.0.0 features a completely redesigned Dashboard with responsive table layouts, optimized Dark/Light mode, and polished card designs.
 - 🛡️ **Robust Security:** 
   - JWT token authentication with 1-hour expiration
   - Rate limiting on authentication and upload endpoints
@@ -54,6 +55,7 @@ A comprehensive, full-stack web application for personal finance management, des
 - **Emoji Picker React (v4.14+):** Interactive emoji picker component.
 - **Moment.js (v2.30+):** Date and time formatting utilities.
 - **Base64url (v3.0+):** Encoding library for WebAuthn credential handling.
+- **jsPDF & html2canvas:** Robust PDF generation with DOM capture capabilities.
 
 ### Backend
 - **Node.js (v18+):** JavaScript runtime environment for server-side development.

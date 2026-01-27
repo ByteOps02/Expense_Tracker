@@ -4,7 +4,7 @@ import { LuIndianRupee, LuBriefcase } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
-const AddIncomeForm = ({ onAddIncome, closeModal }) => {
+const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
   const [income, setIncome] = useState({
     title: "",
     source: "",
@@ -17,6 +17,31 @@ const AddIncomeForm = ({ onAddIncome, closeModal }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  React.useEffect(() => {
+    if (editingData) {
+      setIncome({
+        title: editingData.title || "",
+        source: editingData.source || "",
+        category: editingData.category || "",
+        amount: editingData.amount || "",
+        date: editingData.date ? new Date(editingData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        note: editingData.note || "",
+        icon: editingData.icon || "",
+      });
+    } else {
+        // Reset if no editing data
+        setIncome({
+            title: "",
+            source: "",
+            category: "",
+            amount: "",
+            date: new Date().toISOString().split("T")[0],
+            note: "",
+            icon: "",
+        });
+    }
+  }, [editingData]);
 
   const handleChange = (key, value) => {
     setIncome((prev) => ({ ...prev, [key]: value }));
@@ -43,21 +68,24 @@ const AddIncomeForm = ({ onAddIncome, closeModal }) => {
 
     setIsSubmitting(true);
     try {
-      await onAddIncome?.(income);
+      // Pass the potentially updated income data including ID if editing
+      await onAddIncome?.({ ...income, _id: editingData?._id });
 
-      setIncome({
-        title: "",
-        source: "",
-        category: "",
-        amount: "",
-        date: new Date().toISOString().split("T")[0],
-        note: "",
-        icon: "",
-      });
+      if (!editingData) {
+        setIncome({
+            title: "",
+            source: "",
+            category: "",
+            amount: "",
+            date: new Date().toISOString().split("T")[0],
+            note: "",
+            icon: "",
+        });
+      }
 
       setErrors({});
     } catch (error) {
-      console.error("Error adding income:", error);
+      console.error("Error saving income:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -299,7 +327,7 @@ const AddIncomeForm = ({ onAddIncome, closeModal }) => {
                 disabled:opacity-50
               "
             >
-              {isSubmitting ? "Adding Income..." : "Add Income"}
+              {isSubmitting ? "Saving..." : (editingData ? "Update Income" : "Add Income")}
             </button>
           </div>
         </form>

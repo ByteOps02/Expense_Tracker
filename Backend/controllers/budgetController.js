@@ -1,18 +1,33 @@
 const Budget = require('../models/Budget');
+const Income = require('../models/Income');
 const mongoose = require('mongoose');
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateObjectId } = require("../utils/queryValidator");
 
-// @desc    Create a new budget
-// @route   POST /api/v1/budgets
-// @access  Private
 exports.createBudget = asyncHandler(async (req, res, next) => {
-    const { title, category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
+    const { category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
+
+    // Calculate total income
+    const incomeAggregation = await Income.aggregate([
+        { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+        { $group: { _id: null, total: { $sum: "$amount" } } }
+    ]);
+    const totalIncome = incomeAggregation.length > 0 ? incomeAggregation[0].total : 0;
+
+    // Calculate total existing budgets
+    const budgetAggregation = await Budget.aggregate([
+        { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+        { $group: { _id: null, total: { $sum: "$amount" } } }
+    ]);
+    const totalBudgets = budgetAggregation.length > 0 ? budgetAggregation[0].total : 0;
+
+    if (totalBudgets + amount > totalIncome) {
+        return next(new AppError(`Total budget (${totalBudgets + amount}) cannot exceed total income (${totalIncome})`, 400));
+    }
 
     const newBudget = await Budget.create({
         user: req.user.id,
-        title,
         category,
         amount,
         startDate,
@@ -29,12 +44,8 @@ exports.createBudget = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc    Get all budgets for a user
-// @route   GET /api/v1/budgets
-// @access  Private
 exports.getBudgets = asyncHandler(async (req, res, next) => {
     const budgets = await Budget.find({ user: req.user.id }).sort({ startDate: -1 });
-    
     res.status(200).json({
         status: "success",
         results: budgets.length,
@@ -44,11 +55,7 @@ exports.getBudgets = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc    Get a single budget by ID
-// @route   GET /api/v1/budgets/:id
-// @access  Private
 exports.getBudget = asyncHandler(async (req, res, next) => {
-    // Validate budget ID and user ID
     const budgetId = validateObjectId(req.params.id, 'Budget ID');
     const userId = validateObjectId(req.user.id, 'User ID');
     
@@ -66,14 +73,32 @@ exports.getBudget = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc    Update a budget
-// @route   PUT /api/v1/budgets/:id
-// @access  Private
 exports.updateBudget = asyncHandler(async (req, res, next) => {
-    // Validate budget ID and user ID
     const budgetId = validateObjectId(req.params.id, 'Budget ID');
     const userId = validateObjectId(req.user.id, 'User ID');
     
+    const { amount } = req.body;
+
+    if (amount !== undefined) {
+        // Calculate total income
+        const incomeAggregation = await Income.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ]);
+        const totalIncome = incomeAggregation.length > 0 ? incomeAggregation[0].total : 0;
+
+        // Calculate total other budgets (excluding this one)
+        const budgetAggregation = await Budget.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(req.user.id), _id: { $ne: new mongoose.Types.ObjectId(budgetId) } } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ]);
+        const totalOtherBudgets = budgetAggregation.length > 0 ? budgetAggregation[0].total : 0;
+
+        if (totalOtherBudgets + amount > totalIncome) {
+            return next(new AppError(`Total budget (${totalOtherBudgets + amount}) cannot exceed total income (${totalIncome})`, 400));
+        }
+    }
+
     const budget = await Budget.findOneAndUpdate(
         { _id: budgetId, user: userId },
         req.body,
@@ -92,11 +117,7 @@ exports.updateBudget = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc    Delete a budget
-// @route   DELETE /api/v1/budgets/:id
-// @access  Private
 exports.deleteBudget = asyncHandler(async (req, res, next) => {
-    // Validate budget ID and user ID
     const budgetId = validateObjectId(req.params.id, 'Budget ID');
     const userId = validateObjectId(req.user.id, 'User ID');
     
@@ -112,9 +133,6 @@ exports.deleteBudget = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc    Get budget vs actual spending report
-// @route   GET /api/v1/budgets/report/actual-vs-budget
-// @access  Private
 exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
     const userId = new mongoose.Types.ObjectId(req.user.id);
     const { startDate, endDate } = req.query;
@@ -140,7 +158,7 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
                             $expr: {
                                 $and: [
                                     { $eq: ['$user', '$$budgetUserId'] },
-                                    { $eq: ['$category', '$$budgetCategory'] },
+                                    { $eq: [{ $toLower: '$category' }, { $toLower: '$$budgetCategory' }] },
                                     { $gte: ['$date', '$$budgetStartDate'] },
                                     { $lte: ['$date', '$$budgetEndDate'] }
                                 ]
@@ -156,7 +174,6 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         {
             $project: {
                 _id: 1,
-                title: 1,
                 category: 1,
                 budgetAmount: '$amount',
                 startDate: 1,

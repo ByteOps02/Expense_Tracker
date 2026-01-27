@@ -20,20 +20,18 @@ const router = express.Router();
 // Rate limiter for budget endpoints
 const budgetLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit to 30 requests per windowMs per IP
+  max: 200,
   message: "Too many requests to budget endpoints, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Apply rate limiter to all routes
 router.use(budgetLimiter);
 
 router.route('/')
     .post(Protect, validateBudget, handleValidationErrors, createBudget)
     .get(Protect, getBudgets);
 
-// New route for budget vs actual report
 router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
 
 router.route('/:id')

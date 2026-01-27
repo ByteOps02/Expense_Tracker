@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import Modal from '../../components/layouts/Modal';
-import { UserContext } from '../../context/UserContextDefinition';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATHS } from '../../utils/apiPath';
-import BudgetOverview from '../../components/Budget/BudgetOverview';
-import BudgetList from '../../components/Budget/BudgetList';
-import AddBudgetForm from '../../components/Budget/AddBudgetForm'; // Will be created in next step
-import LoadingSpinner from '../../components/LoadingSpinner';
-
+import React, { useState, useEffect, useCallback } from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
+import Modal from "../../components/layouts/Modal";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPath";
+import BudgetOverview from "../../components/Budget/BudgetOverview";
+import SimpleBudgetList from "../../components/Budget/SimpleBudgetList";
+import AddBudgetForm from "../../components/Budget/AddBudgetForm";
+import ChartJsBarChart from "../../components/Charts/ChartJsBarChart";
+import ChartJsDoughnutChart from "../../components/Charts/ChartJsDoughnutChart";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Budget = () => {
+  const [budgets, setBudgets] = useState([]);
   const [budgetReport, setBudgetReport] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,33 +22,43 @@ const Budget = () => {
   const [reportStartDate, setReportStartDate] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
-    return d.toISOString().split('T')[0];
+    return d.toISOString().split("T")[0];
   });
-  const [reportEndDate, setReportEndDate] = useState(new Date().toISOString().split('T')[0]);
-
+  const [reportEndDate, setReportEndDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
 
   const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    amount: '',
-    startDate: '',
-    endDate: '',
+    category: "",
+    amount: "",
+    startDate: "",
+    endDate: "",
     isRecurring: false,
-    recurrenceType: '',
+    recurrenceType: "",
   });
 
   const fetchBudgetsAndReport = useCallback(async () => {
     setLoading(true);
     try {
-      // const budgetsResponse = await axiosInstance.get(API_PATHS.BUDGET.GET_ALL_BUDGETS);
-      // setBudgets(budgetsResponse.data);
+      const budgetsResponse = await axiosInstance.get(
+        API_PATHS.BUDGET.GET_ALL_BUDGETS,
+      );
+      setBudgets(budgetsResponse.data.data.budgets || []);
 
-      const reportResponse = await axiosInstance.get(`${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`);
-      setBudgetReport(reportResponse.data.data.report);
+      const reportResponse = await axiosInstance.get(
+        `${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`,
+      );
+      const report = reportResponse.data.data.report || [];
+      setBudgetReport(report);
 
+      // Fetch expenses
+      const expensesResponse = await axiosInstance.get(
+        API_PATHS.EXPENSE.GET_ALL_EXPENSE,
+      );
+      setExpenses(expensesResponse.data.data.expenses || []);
     } catch (err) {
-      setError('Failed to fetch data.');
-      console.error('Error fetching data:', err);
+      setError("Failed to fetch data.");
+      console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
@@ -65,19 +77,27 @@ const Budget = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    handleChange(name, type === 'checkbox' ? checked : value);
+    if (type === "checkbox") {
+      handleChange(name, checked);
+    } else if (name === "amount") {
+      // Convert amount to number
+      handleChange(name, value ? parseFloat(value) : "");
+    } else {
+      handleChange(name, value);
+    }
   };
 
   const openAddModal = () => {
     setEditingBudget(null);
     setFormData({
-      title: '',
-      category: '',
-      amount: '',
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0],
+      category: "",
+      amount: "",
+      startDate: new Date().toISOString().split("T")[0],
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
+        .toISOString()
+        .split("T")[0],
       isRecurring: false,
-      recurrenceType: '',
+      recurrenceType: "",
     });
     setIsModalOpen(true);
   };
@@ -85,13 +105,16 @@ const Budget = () => {
   const openEditModal = (budget) => {
     setEditingBudget(budget);
     setFormData({
-      title: budget.title,
       category: budget.category,
       amount: budget.amount,
-      startDate: budget.startDate ? new Date(budget.startDate).toISOString().split('T')[0] : '',
-      endDate: budget.endDate ? new Date(budget.endDate).toISOString().split('T')[0] : '',
+      startDate: budget.startDate
+        ? new Date(budget.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: budget.endDate
+        ? new Date(budget.endDate).toISOString().split("T")[0]
+        : "",
       isRecurring: budget.isRecurring,
-      recurrenceType: budget.recurrenceType || '',
+      recurrenceType: budget.recurrenceType || "",
     });
     setIsModalOpen(true);
   };
@@ -104,96 +127,223 @@ const Budget = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const dataToSend = {
+        category: formData.category,
+        amount: formData.amount,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        isRecurring: formData.isRecurring,
+        recurrenceType: formData.isRecurring ? formData.recurrenceType : null,
+      };
+
+      if (new Date(dataToSend.startDate) > new Date(dataToSend.endDate)) {
+        alert("End Date must be greater than or equal to Start Date");
+        return;
+      }
+
       if (editingBudget) {
-        await axiosInstance.put(API_PATHS.BUDGET.UPDATE_BUDGET(editingBudget._id), formData);
+        await axiosInstance.put(
+          API_PATHS.BUDGET.UPDATE_BUDGET(editingBudget._id),
+          dataToSend,
+        );
       } else {
-        await axiosInstance.post(API_PATHS.BUDGET.ADD_BUDGET, formData);
+        await axiosInstance.post(API_PATHS.BUDGET.ADD_BUDGET, dataToSend);
       }
       fetchBudgetsAndReport();
       closeModal();
+      fetchBudgetsAndReport();
+      closeModal();
     } catch (err) {
-      setError('Failed to save budget.');
-      console.error('Error saving budget:', err);
+      console.error("Error saving budget:", err);
+      const errorMessage = err.response?.data?.message || 
+                          (err.response?.data?.errors && err.response.data.errors[0]?.msg) ||
+                          "Failed to save budget.";
+      alert(errorMessage);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this budget?')) {
+    if (window.confirm("Are you sure you want to delete this budget?")) {
       try {
         await axiosInstance.delete(API_PATHS.BUDGET.DELETE_BUDGET(id));
         fetchBudgetsAndReport();
-      }
-      catch (err) {
-        setError('Failed to delete budget.');
-        console.error('Error deleting budget:', err);
+      } catch (err) {
+        setError("Failed to delete budget.");
+        console.error("Error deleting budget:", err);
       }
     }
   };
 
-
   if (loading) {
-    return <DashboardLayout><div className="flex items-center justify-center min-h-[400px]"><LoadingSpinner text="Loading budget data..." /></div></DashboardLayout>;
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner text="Loading budget data..." />
+        </div>
+      </DashboardLayout>
+    );
   }
 
   if (error) {
-    return <DashboardLayout>
-            <div className="card">
-                <div className="text-center text-red-500 py-8">
-                    <p>{error}</p>
-                    <button onClick={fetchBudgetsAndReport} className="mt-4 btn-primary">
-                        Retry
-                    </button>
-                </div>
-            </div>
-          </DashboardLayout>;
+    return (
+      <DashboardLayout>
+        <div className="card">
+          <div className="text-center text-red-500 py-8">
+            <p>{error}</p>
+            <button
+              onClick={fetchBudgetsAndReport}
+              className="mt-4 btn-primary"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
-
 
   return (
     <DashboardLayout activeMenu="Budget">
       <div className="w-full max-w-[1400px] mx-auto px-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Budget Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Budget Management
+        </h1>
 
         <div className="space-y-6">
-            <BudgetOverview
-                onAddBudget={openAddModal}
-                reportStartDate={reportStartDate}
-                setReportStartDate={setReportStartDate}
-                reportEndDate={reportEndDate}
-                setReportEndDate={setReportEndDate}
-            />
+          <BudgetOverview
+            onAddBudget={openAddModal}
+            reportStartDate={reportStartDate}
+            setReportStartDate={setReportStartDate}
+            reportEndDate={reportEndDate}
+            setReportEndDate={setReportEndDate}
+            budgetReport={budgetReport}
+            budgets={budgets}
+            expenses={expenses}
+          />
 
-            {/* Budget vs Actual Chart (Placeholder for now) */}
-            {budgetReport.length > 0 && (
-                <div className="card mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Budget vs. Actual Spending</h2>
-                    <div className="h-[300px]">
-                        {/* <ChartJsBarChart data={chartData} /> */}
-                        <p className="text-gray-600 dark:text-gray-400">Chart will be displayed here.</p>
-                    </div>
+          {budgetReport.length > 0 ? (
+            <>
+              <div className="card mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Budget vs. Actual Spending
+                </h2>
+                <div className="h-[350px]">
+                  <ChartJsBarChart
+                    data={budgetReport.map((item) => ({
+                      category: item.category,
+                      amount: item.budgetAmount,
+                      actual: item.actualSpent,
+                    }))}
+                  />
                 </div>
-            )}
+              </div>
 
-            {budgetReport.length === 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="card">
-                    <p className="text-gray-700 dark:text-gray-300">No budgets set yet. Add your first budget!</p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    Budgeted Amount by Category
+                  </h2>
+                  <div className="h-[350px]">
+                    <ChartJsDoughnutChart
+                      data={budgetReport.map((item) => ({
+                        category: item.category,
+                        amount: item.budgetAmount,
+                      }))}
+                      colors={[
+                        "#8b5cf6",
+                        "#ec4899",
+                        "#f59e0b",
+                        "#10b981",
+                        "#3b82f6",
+                        "#6366f1",
+                        "#f97316",
+                        "#06b6d4",
+                      ]}
+                    />
+                  </div>
                 </div>
-            ) : (
-                <BudgetList budgetReport={budgetReport} onEdit={openEditModal} onDelete={handleDelete} />
-            )}
+
+                <div className="card">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    Actual Spending by Category
+                  </h2>
+                  <div className="h-[350px]">
+                    <ChartJsDoughnutChart
+                      data={budgetReport.map((item) => ({
+                        category: item.category,
+                        amount: item.actualSpent,
+                      }))}
+                      colors={[
+                        "#ef4444",
+                        "#f97316",
+                        "#f59e0b",
+                        "#eab308",
+                        "#84cc16",
+                        "#22c55e",
+                        "#10b981",
+                        "#14b8a6",
+                      ]}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : budgets.length > 0 ? (
+            <>
+              <div className="card mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Budget Distribution
+                </h2>
+                <div className="h-[350px]">
+                  <ChartJsDoughnutChart
+                    data={budgets.map((item) => ({
+                      category: item.category,
+                      amount: item.amount,
+                    }))}
+                    colors={[
+                      "#8b5cf6",
+                      "#ec4899",
+                      "#f59e0b",
+                      "#10b981",
+                      "#3b82f6",
+                      "#6366f1",
+                      "#f97316",
+                      "#06b6d4",
+                    ]}
+                  />
+                </div>
+              </div>
+            </>
+          ) : null}
+
+          {budgets.length === 0 ? (
+            <div className="card">
+              <p className="text-gray-700 dark:text-gray-300">
+                No budgets set yet. Add your first budget!
+              </p>
+            </div>
+          ) : (
+            <SimpleBudgetList
+              budgets={budgets}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+            />
+          )}
         </div>
 
-
-        {/* Add/Edit Budget Modal */}
-        <Modal isOpen={isModalOpen} onClose={closeModal} title={editingBudget ? 'Edit Budget' : 'Add New Budget'}>
-            <AddBudgetForm
-                formData={formData}
-                handleChange={handleChange}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-                editingBudget={editingBudget}
-                closeModal={closeModal}
-            />
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={editingBudget ? "Edit Budget" : "Add New Budget"}
+        >
+          <AddBudgetForm
+            formData={formData}
+            handleChange={handleChange}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            editingBudget={editingBudget}
+            closeModal={closeModal}
+          />
         </Modal>
       </div>
     </DashboardLayout>

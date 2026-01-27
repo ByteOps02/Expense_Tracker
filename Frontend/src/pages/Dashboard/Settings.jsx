@@ -25,9 +25,10 @@ const Settings = () => {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.fullName);
-      setEmail(user.email);
+      if (user.fullName !== fullName) setFullName(user.fullName);
+      if (user.email !== email) setEmail(user.email);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleChangePassword = async (e) => {

@@ -4,7 +4,7 @@ import { LuIndianRupee, LuTag, LuFileText } from "react-icons/lu";
 import EmojiPickerPopup from "../layouts/EmojiPickerPopup";
 import ModernDatePicker from "../Inputs/ModernDatePicker";
 
-const AddExpenseForm = ({ onAddExpense, closeModal }) => {
+const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
   const [expense, setExpense] = useState({
     title: "",
     category: "",
@@ -16,6 +16,28 @@ const AddExpenseForm = ({ onAddExpense, closeModal }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  React.useEffect(() => {
+    if (editingData) {
+      setExpense({
+        title: editingData.title || "",
+        category: editingData.category || "",
+        amount: editingData.amount || "",
+        date: editingData.date ? new Date(editingData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        description: editingData.description || "",
+        icon: editingData.icon || "",
+      });
+    } else {
+         setExpense({
+            title: "",
+            category: "",
+            amount: "",
+            date: new Date().toISOString().split("T")[0],
+            description: "",
+            icon: "",
+          });
+    }
+  }, [editingData]);
 
   const handleChange = (key, value) => {
     setExpense((prev) => ({ ...prev, [key]: value }));
@@ -40,16 +62,19 @@ const AddExpenseForm = ({ onAddExpense, closeModal }) => {
     setIsSubmitting(true);
 
     try {
-      await onAddExpense?.(expense);
+      // Pass updated data including ID if editing
+      await onAddExpense?.({ ...expense, _id: editingData?._id });
 
-      setExpense({
-        title: "",
-        category: "",
-        amount: "",
-        date: new Date().toISOString().split("T")[0],
-        description: "",
-        icon: "",
-      });
+      if (!editingData) {
+        setExpense({
+            title: "",
+            category: "",
+            amount: "",
+            date: new Date().toISOString().split("T")[0],
+            description: "",
+            icon: "",
+        });
+      }
 
       setErrors({});
     } catch (error) {
@@ -273,7 +298,7 @@ const AddExpenseForm = ({ onAddExpense, closeModal }) => {
                 disabled:opacity-50
               "
             >
-              {isSubmitting ? "Adding Expense..." : "Add Expense"}
+               {isSubmitting ? "Saving..." : (editingData ? "Update Expense" : "Add Expense")}
             </button>
           </div>
         </form>

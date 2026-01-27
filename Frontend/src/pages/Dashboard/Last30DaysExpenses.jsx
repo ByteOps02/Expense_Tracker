@@ -24,43 +24,46 @@ const Last30DaysExpenses = ({ data }) => {
   };
 
   return (
-    <div className="card h-[400px] transition-all duration-300 ease-in-out flex flex-col">
-      <div className="flex items-center justify-between px-4 pt-4">
+    <div className="card h-[450px] transition-all duration-300 ease-in-out flex flex-col">
+      <div className="flex items-center justify-between">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Last 30 Days Expenses
         </h5>
       </div>
 
-      <div className="flex-1 w-full mt-4 min-h-0 relative flex items-center justify-center">
+      <div className="w-full h-[320px] mt-4 relative flex items-center justify-center">
         <ChartJsDoughnutChart data={chartData} colors={COLORS} />
 
         {chartData.length > 0 && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Expense</span>
 
             <span className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
               ₹{addThousandsSeparator(totalExpense)}
             </span>
-
-            {/* top category label & colored dot */}
-            {topCategory && (
-              <div className="mt-2 flex items-center space-x-2">
-                <span
-                  aria-hidden
-                  style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: 9999,
-                    backgroundColor: getColorForCategory(topCategory),
-                    display: "inline-block",
-                  }}
-                />
-                <span className="text-sm text-gray-600 dark:text-gray-300">{topCategory.name}</span>
-              </div>
-            )}
           </div>
         )}
       </div>
+
+      {/* Top category label & colored dot moved below */}
+      {topCategory && (
+        <div className="mt-2 flex items-center justify-center space-x-2">
+          <span
+            aria-hidden
+            className="shrink-0"
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 9999,
+              backgroundColor: getColorForCategory(topCategory),
+              display: "inline-block",
+            }}
+          />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {topCategory.name}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

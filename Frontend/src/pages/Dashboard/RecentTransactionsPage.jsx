@@ -7,6 +7,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
 
 import { LuDownload } from "react-icons/lu";
+import TransactionsTable from "../../components/Transactions/TransactionsTable";
 
 // RecentTransactionsPage component
 
@@ -109,27 +110,10 @@ const RecentTransactionsPage = () => {
           <div className="space-y-6">
             <div className="w-full">
               <div className="card">
-                <div className="flex flex-col space-y-4">
-                  {transactions.map((transaction) => {
-                    const isIncome = transaction.source;
-                    const title = transaction.title;
-                    const category = isIncome
-                      ? transaction.source
-                      : transaction.category;
-                    const type = isIncome ? "income" : "expense";
-
-                    return (
-                      <TransactionInfoCard
-                        key={transaction._id}
-                        {...transaction}
-                        title={title}
-                        category={category}
-                        type={type}
-                        hideDeleteBtn={true}
-                      />
-                    );
-                  })}
-                </div>
+                <TransactionsTable
+                  data={transactions}
+                  showActions={false}
+                />
               </div>
             </div>
           </div>

@@ -22,10 +22,10 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
     <div className="card w-full"> 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h5 className="text-lg font-semibold text-gray-900">
+          <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
             Income Overview
           </h5>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Track your earnings and analyze income sources.
           </p>
         </div>
@@ -40,8 +40,8 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Bar Chart Section */}
-        <div className="lg:col-span-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-          <h6 className="text-sm font-semibold text-gray-700 mb-4">
+        <div id="income-bar-chart" className="lg:col-span-2 bg-gray-50/50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+          <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Income Trend
           </h6>
           <div className="h-[300px]">
@@ -50,11 +50,11 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
         </div>
 
         {/* Doughnut Chart Section */}
-        <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 flex flex-col">
-          <h6 className="text-sm font-semibold text-gray-700 mb-4">
+        <div id="income-doughnut-chart" className="bg-gray-50/50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col">
+          <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Income Sources
           </h6>
-          <div className="h-[300px] flex items-center justify-center">
+          <div className="h-[300px] flex items-center justify-center overflow-y-auto custom-scrollbar">
             {sourceChartData.length > 0 ? (
               <ChartJsDoughnutChart data={sourceChartData} />
             ) : (

@@ -58,7 +58,7 @@ app.use(
 // Rate limiting for general API endpoints
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 5000, // limit each IP to 5000 requests per windowMs (Relaxed for Dev)
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
@@ -67,7 +67,7 @@ const generalLimiter = rateLimit({
 // Stricter rate limiting for authentication endpoints (login and register)
 const loginRegisterLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // limit each IP to 50 login/register attempts per windowMs (adjustable)
+  max: 1000, // limit each IP to 1000 attempts per windowMs
   message: "Too many login or registration attempts from this IP, please try again later.",
   skipSuccessfulRequests: false,
   standardHeaders: true,
@@ -77,7 +77,7 @@ const loginRegisterLimiter = rateLimit({
 // Rate limiting for image uploads
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Limit each IP to 20 upload attempts per windowMs
+  max: 1000, // Limit each IP to 1000 upload attempts per windowMs
   message: "Too many image upload attempts from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,

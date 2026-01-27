@@ -27,40 +27,8 @@ const AddBudgetForm = ({
         "
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-
-          {/* CATEGORY + AMOUNT */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Title */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                Title <span className="text-red-500">*</span>
-              </label>
-
-              <div className="relative">
-                <LuTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
-
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Monthly Groceries"
-                  className="
-                    w-full pl-10 pr-4 py-2.5 rounded-xl
-                    bg-gray-100 dark:bg-gray-800
-                    text-gray-900 dark:text-gray-100
-                    placeholder-gray-400 dark:placeholder-gray-500
-                    border border-gray-300 dark:border-gray-700
-                    focus:outline-none focus:ring-2
-                    focus:ring-purple-300 dark:focus:ring-purple-800
-                  "
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Category */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Category <span className="text-red-500">*</span>
@@ -120,7 +88,6 @@ const AddBudgetForm = ({
             </div>
           </div>
 
-          {/* DATE PICKERS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ModernDatePicker
               label="Start Date"
@@ -141,7 +108,6 @@ const AddBudgetForm = ({
             />
           </div>
 
-          {/* Recurring Toggle */}
           <div className="flex items-center">
             <input
               id="isRecurring"
@@ -166,7 +132,6 @@ const AddBudgetForm = ({
             </label>
           </div>
 
-          {/* Recurrence Type */}
           {formData.isRecurring && (
             <div className="space-y-2">
               <label
@@ -200,7 +165,6 @@ const AddBudgetForm = ({
             </div>
           )}
 
-          {/* BUTTONS */}
           <div className="flex justify-end space-x-3">
             <button
               type="button"

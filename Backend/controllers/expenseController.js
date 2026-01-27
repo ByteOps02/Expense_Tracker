@@ -13,11 +13,17 @@ const { validateObjectId } = require("../utils/queryValidator");
 exports.addExpense = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, category, date, description } = req.body;
 
+  // Sanitize amount
+  const numericAmount = Number(amount);
+  if (isNaN(numericAmount)) {
+    return next(new AppError("Amount must be a valid number", 400));
+  }
+
   const expense = await Expense.create({
     user: req.user.id,
     title,
     icon,
-    amount,
+    amount: numericAmount,
     category,
     date,
     description,
@@ -83,13 +89,19 @@ exports.deleteExpense = asyncHandler(async (req, res, next) => {
 exports.updateExpense = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, category, date, description } = req.body;
   
+  // Sanitize amount
+  const numericAmount = Number(amount);
+  if (isNaN(numericAmount)) {
+    return next(new AppError("Amount must be a valid number", 400));
+  }
+
   // Validate expense ID and user ID
   const expenseId = validateObjectId(req.params.id, 'Expense ID');
   const userId = validateObjectId(req.user.id, 'User ID');
 
   const expense = await Expense.findOneAndUpdate(
     { _id: expenseId, user: userId },
-    { title, icon, amount, category, date, description },
+    { title, icon, amount: numericAmount, category, date, description },
     { new: true, runValidators: true },
   );
 

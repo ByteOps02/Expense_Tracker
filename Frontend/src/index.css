@@ -84,7 +84,7 @@
     background-color: var(--background-color);
     overflow-x: hidden;
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+    /* transition: background-color 0.3s ease, color 0.3s ease; Removed for instant switch */
   }
 }
 
@@ -152,4 +152,44 @@
 
 .add-btn-fill {
   @apply text-white bg-purple-600 border-transparent shadow-md shadow-purple-200;
+}
+
+/* Custom Scrollbar Styles */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Custom styled scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.300');
+    border-radius: 20px;
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.600');
+  }
+
+  /* Firefox support for custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+
+  .dark .custom-scrollbar {
+    scrollbar-color: theme('colors.gray.600') transparent;
+  }
 }

@@ -13,7 +13,10 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
   const incomes = await Income.find({ user: req.user.id }).lean();
   const expenses = await Expense.find({ user: req.user.id }).lean();
 
-  const transactions = [...incomes, ...expenses];
+  const formattedIncomes = incomes.map(income => ({ ...income, type: 'income' }));
+  const formattedExpenses = expenses.map(expense => ({ ...expense, type: 'expense' }));
+
+  const transactions = [...formattedIncomes, ...formattedExpenses];
 
   transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 

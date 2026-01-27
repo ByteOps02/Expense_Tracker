@@ -7,10 +7,6 @@ const BudgetSchema = new mongoose.Schema(
             ref: 'User',
             required: true
         },
-        title: {
-            type: String,
-            required: true
-        },
         category: {
             type: String,
             required: true
@@ -34,14 +30,13 @@ const BudgetSchema = new mongoose.Schema(
         },
         recurrenceType: {
             type: String,
-            enum: ['monthly', 'annually', 'weekly', 'daily', null], // Allow null for non-recurring
+            enum: ['monthly', 'annually', 'weekly', 'daily', null],
             default: null
         }
     },
     { timestamps: true }
 );
 
-// Add indexes for better query performance
 BudgetSchema.index({ user: 1, startDate: 1, endDate: 1 });
 BudgetSchema.index({ user: 1, category: 1, startDate: 1 });
 
