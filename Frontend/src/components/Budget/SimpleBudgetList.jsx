@@ -1,4 +1,5 @@
 import React from "react";
+import { LuPencil, LuTrash2 } from "react-icons/lu";
 
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -34,8 +35,22 @@ const SimpleBudgetList = ({ budgets, onEdit, onDelete }) => {
                   {budget.isRecurring ? budget.recurrenceType : 'No'}
                 </td>
                 <td className="px-3 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => onEdit(budget)} className="text-indigo-600 dark:text-indigo-400 mr-4 hover:underline">Edit</button>
-                  <button onClick={() => onDelete(budget._id)} className="text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                  <div className="flex items-center justify-end gap-3">
+                      <button 
+                          onClick={() => onEdit(budget)} 
+                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors"
+                          title="Edit"
+                      >
+                          <LuPencil className="w-5 h-5" />
+                      </button>
+                      <button 
+                          onClick={() => onDelete(budget._id)} 
+                          className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors"
+                          title="Delete"
+                      >
+                          <LuTrash2 className="w-5 h-5" />
+                      </button>
+                  </div>
                 </td>
               </tr>
             ))}

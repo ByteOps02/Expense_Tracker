@@ -6,8 +6,9 @@ import { API_PATHS } from "../../utils/apiPath";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
 
-import { LuDownload } from "react-icons/lu";
+import { LuDownload, LuFileText } from "react-icons/lu";
 import TransactionsTable from "../../components/Transactions/TransactionsTable";
+import { generatePDF } from "../../utils/pdfGenerator";
 
 // RecentTransactionsPage component
 
@@ -20,7 +21,7 @@ const RecentTransactionsPage = () => {
   /**
    * @desc    Handles the download of transaction data as an Excel file.
    */
-  const handleDownload = async () => {
+  const handleDownloadExcel = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
@@ -86,9 +87,14 @@ const RecentTransactionsPage = () => {
             Recent Transactions
           </h1>
 
-          <button className="card-btn" onClick={handleDownload}>
-            <LuDownload className="text-base" /> Download
-          </button>
+          <div className="flex gap-2">
+            <button className="card-btn" onClick={() => generatePDF("Transaction Report", transactions, [], "transaction")}>
+                 <LuFileText className="text-base" /> PDF
+            </button>
+            <button className="card-btn" onClick={handleDownloadExcel}>
+              <LuDownload className="text-base" /> Excel
+            </button>
+          </div>
         </div>
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">

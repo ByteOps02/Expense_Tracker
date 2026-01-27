@@ -189,8 +189,8 @@ const Expense = () => {
   // Filter Logic
   const filteredExpenses = expenseData.filter((expense) => {
     const matchesSearch =
-      expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.category.toLowerCase().includes(searchTerm.toLowerCase());
+      (expense.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (expense.category?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
     const expenseDate = new Date(expense.date);
     const start = startDate ? new Date(startDate) : null;

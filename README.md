@@ -21,7 +21,7 @@ A comprehensive, full-stack web application for personal finance management, des
 - 📈 **Advanced Analytics:** Multiple visualization options including Recharts and Chart.js for comprehensive financial insights.
 - 🔍 **Advanced Filtering:** Powerful search and date range filtering for precise transaction tracking.
 - 📄 **PDF Reports:** Generate professional PDF reports with embedded charts and transaction tables.
-- 📱 **Enhanced UI/UX:** v2.1.0 features a completely redesigned Dashboard with responsive table layouts, optimized Dark/Light mode, and polished card designs.
+- 📱 **Enhanced UI/UX:** v2.1.1 features a completely redesigned Dashboard with responsive table layouts, optimized Dark/Light mode, and polished card designs.
 - 🛡️ **Robust Security:** 
   - JWT token authentication with 1-hour expiration
   - Rate limiting on authentication and upload endpoints
@@ -40,49 +40,58 @@ A comprehensive, full-stack web application for personal finance management, des
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Libraries
 
-### Frontend
-- **React (v19+):** Modern UI library with Hooks and Suspense support for server-side code splitting.
-- **Vite (v7+):** Lightning-fast build tool and development server with HMR support.
-- **Tailwind CSS (v4+):** Utility-first CSS framework with Vite plugin for optimized builds.
-- **React Router DOM (v7+):** Client-side routing for single-page application navigation.
-- **Axios (v1.11+):** Promise-based HTTP client for API communication.
-- **Recharts (v3.3+):** Composable charting library built on React components for financial data visualization.
-- **Chart.js (v4.5+) & react-chartjs-2 (v5+):** Advanced charting with responsive bar, line, and doughnut charts.
-- **Framer Motion (v12+):** Animation library for smooth UI transitions and interactions.
-- **Lucide React (v0.548+) & React Icons (v5.5+):** Comprehensive icon libraries for UI elements.
-- **Emoji Picker React (v4.14+):** Interactive emoji picker component.
-- **Moment.js (v2.30+):** Date and time formatting utilities.
-- **Base64url (v3.0+):** Encoding library for WebAuthn credential handling.
-- **jsPDF & html2canvas:** Robust PDF generation with DOM capture capabilities.
+### Frontend Dependencies (`Frontend/package.json`)
+| Library | Version | Purpose |
+|:--------|:--------|:--------|
+| **react** | ^19.2.0 | Core UI library |
+| **react-dom** | ^19.2.0 | DOM bindings for React |
+| **react-router-dom** | ^7.12.0 | Client-side routing |
+| **vite** | ^7.0.4 | Fast build tool & dev server |
+| **tailwindcss** | ^4.1.16 | Utility-first CSS framework |
+| **@tailwindcss/vite** | ^4.1.16 | Tailwind integration for Vite |
+| **axios** | ^1.11.0 | HTTP client for API requests |
+| **recharts** | ^3.3.0 | Charting library |
+| **chart.js** | ^4.5.1 | Core charting engine |
+| **react-chartjs-2** | ^5.3.1 | React wrapper for Chart.js |
+| **framer-motion** | ^12.23.24 | Animation library |
+| **react-icons** | ^5.5.0 | Icon library (Feather, Lucide, etc.) |
+| **lucide-react** | ^0.548.0 | Lucide icons |
+| **moment** | ^2.30.1 | Date formatting |
+| **jspdf** | ^4.0.0 | PDF generation |
+| **jspdf-autotable** | ^5.0.7 | Table plugin for jsPDF |
+| **html2canvas** | ^1.4.1 | Canvas creation from DOM |
+| **emoji-picker-react** | ^4.14.2 | Emoji picker component |
+| **base64url** | ^3.0.1 | Base64 URL encoding |
+| **prettier** | ^3.6.2 | Code formatter |
 
-### Backend
-- **Node.js (v18+):** JavaScript runtime environment for server-side development.
-- **Express.js (v5.1+):** Lightweight web application framework for building REST APIs.
-- **MongoDB (with Mongoose v8.19+):** NoSQL database with Object Data Modeling for schema validation and management.
-- **JWT (jsonwebtoken v9.0+):** Token-based authentication for stateless security.
-- **bcryptjs (v3.0+):** Password hashing and verification with salt rounds.
-- **Multer (v2.0+):** Middleware for handling multipart/form-data file uploads.
-- **Cloudinary (v2.8+):** Cloud-based image storage and manipulation service.
-- **ExcelJS (v4.4+):** Library for generating Excel files for data export.
-- **WebAuthn Support (base64url v3.0+, cbor v10.0+):** Libraries for biometric authentication.
-- **Helmet (v8.1+):** Security middleware for setting HTTP headers.
-- **Express Rate Limit (v8.2+):** Rate limiting middleware for DDoS protection.
-- **Express Validator (v7.3+):** Input validation and sanitization middleware.
-- **Compression (v1.7+):** Gzip compression middleware for response optimization.
-- **CORS (v2.8+):** Cross-Origin Resource Sharing middleware for secure cross-origin requests.
-- **Speakeasy (v2.0+):** Two-factor authentication support.
-- **Node Cache (v5.1+):** In-memory caching for improved performance.
-- **Dotenv (v17.2+):** Environment variable management.
-
-### Development Tools
-- **ESLint:** Code quality and style checking.
-- **Prettier:** Code formatting for consistency.
-- **Nodemon (v3.1+):** Auto-restart development server on file changes.
-- **Supertest (v7.1+):** HTTP assertion library for API testing.
+### Backend Dependencies (`Backend/package.json`)
+| Library | Version | Purpose |
+|:--------|:--------|:--------|
+| **express** | ^5.1.0 | Web framework for Node.js |
+| **mongoose** | ^8.19.2 | MongoDB object modeling |
+| **jsonwebtoken** | ^9.0.2 | JWT implementation |
+| **bcryptjs** | ^3.0.2 | Password hashing |
+| **cors** | ^2.8.5 | Cross-Origin Resource Sharing |
+| **dotenv** | ^17.2.3 | Environment variable loader |
+| **multer** | ^2.0.1 | File upload middleware |
+| **cloudinary** | ^2.8.0 | Cloud image management |
+| **exceljs** | ^4.4.0 | Excel spreadsheet creation |
+| **express-rate-limit** | ^8.2.1 | API rate limiting |
+| **helmet** | ^8.1.0 | Security headers |
+| **express-validator** | ^7.3.1 | Request validation |
+| **compression** | ^1.7.4 | Response compression |
+| **express-session** | ^1.18.2 | Session management |
+| **node-cache** | ^5.1.2 | In-memory caching |
+| **speakeasy** | ^2.0.0 | 2FA / OTP generation |
+| **base64url** | ^3.0.1 | Base64 URL encoding |
+| **cbor** | ^10.0.11 | CBOR encoding (WebAuthn) |
+| **nodemon** | ^3.1.10 | Dev server auto-restart |
+| **supertest** | ^7.1.4 | HTTP assertion for testing |
 
 ---
+
 
 ## 📦 Project Structure
 
@@ -91,7 +100,7 @@ Expense_Tracker/
 ├── .git/                   # Git version control
 ├── .gitignore              # Global Git ignore file
 ├── package.json            # Root package configuration
-├── README.md               # Project documentation
+├── README.md             # Project documentation
 ├── SECURITY.md             # Security guidelines
 ├── vercel.json             # Vercel monorepo configuration
 │
@@ -136,9 +145,10 @@ Expense_Tracker/
 │   │   ├── validationMiddleware.js     # Input validation with express-validator
 │   │   └── uploadMiddleware.js         # Multer file upload configuration
 │   │
-│   └── utils/              # Helper utilities
-│       ├── asyncHandler.js # Wrapper for async route handlers
-│       └── AppError.js     # Custom error class
+    └── utils/              # Helper utilities
+        ├── asyncHandler.js # Wrapper for async route handlers
+        ├── AppError.js     # Custom error class
+        └── queryValidator.js # Utility for query parameter validation
 │
 ├── Frontend/               # React/Vite Web Application
 │   ├── index.html          # Main HTML entry point
@@ -147,25 +157,29 @@ Expense_Tracker/
 │   ├── eslint.config.js    # ESLint configuration
 │   ├── vercel.json         # Static site deployment configuration
 │   │
-│   ├── public/
-│   │   └── robots.txt      # SEO robots configuration
+    ├── public/
+    │   ├── favicon.svg     # Frontend favicon
+    │   ├── robots.txt      # SEO robots configuration
+    │   └── vite.svg        # Vite logo asset
 │   │
 │   └── src/
 │       ├── main.jsx        # React DOM root entry point
 │       ├── App.jsx         # Main app component with routing and providers
 │       ├── index.css       # Global styles and Tailwind directives
 │       │
-│       ├── assets/
-│       │   └── images/     # Static image assets
+        ├── assets/
+        │   ├── images/     # Static image assets
+        │   └── react.svg   # React logo asset
 │       │
 │       ├── components/     # Reusable React components
 │       │   ├── ErrorBoundary.jsx           # Error boundary for error handling
 │       │   ├── LoadingSpinner.jsx          # Loading state component
 │       │   │
 │       │   ├── Budget/                     # Budget-related components
-│       │   │   ├── AddBudgetForm.jsx       # Budget creation form
-│       │   │   ├── BudgetList.jsx          # Budget list display
-│       │   │   └── BudgetOverview.jsx      # Budget statistics
+    │   │   ├── AddBudgetForm.jsx       # Budget creation form
+    │   │   ├── BudgetList.jsx          # Budget list display
+    │   │   ├── BudgetOverview.jsx      # Budget statistics
+    │   │   └── SimpleBudgetList.jsx    # Simplified budget list display
 │       │   │
 │       │   ├── Expense/                    # Expense-related components
 │       │   │   ├── AddExpenseForm.jsx      # Expense entry form
@@ -190,6 +204,7 @@ Expense_Tracker/
 │       │   │   └── CustomTooltip.jsx       # Custom tooltip for charts
 │       │   │
 │       │   ├── Dashboard/                  # Dashboard-specific components
+│       │   │   ├── DashboardWidget.jsx     # Reusable dashboard widget container
 │       │   │   ├── FinanceOverview.jsx     # Financial summary dashboard
 │       │   │   ├── ExpenseTransactions.jsx # Expense transaction display
 │       │   │   ├── RecentIncome.jsx        # Recent income section

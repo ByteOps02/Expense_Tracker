@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 import moment from "moment";
 
@@ -51,7 +51,20 @@ export const generatePDF = async (title, transactions, chartIds = [], type = "in
             if (chartElement) {
                 try {
                     // Use html2canvas to capture the chart area
-                    const canvas = await html2canvas(chartElement, { scale: 2 });
+                    // Mitigation for "oklab" error: force background color and clone options
+                    const canvas = await html2canvas(chartElement, { 
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: "#ffffff", // Force HEX background
+                        onclone: (clonedDoc) => {
+                            // Try to force standard colors on the cloned element to avoid oklab
+                            const element = clonedDoc.getElementById(id);
+                            if (element) {
+                                element.style.backgroundColor = "#ffffff";
+                                element.style.color = "#000000";
+                            }
+                        }
+                    });
                     const imgData = canvas.toDataURL("image/png");
                     
                     // Simple scaling logic
@@ -68,6 +81,11 @@ export const generatePDF = async (title, transactions, chartIds = [], type = "in
                     finalY += imgHeight + 10;
                 } catch (err) {
                     console.error("Error generating PDF chart:", err);
+                    doc.setFontSize(10);
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`(Chart capture failed: ${err.message})`, 14, finalY + 10);
+                    finalY += 20;
+                    doc.setTextColor(40, 40, 40); // Reset color
                 }
             }
         }
@@ -82,14 +100,15 @@ export const generatePDF = async (title, transactions, chartIds = [], type = "in
 
     doc.text("Transaction Details", 14, finalY);
     
-    doc.autoTable({
+    // Correct usage of autoTable
+    autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: finalY + 5,
         theme: "grid",
         styles: { fontSize: 9 },
         headStyles: { 
-            fillColor: type === 'income' ? [34, 197, 94] : [220, 38, 38], // Green or Red
+            fillColor: type === 'income' ? [34, 197, 94] : type === 'expense' ? [220, 38, 38] : [124, 58, 237], // Green, Red, or Purple
             textColor: [255, 255, 255] 
         }
     });

@@ -187,9 +187,9 @@ const Income = () => {
   // Filter Logic
   const filteredIncome = incomeData.filter((income) => {
     const matchesSearch =
-      income.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      income.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      income.source?.toLowerCase().includes(searchTerm.toLowerCase()); // Handle incomplete data
+      (income.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (income.category?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (income.source?.toLowerCase() || "").includes(searchTerm.toLowerCase()); // Handle incomplete data
 
     const incomeDate = new Date(income.date);
     const start = startDate ? new Date(startDate) : null;
