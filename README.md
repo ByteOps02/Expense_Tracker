@@ -21,7 +21,7 @@ A comprehensive, full-stack web application for personal finance management, des
 - 📈 **Advanced Analytics:** Multiple visualization options including Recharts and Chart.js for comprehensive financial insights.
 - 🔍 **Advanced Filtering:** Powerful search and date range filtering for precise transaction tracking.
 - 📄 **PDF Reports:** Generate professional PDF reports with embedded charts and transaction tables.
-- 📱 **Enhanced UI/UX:** v2.0.0 features a completely redesigned Dashboard with responsive table layouts, optimized Dark/Light mode, and polished card designs.
+- 📱 **Enhanced UI/UX:** v2.1.0 features a completely redesigned Dashboard with responsive table layouts, optimized Dark/Light mode, and polished card designs.
 - 🛡️ **Robust Security:** 
   - JWT token authentication with 1-hour expiration
   - Rate limiting on authentication and upload endpoints

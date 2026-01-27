@@ -92,7 +92,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
 
       {/* Footer/Logout Area could go here */}
       <div className="p-4 text-center">
-         <p className="text-xs text-gray-300 dark:text-gray-600">v2.0.0</p>
+         <p className="text-xs text-gray-300 dark:text-gray-600">v2.1.0</p>
       </div>
     </div>
   );
