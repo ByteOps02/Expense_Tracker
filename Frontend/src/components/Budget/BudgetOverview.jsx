@@ -40,37 +40,39 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
 
   return (
     <div className="card w-full">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
         <div>
           <h5 className="text-lg font-semibold text-gray-900 dark:text-white">Budget Overview</h5>
           <p className="text-sm text-gray-500 mt-1">Monitor your financial goals and spending limits.</p>
         </div>
 
-        <div className="flex items-center space-x-4">
-            <div>
-                <ModernDatePicker
-                    label="Start Date"
-                    value={reportStartDate}
-                    onChange={(e) => setReportStartDate(e.target.value)}
-                    colorTheme="purple"
-                />
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 w-full lg:w-auto">
+            <div className="grid grid-cols-2 gap-3 w-full lg:w-auto">
+                <div className="w-full">
+                    <ModernDatePicker
+                        label="Start Date"
+                        value={reportStartDate}
+                        onChange={(e) => setReportStartDate(e.target.value)}
+                        colorTheme="purple"
+                    />
+                </div>
+                <div className="w-full">
+                    <ModernDatePicker
+                        label="End Date"
+                        value={reportEndDate}
+                        onChange={(e) => setReportEndDate(e.target.value)}
+                        colorTheme="purple"
+                    />
+                </div>
             </div>
-            <div>
-                <ModernDatePicker
-                    label="End Date"
-                    value={reportEndDate}
-                    onChange={(e) => setReportEndDate(e.target.value)}
-                    colorTheme="purple"
-                />
-            </div>
-            <button className="add-btn flex-shrink-0" onClick={onAddBudget}>
+            <button className="add-btn flex-shrink-0 justify-center w-full lg:w-auto mt-2 lg:mt-0" onClick={onAddBudget}>
                 <LuPlus className="text-lg" />
                 Add New Budget
             </button>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
           <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">Total Budgeted</p>
           <p className="text-xl font-bold text-blue-900 dark:text-blue-100 mt-2">{formatCurrency(totalBudgeted)}</p>

@@ -10,7 +10,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ChartJsDoughnutChart = ({ data, colors }) => {
+const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
   const { theme } = useContext(ThemeContext);
 
   if (!data || data.length === 0) {
@@ -49,6 +49,7 @@ const ChartJsDoughnutChart = ({ data, colors }) => {
     cutout: "75%",
     plugins: {
       legend: {
+        display: showLegend,
         position: "bottom",
         labels: {
           usePointStyle: true,

@@ -21,7 +21,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
             <SideMenu activeMenu={activeMenu} />
           </div>
           {/* Main content area */}
-          <div className="grow pt-20 pb-8 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-61px)] lg:ml-64 transition-colors duration-300">
+          <div className="grow pt-20 px-4 md:px-6 pb-8 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-61px)] lg:ml-64 transition-colors duration-300">
             {children}
           </div>
         </div>

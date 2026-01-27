@@ -37,6 +37,8 @@ const Budget = () => {
     recurrenceType: "",
   });
 
+  const [activeChartTab, setActiveChartTab] = useState('budgetVsActual');
+
   const fetchBudgetsAndReport = useCallback(async () => {
     setLoading(true);
     try {
@@ -202,9 +204,12 @@ const Budget = () => {
     );
   }
 
+
+
+
   return (
     <DashboardLayout activeMenu="Budget">
-      <div className="w-full max-w-[1400px] mx-auto px-6">
+      <div className="w-full max-w-[1400px] mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
           Budget Management
         </h1>
@@ -223,11 +228,33 @@ const Budget = () => {
 
           {budgetReport.length > 0 ? (
             <>
-              <div className="card mb-6">
+              {/* Mobile Tabs */}
+              <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-6 overflow-x-auto">
+                <button 
+                  className={`flex-1 min-w-[100px] py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${activeChartTab === 'budgetVsActual' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+                  onClick={() => setActiveChartTab('budgetVsActual')}
+                >
+                  Vs. Actual
+                </button>
+                <button 
+                  className={`flex-1 min-w-[100px] py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${activeChartTab === 'budgeted' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+                  onClick={() => setActiveChartTab('budgeted')}
+                >
+                  Budgeted
+                </button>
+                <button 
+                  className={`flex-1 min-w-[100px] py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${activeChartTab === 'spent' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+                  onClick={() => setActiveChartTab('spent')}
+                >
+                  Spending
+                </button>
+              </div>
+
+              <div className={`card mb-6 ${activeChartTab === 'budgetVsActual' ? 'block' : 'hidden'} lg:block`}>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Budget vs. Actual Spending
                 </h2>
-                <div className="h-[350px]">
+                <div className="h-[220px] lg:h-[350px]">
                   <ChartJsBarChart
                     data={budgetReport.map((item) => ({
                       category: item.category,
@@ -239,51 +266,63 @@ const Budget = () => {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="card">
+                <div className={`card ${activeChartTab === 'budgeted' ? 'block' : 'hidden'} lg:block`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     Budgeted Amount by Category
                   </h2>
-                  <div className="h-[350px]">
-                    <ChartJsDoughnutChart
-                      data={budgetReport.map((item) => ({
-                        category: item.category,
-                        amount: item.budgetAmount,
-                      }))}
-                      colors={[
-                        "#8b5cf6",
-                        "#ec4899",
-                        "#f59e0b",
-                        "#10b981",
-                        "#3b82f6",
-                        "#6366f1",
-                        "#f97316",
-                        "#06b6d4",
-                      ]}
-                    />
+                  <div className="h-auto flex flex-col">
+                    <div className="h-[250px] relative flex items-center justify-center shrink-0">
+                        <ChartJsDoughnutChart
+                          data={budgetReport.map((item) => ({
+                            category: item.category,
+                            amount: item.budgetAmount,
+                          }))}
+                          colors={[
+                            "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4",
+                          ]}
+                          showLegend={false}
+                        />
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
+                         {budgetReport.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4"][index % 8] }}></span>
+                              <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
+                                {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.budgetAmount)}
+                              </span>
+                            </div>
+                         ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="card">
+                <div className={`card ${activeChartTab === 'spent' ? 'block' : 'hidden'} lg:block`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     Actual Spending by Category
                   </h2>
-                  <div className="h-[350px]">
-                    <ChartJsDoughnutChart
-                      data={budgetReport.map((item) => ({
-                        category: item.category,
-                        amount: item.actualSpent,
-                      }))}
-                      colors={[
-                        "#ef4444",
-                        "#f97316",
-                        "#f59e0b",
-                        "#eab308",
-                        "#84cc16",
-                        "#22c55e",
-                        "#10b981",
-                        "#14b8a6",
-                      ]}
-                    />
+                  <div className="h-auto flex flex-col">
+                    <div className="h-[250px] relative flex items-center justify-center shrink-0">
+                        <ChartJsDoughnutChart
+                          data={budgetReport.map((item) => ({
+                            category: item.category,
+                            amount: item.actualSpent,
+                          }))}
+                          colors={[
+                            "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981", "#14b8a6",
+                          ]}
+                          showLegend={false}
+                        />
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
+                         {budgetReport.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981", "#14b8a6"][index % 8] }}></span>
+                              <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
+                                {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.actualSpent)}
+                              </span>
+                            </div>
+                         ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -294,24 +333,30 @@ const Budget = () => {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Budget Distribution
                 </h2>
-                <div className="h-[350px]">
-                  <ChartJsDoughnutChart
-                    data={budgets.map((item) => ({
-                      category: item.category,
-                      amount: item.amount,
-                    }))}
-                    colors={[
-                      "#8b5cf6",
-                      "#ec4899",
-                      "#f59e0b",
-                      "#10b981",
-                      "#3b82f6",
-                      "#6366f1",
-                      "#f97316",
-                      "#06b6d4",
-                    ]}
-                  />
-                </div>
+                <div className="h-auto flex flex-col">
+                    <div className="h-[250px] relative flex items-center justify-center shrink-0">
+                      <ChartJsDoughnutChart
+                        data={budgets.map((item) => ({
+                          category: item.category,
+                          amount: item.amount,
+                        }))}
+                        colors={[
+                          "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4",
+                        ]}
+                        showLegend={false}
+                      />
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
+                         {budgets.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4"][index % 8] }}></span>
+                              <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
+                                {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount)}
+                              </span>
+                            </div>
+                         ))}
+                    </div>
+                  </div>
               </div>
             </>
           ) : null}

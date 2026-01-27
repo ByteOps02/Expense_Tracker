@@ -80,7 +80,7 @@ const RecentTransactionsPage = () => {
 
   return (
     <DashboardLayout activeMenu="Recent Transactions">
-      <div className="w-full max-w-[1400px] mx-auto px-6">
+      <div className="w-full max-w-[1400px] mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Recent Transactions

@@ -206,7 +206,7 @@ const Income = () => {
 
   return (
     <DashboardLayout activeMenu="Income">
-      <div className="w-full max-w-[1400px] mx-auto px-6">
+      <div className="w-full max-w-[1400px] mx-auto">
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner text="Loading income data..." />

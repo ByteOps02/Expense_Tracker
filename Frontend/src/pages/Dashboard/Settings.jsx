@@ -93,7 +93,7 @@ const Settings = () => {
 
   return (
     <DashboardLayout activeMenu="Settings">
-      <div className="p-6">
+      <div className="w-full">
         <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Settings</h3>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
