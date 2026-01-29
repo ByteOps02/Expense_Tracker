@@ -9,7 +9,7 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, reportEndDate, setReportEndDate, budgetReport, budgets, expenses }) => {
+const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, reportEndDate, setReportEndDate, budgetReport, budgets }) => {
   const [showAtRiskDetails, setShowAtRiskDetails] = useState(false);
   
   const hasReportData = budgetReport && budgetReport.length > 0;
@@ -20,7 +20,8 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
   
   const totalSpent = hasReportData
     ? budgetReport.reduce((sum, b) => sum + (b.actualSpent || 0), 0)
-    : expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+    : 0; // Fallback to 0 if no report data (optimized)
+
   const totalRemaining = totalBudgeted - totalSpent;
   
   let overspentCount = 0;
@@ -28,13 +29,6 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
   
   if (hasReportData) {
     atRiskCategories = budgetReport?.filter(b => b.status === 'overspent') || [];
-    overspentCount = atRiskCategories.length;
-  } else if (budgets && budgets.length > 0 && expenses && expenses.length > 0) {
-    atRiskCategories = budgets.filter(budget => {
-      const categoryExpenses = expenses.filter(e => e.category === budget.category);
-      const categoryTotal = categoryExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-      return categoryTotal > budget.amount;
-    });
     overspentCount = atRiskCategories.length;
   }
 
@@ -131,27 +125,8 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
                     </div>
                   </div>
                 );
-              } else {
-                const categoryExpenses = expenses.filter(e => e.category === category.category);
-                const categoryTotal = categoryExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-                const overspentAmount = categoryTotal - category.amount;
-                return (
-                  <div key={idx} className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{category.category}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Budget: {formatCurrency(category.amount)} | Spent: {formatCurrency(categoryTotal)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-red-600 dark:text-red-400">
-                        +{formatCurrency(overspentAmount)}
-                      </p>
-                      <p className="text-xs text-red-500 dark:text-red-400">Over by</p>
-                    </div>
-                  </div>
-                );
               }
+              return null;
             })}
           </div>
         </div>

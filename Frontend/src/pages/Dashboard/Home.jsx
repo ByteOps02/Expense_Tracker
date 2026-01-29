@@ -53,10 +53,7 @@ const Home = () => {
             value={
               "₹" +
               addThousandsSeparator(
-                dashboardData?.allIncomes?.reduce(
-                  (sum, i) => sum + i.amount,
-                  0,
-                ) ?? 0,
+                dashboardData?.totalIncome ?? 0,
               )
             }
             color="bg-orange-500"
@@ -67,10 +64,7 @@ const Home = () => {
             value={
               "₹" +
               addThousandsSeparator(
-                dashboardData?.allExpenses?.reduce(
-                  (sum, e) => sum + e.amount,
-                  0,
-                ) ?? 0,
+                dashboardData?.totalExpense ?? 0,
               )
             }
             color="bg-red-500"
@@ -94,16 +88,10 @@ const Home = () => {
           <FinanceOverview
             totalBalance={dashboardData?.balance ?? 0}
             totalIncome={
-              dashboardData?.allIncomes?.reduce(
-                (sum, i) => sum + i.amount,
-                0,
-              ) ?? 0
+              dashboardData?.totalIncome ?? 0
             }
             totalExpense={
-              dashboardData?.allExpenses?.reduce(
-                (sum, e) => sum + e.amount,
-                0,
-              ) ?? 0
+              dashboardData?.totalExpense ?? 0
             }
           />
           <Last30DaysExpenses

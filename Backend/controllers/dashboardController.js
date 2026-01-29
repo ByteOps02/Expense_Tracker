@@ -20,10 +20,11 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
-          allIncomes: [{ $sort: { date: -1 } }],
+            // OPTIMIZED: REMOVED allIncomes full fetch
           incomeLast30Days: [
             { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
             { $sort: { date: -1 } },
+            // Limit just in case, though usually this is for graph data
           ],
           last5Incomes: [
             { $sort: { date: -1 } },
@@ -42,7 +43,7 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
-          allExpenses: [{ $sort: { date: -1 } }],
+            // OPTIMIZED: REMOVED allExpenses full fetch
           expenseLast30Days: [
             { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
             { $sort: { date: -1 } },
@@ -83,20 +84,16 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: {
-      allIncomes: incomeData.allIncomes,
-      allExpenses: expenseData.allExpenses,
+      // removed allIncomes/allExpenses from response
       incomeLast30Days: incomeData.incomeLast30Days,
       totalIncomeLast30Days,
       expenseLast30Days: expenseData.expenseLast30Days,
       totalExpenseLast30Days,
       last5Transactions,
       balance,
+      totalIncome,
+      totalExpense,
     },
-    debug: {
-      userId,
-      incomeStats,
-      expenseStats,
-    }
   });
 });
 

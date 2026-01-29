@@ -58,15 +58,18 @@ export const prepareExpenseTimeSeriesData = (data = []) => {
     (a, b) => new Date(a.date) - new Date(b.date),
   );
 
-  const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    amount: item?.amount,
-    source: item?.source,
-  }));
+  const chartData = sortedData.map((item) => {
+     if (!item) return null;
+     return {
+        month: new Date(item.date).toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        }),
+        amount: item.amount,
+        source: item.source,
+    };
+  }).filter(Boolean);
 
   return chartData;
 };
@@ -81,15 +84,18 @@ export const prepareExpenseLineChartData = (data = []) => {
     (a, b) => new Date(a.date) - new Date(b.date),
   );
 
-  const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    amount: item?.amount,
-    category: item?.category,
-  }));
+  const chartData = sortedData.map((item) => {
+    if (!item) return null;
+    return {
+        month: new Date(item.date).toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        }),
+        amount: item.amount,
+        category: item.category,
+    };
+  }).filter(Boolean);
 
   return chartData;
 };
@@ -136,7 +142,8 @@ export const prepareTitleAndCategoryData = (data = []) => {
   if (!Array.isArray(data)) return [];
 
   const grouped = data.reduce((acc, item) => {
-    const label = `${item.title} (${item.category || item.source || "N/A"})`;
+    if (!item) return acc;
+    const label = `${item.title || 'Unknown'} (${item.category || item.source || "N/A"})`;
     acc[label] = (acc[label] || 0) + (item.amount || 0);
     return acc;
   }, {});

@@ -1,6 +1,9 @@
 const Budget = require('../models/Budget');
 const Income = require('../models/Income');
+const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateObjectId } = require("../utils/queryValidator");
@@ -146,63 +149,87 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         matchQuery.endDate = { ...matchQuery.endDate, $lte: new Date(endDate) };
     }
 
-    const report = await Budget.aggregate([
-        { $match: matchQuery },
-        {
-            $lookup: {
-                from: 'expenses',
-                let: { budgetCategory: '$category', budgetStartDate: '$startDate', budgetEndDate: '$endDate', budgetUserId: '$user' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ['$user', '$$budgetUserId'] },
-                                    { $eq: [{ $toLower: '$category' }, { $toLower: '$$budgetCategory' }] },
-                                    { $gte: ['$date', '$$budgetStartDate'] },
-                                    { $lte: ['$date', '$$budgetEndDate'] }
-                                ]
-                            }
-                        }
-                    },
-                    { $group: { _id: null, totalSpent: { $sum: '$amount' } } }
-                ],
-                as: 'actualSpending'
-            }
-        },
-        { $addFields: { actualSpent: { $ifNull: [{ $arrayElemAt: ['$actualSpending.totalSpent', 0] }, 0] } } },
-        {
-            $project: {
-                _id: 1,
-                category: 1,
-                budgetAmount: '$amount',
-                startDate: 1,
-                endDate: 1,
-                isRecurring: 1,
-                recurrenceType: 1,
-                actualSpent: 1,
-                remaining: { $subtract: ['$amount', '$actualSpent'] },
-                status: {
-                    $cond: {
-                        if: { $gt: ['$actualSpent', '$amount'] },
-                        then: 'overspent',
-                        else: 'within_budget'
-                    }
-                }
-            }
-        },
-        { $sort: { startDate: -1 } }
-    ]);
+    // 1. Fetch Budgets
+    const budgets = await Budget.find(matchQuery).sort({ startDate: -1 }).lean();
 
-    if (!report) {
+    if (!budgets || budgets.length === 0) {
         return res.status(200).json({
             status: "success",
             results: 0,
-            data: {
-                report: []
-            }
+            data: { report: [] }
         });
     }
+
+    // 2. Determine date range for expenses to minimize fetch
+    // We need expenses that could possibly fall into ANY of the fetched budgets
+    const minDate = budgets.reduce((min, b) => new Date(b.startDate) < min ? new Date(b.startDate) : min, new Date(8640000000000000));
+    const maxDate = budgets.reduce((max, b) => new Date(b.endDate) > max ? new Date(b.endDate) : max, new Date(-8640000000000000));
+
+    const logPath = path.join(__dirname, '..', 'debug_budget.log');
+    const log = (msg) => fs.appendFileSync(logPath, msg + '\n');
+
+    log(`\n\n--- DEBUG RUN ${new Date().toISOString()} ---`);
+    log(`User ID: ${userId}`);
+    log(`Budgets Found: ${budgets.length}`);
+    log(`Global Date Range: ${minDate.toISOString()} to ${maxDate.toISOString()}`);
+
+    // 3. Fetch Expenses (only necessary fields)
+    const expenses = await Expense.find(
+        {
+            user: userId,
+            date: { $gte: minDate, $lte: maxDate }
+        }
+    ).select('amount category date').lean();
+
+    log(`Expenses Found (Count): ${expenses.length}`);
+    if (expenses.length > 0) {
+        log(`Sample Expense: ${JSON.stringify(expenses[0])}`);
+    } else {
+        log("No expenses found in date range. Checking wider range...");
+        const allExpenses = await Expense.find({ user: userId }).limit(1).lean();
+        log(`Any expense for user? ${allExpenses.length > 0 ? JSON.stringify(allExpenses[0]) : 'NONE'}`);
+    }
+
+    // 4. Merge in Memory (Map expenses to budgets)
+    const report = budgets.map(budget => {
+        const budgetCategory = (budget.category || "").trim().toLowerCase();
+        const isGlobalBudget = ['total', 'all', 'budget', 'overall', 'monthly budget'].includes(budgetCategory);
+        
+        log(`Processing Budget: "${budget.category}" (isGlobal: ${isGlobalBudget})`);
+        
+        // Sum expenses that match this budget's category and date range
+        const actualSpent = expenses.reduce((sum, expense) => {
+            const expenseCategory = (expense.category || "").trim().toLowerCase();
+            const isCategoryMatch = isGlobalBudget || expenseCategory === budgetCategory;
+            
+            const expenseDate = new Date(expense.date);
+            const budgetStart = new Date(budget.startDate);
+            const budgetEnd = new Date(budget.endDate);
+            // Fix: Set budgetEnd to end of day
+            budgetEnd.setHours(23, 59, 59, 999);
+
+            const isDateMatch = expenseDate >= budgetStart && expenseDate <= budgetEnd;
+
+            if (isCategoryMatch && isDateMatch) {
+                 return sum + expense.amount;
+            }
+            return sum;
+        }, 0);
+        
+        log(`Total Spent: ${actualSpent}`);
+        
+        const status = actualSpent > budget.amount ? 'overspent' : 'within_budget';
+
+        return {
+            ...budget,
+            budgetAmount: budget.amount, // Maintain compatibility with frontend
+            actualSpent,
+            remaining: budget.amount - actualSpent,
+            status
+        };
+    });
+
+
 
     res.status(200).json({
         status: "success",

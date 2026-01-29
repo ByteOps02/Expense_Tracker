@@ -44,7 +44,7 @@ exports.addIncome = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.getAllIncome = asyncHandler(async (req, res, next) => {
-  const { page, limit, startDate, endDate } = req.query;
+  const { page, limit, startDate, endDate, search } = req.query;
 
   const query = { user: req.user.id };
 
@@ -54,6 +54,16 @@ exports.getAllIncome = asyncHandler(async (req, res, next) => {
       $gte: new Date(startDate),
       $lte: new Date(endDate),
     };
+  }
+
+  // Search filtering
+  if (search) {
+    const searchRegex = new RegExp(search, "i");
+    query.$or = [
+      { title: searchRegex },
+      { category: searchRegex },
+      { source: searchRegex },
+    ];
   }
 
   // If no pagination is requested, return all (backward compatibility)

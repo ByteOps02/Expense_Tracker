@@ -3,6 +3,10 @@ const connectDB = require('../config/db');
 // Middleware to ensure database connection
 const connectDBMiddleware = async (req, res, next) => {
   try {
+    // Check if we have a connection to the database
+    if (require('mongoose').connection.readyState === 1) {
+      return next();
+    }
     await connectDB();
     next();
   } catch (error) {

@@ -13,7 +13,6 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 const Budget = () => {
   const [budgets, setBudgets] = useState([]);
   const [budgetReport, setBudgetReport] = useState([]);
-  const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,11 +52,8 @@ const Budget = () => {
       const report = reportResponse.data.data.report || [];
       setBudgetReport(report);
 
-      // Fetch expenses
-      const expensesResponse = await axiosInstance.get(
-        API_PATHS.EXPENSE.GET_ALL_EXPENSE,
-      );
-      setExpenses(expensesResponse.data.data.expenses || []);
+      // OPTIMIZATION: Removed fetching of all expenses. 
+      // Budget vs Actual data is now fully handled by the GET_REPORT endpoint.
     } catch (err) {
       setError("Failed to fetch data.");
       console.error("Error fetching data:", err);
@@ -222,8 +218,7 @@ const Budget = () => {
             reportEndDate={reportEndDate}
             setReportEndDate={setReportEndDate}
             budgetReport={budgetReport}
-            budgets={budgets}
-            expenses={expenses}
+            budgets={budgets} // Kept for "Total Budgeted" fallback if report empty, though unlikely
           />
 
           {budgetReport.length > 0 ? (
