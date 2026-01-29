@@ -18,6 +18,7 @@ const budgetRoutes = require("./routes/budgetRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const globalErrorHandler = require('./middleware/errorMiddleware');
 const { sanitizeMongoParams } = require("./middleware/validationMiddleware");
+const connectDBMiddleware = require("./middleware/connectDBMiddleware");
 
 
 // Initialize express app
@@ -33,7 +34,7 @@ app.use(helmet({
 
 // Enable Cross-Origin Resource Sharing (CORS) early
 // This allows the frontend to make requests to the backend, including preflight OPTIONS requests
-const allowedOrigins = (process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : ["http://localhost:5173", "http://localhost:5174", "https://expense-tracker-52hv.vercel.app"])
+const allowedOrigins = (process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : ["http://localhost:5173", "http://localhost:5174"])
   .map(url => url.trim()); // Trim whitespace from each URL
 
 app.use(
@@ -99,6 +100,9 @@ app.use((req, res, next) => {
 
 // Parse incoming JSON requests
 app.use(express.json());
+
+// Ensure Database Connection for every request (Serverless fix)
+app.use(connectDBMiddleware);
 
 // Sanitize MongoDB parameters to prevent NoSQL injection
 app.use(sanitizeMongoParams);
