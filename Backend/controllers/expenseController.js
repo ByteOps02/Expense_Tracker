@@ -43,16 +43,51 @@ exports.addExpense = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.getAllExpenses = asyncHandler(async (req, res, next) => {
-  const expenses = await Expense.find({ user: req.user.id })
+  const { page, limit, startDate, endDate } = req.query;
+
+  const query = { user: req.user.id };
+
+  // Date filtering
+  if (startDate && endDate) {
+    query.date = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
+  }
+
+  // If no pagination is requested, return all (backward compatibility)
+  if (!page && !limit) {
+    const expenses = await Expense.find(query).sort({ date: -1 }).lean();
+    return res.status(200).json({
+      status: "success",
+      results: expenses.length,
+      data: { expenses },
+    });
+  }
+
+  // Pagination logic
+  const pageNum = parseInt(page) || 1;
+  const limitNum = parseInt(limit) || 10;
+  const skip = (pageNum - 1) * limitNum;
+
+  const expenses = await Expense.find(query)
     .sort({ date: -1 })
+    .skip(skip)
+    .limit(limitNum)
     .lean();
+
+  const total = await Expense.countDocuments(query);
 
   res.status(200).json({
     status: "success",
     results: expenses.length,
-    data: {
-      expenses,
+    pagination: {
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
     },
+    data: { expenses },
   });
 });
 
