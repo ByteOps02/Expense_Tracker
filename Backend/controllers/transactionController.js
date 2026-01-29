@@ -10,21 +10,65 @@ const ExcelJS = require("exceljs");
  * @access  Private
  */
 exports.getAllTransactions = asyncHandler(async (req, res, next) => {
-  const incomes = await Income.find({ user: req.user.id }).lean();
-  const expenses = await Expense.find({ user: req.user.id }).lean();
+  const { page, limit, startDate, endDate } = req.query;
+
+  const pageNum = parseInt(page) || 1;
+  const limitNum = parseInt(limit) || 10;
+  const skip = (pageNum - 1) * limitNum;
+
+  const query = { user: req.user.id };
+
+  // Date filtering
+  if (startDate && endDate) {
+    query.date = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
+  }
+
+  // OPTIMIZATION: Instead of fetching ALL, we fetch just enough from BOTH
+  // collections to ensure we can build the correct sorted page.
+  // We fetch (skip + limit) from both because we don't know the distribution.
+  // Then we slice the correct window in memory.
+  // NOTE: For very deep pagination (e.g. page 1000), this is still slow. 
+  // But for "Load More" (page 1, 2, 3), it's drastically faster.
+  
+  const fetchLimit = skip + limitNum;
+
+  const [incomes, expenses] = await Promise.all([
+    Income.find(query).sort({ date: -1 }).limit(fetchLimit).lean(),
+    Expense.find(query).sort({ date: -1 }).limit(fetchLimit).lean()
+  ]);
 
   const formattedIncomes = incomes.map(income => ({ ...income, type: 'income' }));
   const formattedExpenses = expenses.map(expense => ({ ...expense, type: 'expense' }));
 
-  const transactions = [...formattedIncomes, ...formattedExpenses];
+  // Merge and Sort
+  const allTransactions = [...formattedIncomes, ...formattedExpenses];
+  allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Apply Pagination Slice
+  const paginatedTransactions = allTransactions.slice(skip, skip + limitNum);
+
+  // Calculate total documents for metadata (optional, slightly expensive but good for UX)
+  // For infinite scroll, we might just check if result < limit
+  const [totalIncome, totalExpense] = await Promise.all([
+      Income.countDocuments(query),
+      Expense.countDocuments(query)
+  ]);
+  const total = totalIncome + totalExpense;
 
   res.status(200).json({
     status: "success",
-    results: transactions.length,
+    results: paginatedTransactions.length,
+    pagination: {
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+    },
     data: {
-      transactions,
+      transactions: paginatedTransactions,
     },
   });
 });

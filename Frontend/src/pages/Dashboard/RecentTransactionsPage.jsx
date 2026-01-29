@@ -15,8 +15,13 @@ import { generatePDF } from "../../utils/pdfGenerator";
 const RecentTransactionsPage = () => {
   // State variables for transaction data and loading state
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed initial state to false to handle initial fetch
   const [error, setError] = useState(null);
+  
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const LIMIT = 10;
 
   /**
    * @desc    Handles the download of transaction data as an Excel file.
@@ -48,23 +53,33 @@ const RecentTransactionsPage = () => {
   };
 
   /**
-
-   * @desc    Fetches all transaction records for the user
-
+   * @desc    Fetches transaction records with pagination
    */
-
-  const fetchAllTransactions = async () => {
+  const fetchTransactions = async (pageNum = 1) => {
     setLoading(true);
     setError(null);
     try {
       const response = await axiosInstance.get(
-        `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}`,
+        `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?page=${pageNum}&limit=${LIMIT}`,
       );
-      if (response.data && response.data.data.transactions) {
-        setTransactions(response.data.data.transactions);
+      
+      const newTransactions = response.data.data.transactions || [];
+      const total = response.data.pagination?.total || 0;
+
+      if (pageNum === 1) {
+        setTransactions(newTransactions);
       } else {
-        setTransactions([]);
+        setTransactions((prev) => [...prev, ...newTransactions]);
       }
+
+      // Check if we have loaded all transactions
+      // Either if response is empty OR we reached the total count
+      if (newTransactions.length < LIMIT || (pageNum * LIMIT) >= total) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+
     } catch (error) {
       console.error("Error fetching transactions:", error);
       setError("Failed to load transaction data. Please try again.");
@@ -74,10 +89,15 @@ const RecentTransactionsPage = () => {
   };
 
   // Fetch transaction data on component mount
-
   useEffect(() => {
-    fetchAllTransactions();
+    fetchTransactions(1);
   }, []);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchTransactions(nextPage);
+  };
 
   return (
     <DashboardLayout activeMenu="Recent Transactions">
@@ -96,34 +116,54 @@ const RecentTransactionsPage = () => {
             </button>
           </div>
         </div>
-        {loading ? (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <LoadingSpinner text="Loading transaction data..." />
-          </div>
-        ) : error ? (
-          <div className="card">
-            <div className="text-center text-red-500 py-8">
+        
+        {error && (
+          <div className="card mb-6">
+            <div className="text-center text-red-500 py-4">
               <p>{error}</p>
               <button
-                onClick={fetchAllTransactions}
-                className="mt-4 btn-primary"
+                onClick={() => fetchTransactions(page)}
+                className="mt-2 btn-primary"
               >
                 Retry
               </button>
             </div>
           </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="w-full">
-              <div className="card">
-                <TransactionsTable
-                  data={transactions}
-                  showActions={false}
-                />
-              </div>
+        )}
+
+        <div className="space-y-6">
+          <div className="w-full">
+            <div className="card">
+              <TransactionsTable
+                data={transactions}
+                showActions={false}
+              />
+              
+              {loading && (
+                 <div className="flex items-center justify-center p-4">
+                  <LoadingSpinner text="Loading..." />
+                 </div>
+              )}
+
+              {!loading && hasMore && (
+                <div className="flex justify-center p-4">
+                  <button 
+                    onClick={handleLoadMore}
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    Load More
+                  </button>
+                </div>
+              )}
+
+              {!loading && !hasMore && transactions.length > 0 && (
+                <div className="text-center p-4 text-gray-500 dark:text-gray-400">
+                  No more transactions to load.
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </DashboardLayout>
   );
