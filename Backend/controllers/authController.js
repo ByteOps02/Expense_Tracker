@@ -160,7 +160,7 @@ exports.uploadProfileImage = asyncHandler(async (req, res, next) => {
     },
     (error, result) => {
       if (error) {
-        console.error("Cloudinary Upload Error:", error);
+        console.error("Cloudinary Upload Error Details:", JSON.stringify(error, null, 2));
         return next(new AppError("Failed to upload image", 500));
       }
       res.status(200).json({
