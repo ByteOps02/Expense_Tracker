@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-let isConnected = false;
-
 const connectDB = async () => {
-  if (isConnected) {
+  // Check if we have a connection to the database
+  if (mongoose.connection.readyState >= 1) {
     console.log("MongoDB is already connected.");
     return;
   }
@@ -14,11 +13,11 @@ const connectDB = async () => {
       useUnifiedTopology: true,
       bufferCommands: false, // Important for serverless environments
     });
-    isConnected = true;
     console.log("MongoDB connected successfully.");
   } catch (error) {
     console.error("MongoDB connection error:", error);
-    process.exit(1); // Exit process with failure
+    // Throw the error to be handled by the caller, instead of exiting the process
+    throw new Error("Database connection failed.");
   }
 };
 
