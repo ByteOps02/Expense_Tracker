@@ -1,22 +1,24 @@
 const mongoose = require("mongoose");
 
+let isConnected = false;
+
 const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) {
-    console.log("MongoDB already connected");
+  if (isConnected) {
+    console.log("MongoDB is already connected.");
     return;
   }
 
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      maxPoolSize: 10,
-      minPoolSize: 2,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      bufferCommands: false, // Important for serverless environments
     });
-    console.log("MongoDB connected with optimized settings");
-  } catch (err) {
-    console.log("Error connecting to MongoDB", err);
-    throw err;
+    isConnected = true;
+    console.log("MongoDB connected successfully.");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    process.exit(1); // Exit process with failure
   }
 };
 

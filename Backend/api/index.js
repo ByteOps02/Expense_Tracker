@@ -1,3 +1,12 @@
 const app = require("../server");
+const connectDB = require("../config/db");
 
-module.exports = app;
+let serverlessApp;
+
+module.exports = async (req, res) => {
+  if (!serverlessApp) {
+    await connectDB();
+    serverlessApp = app;
+  }
+  return serverlessApp(req, res);
+};
