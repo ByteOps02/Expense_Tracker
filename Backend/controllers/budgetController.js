@@ -2,8 +2,6 @@ const Budget = require('../models/Budget');
 const Income = require('../models/Income');
 const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateObjectId } = require("../utils/queryValidator");
@@ -165,13 +163,11 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
     const minDate = budgets.reduce((min, b) => new Date(b.startDate) < min ? new Date(b.startDate) : min, new Date(8640000000000000));
     const maxDate = budgets.reduce((max, b) => new Date(b.endDate) > max ? new Date(b.endDate) : max, new Date(-8640000000000000));
 
-    const logPath = path.join(__dirname, '..', 'debug_budget.log');
-    const log = (msg) => fs.appendFileSync(logPath, msg + '\n');
 
-    log(`\n\n--- DEBUG RUN ${new Date().toISOString()} ---`);
-    log(`User ID: ${userId}`);
-    log(`Budgets Found: ${budgets.length}`);
-    log(`Global Date Range: ${minDate.toISOString()} to ${maxDate.toISOString()}`);
+    console.log(`\n\n--- DEBUG RUN ${new Date().toISOString()} ---`);
+    console.log(`User ID: ${userId}`);
+    console.log(`Budgets Found: ${budgets.length}`);
+    console.log(`Global Date Range: ${minDate.toISOString()} to ${maxDate.toISOString()}`);
 
     // 3. Fetch Expenses (only necessary fields)
     const expenses = await Expense.find(
@@ -181,13 +177,14 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         }
     ).select('amount category date').lean();
 
-    log(`Expenses Found (Count): ${expenses.length}`);
+
+    console.log(`Expenses Found (Count): ${expenses.length}`);
     if (expenses.length > 0) {
-        log(`Sample Expense: ${JSON.stringify(expenses[0])}`);
+        console.log(`Sample Expense: ${JSON.stringify(expenses[0])}`);
     } else {
-        log("No expenses found in date range. Checking wider range...");
+        console.log("No expenses found in date range. Checking wider range...");
         const allExpenses = await Expense.find({ user: userId }).limit(1).lean();
-        log(`Any expense for user? ${allExpenses.length > 0 ? JSON.stringify(allExpenses[0]) : 'NONE'}`);
+        console.log(`Any expense for user? ${allExpenses.length > 0 ? JSON.stringify(allExpenses[0]) : 'NONE'}`);
     }
 
     // 4. Merge in Memory (Map expenses to budgets)
@@ -195,7 +192,8 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         const budgetCategory = (budget.category || "").trim().toLowerCase();
         const isGlobalBudget = ['total', 'all', 'budget', 'overall', 'monthly budget'].includes(budgetCategory);
         
-        log(`Processing Budget: "${budget.category}" (isGlobal: ${isGlobalBudget})`);
+
+        console.log(`Processing Budget: "${budget.category}" (isGlobal: ${isGlobalBudget})`);
         
         // Sum expenses that match this budget's category and date range
         const actualSpent = expenses.reduce((sum, expense) => {
@@ -216,7 +214,8 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
             return sum;
         }, 0);
         
-        log(`Total Spent: ${actualSpent}`);
+        
+        console.log(`Total Spent: ${actualSpent}`);
         
         const status = actualSpent > budget.amount ? 'overspent' : 'within_budget';
 
