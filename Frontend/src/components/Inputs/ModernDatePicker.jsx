@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { LuCalendar, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
 
-const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => {
+const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple", className = "", inputClassName = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const datePickerRef = useRef(null);
@@ -138,28 +138,31 @@ const ModernDatePicker = ({ value, onChange, error, colorTheme = "purple" }) => 
   const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
   return (
-    <div className="space-y-2" ref={datePickerRef}>
+    <div className={`space-y-2 ${className}`} ref={datePickerRef}>
       <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-        Date <span className={theme.accent}>*</span>
+        {React.isValidElement(label) ? label : (label || "Date")} <span className={theme.accent}>*</span>
       </label>
 
       {/* Input */}
       <div className="relative">
-        <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
 
         <input
           readOnly
           value={formatDisplayDate(value)}
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full pl-10 pr-4 py-3 rounded-xl
-            bg-gray-50 dark:bg-gray-900
-            border border-gray-200 dark:border-gray-700
+            w-full pl-10 pr-4 py-2.5 rounded-xl
+            bg-gray-100 dark:bg-gray-800
+            border border-gray-300 dark:border-gray-700
             text-gray-900 dark:text-white
+            placeholder-gray-400 dark:placeholder-gray-500
             cursor-pointer transition-all
+            focus:outline-none focus:ring-2
             ${theme.ring}
             ${isOpen ? theme.glow : ""}
             ${error ? "border-red-400 ring-red-300/40" : ""}
+            ${inputClassName}
           `}
         />
 

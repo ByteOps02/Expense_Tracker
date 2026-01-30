@@ -7,12 +7,14 @@ import BudgetOverview from "../../components/Budget/BudgetOverview";
 import SimpleBudgetList from "../../components/Budget/SimpleBudgetList";
 import AddBudgetForm from "../../components/Budget/AddBudgetForm";
 import ChartJsBarChart from "../../components/Charts/ChartJsBarChart";
-import ChartJsDoughnutChart from "../../components/Charts/ChartJsDoughnutChart";
+import ChartJsPieChart from "../../components/Charts/ChartJsPieChart";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Budget = () => {
   const [budgets, setBudgets] = useState([]);
   const [budgetReport, setBudgetReport] = useState([]);
+  const [expenseDistribution, setExpenseDistribution] = useState([]);
+  const [totalExpenses, setTotalExpenses] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,11 +51,15 @@ const Budget = () => {
       const reportResponse = await axiosInstance.get(
         `${API_PATHS.BUDGET.GET_REPORT}?startDate=${reportStartDate}&endDate=${reportEndDate}`,
       );
-      const report = reportResponse.data.data.report || [];
-      setBudgetReport(report);
+      const reportData = reportResponse.data.data;
+      setBudgetReport(reportData.report || []);
+      setTotalExpenses(reportData.totalExpenses || 0);
+      setExpenseDistribution(reportData.expenseDistribution || []);
 
-      // OPTIMIZATION: Removed fetching of all expenses. 
-      // Budget vs Actual data is now fully handled by the GET_REPORT endpoint.
+      // Verify if total expenses matches report sum (debug)
+      const reportSum = (reportData.report || []).reduce((sum, item) => sum + item.actualSpent, 0);
+      console.log(`Debug: Grand Total Expenses: ${reportData.totalExpenses}, Sum of Report Items: ${reportSum}`);
+
     } catch (err) {
       setError("Failed to fetch data.");
       console.error("Error fetching data:", err);
@@ -78,7 +84,6 @@ const Budget = () => {
     if (type === "checkbox") {
       handleChange(name, checked);
     } else if (name === "amount") {
-      // Convert amount to number
       handleChange(name, value ? parseFloat(value) : "");
     } else {
       handleChange(name, value);
@@ -87,13 +92,17 @@ const Budget = () => {
 
   const openAddModal = () => {
     setEditingBudget(null);
+    
+    // Default to current month: 1st to Last Day
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
     setFormData({
       category: "",
       amount: "",
-      startDate: new Date().toISOString().split("T")[0],
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
-        .toISOString()
-        .split("T")[0],
+      startDate: firstDay.toISOString().split("T")[0],
+      endDate: lastDay.toISOString().split("T")[0],
       isRecurring: false,
       recurrenceType: "",
     });
@@ -131,8 +140,11 @@ const Budget = () => {
         startDate: formData.startDate,
         endDate: formData.endDate,
         isRecurring: formData.isRecurring,
-        recurrenceType: formData.isRecurring ? formData.recurrenceType : null,
       };
+
+      if (formData.isRecurring) {
+        dataToSend.recurrenceType = formData.recurrenceType;
+      }
 
       if (new Date(dataToSend.startDate) > new Date(dataToSend.endDate)) {
         alert("End Date must be greater than or equal to Start Date");
@@ -147,8 +159,6 @@ const Budget = () => {
       } else {
         await axiosInstance.post(API_PATHS.BUDGET.ADD_BUDGET, dataToSend);
       }
-      fetchBudgetsAndReport();
-      closeModal();
       fetchBudgetsAndReport();
       closeModal();
     } catch (err) {
@@ -200,8 +210,11 @@ const Budget = () => {
     );
   }
 
-
-
+  // Helper to get Chart Colors
+  const getChartColors = (count) => {
+    const colors = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4"];
+    return Array(count).fill().map((_, i) => colors[i % colors.length]);
+  };
 
   return (
     <DashboardLayout activeMenu="Budget">
@@ -218,7 +231,8 @@ const Budget = () => {
             reportEndDate={reportEndDate}
             setReportEndDate={setReportEndDate}
             budgetReport={budgetReport}
-            budgets={budgets} // Kept for "Total Budgeted" fallback if report empty, though unlikely
+            budgets={budgets} 
+            totalExpenses={totalExpenses}
           />
 
           {budgetReport.length > 0 ? (
@@ -235,7 +249,7 @@ const Budget = () => {
                   className={`flex-1 min-w-[100px] py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${activeChartTab === 'budgeted' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
                   onClick={() => setActiveChartTab('budgeted')}
                 >
-                  Budgeted
+                  Allocations
                 </button>
                 <button 
                   className={`flex-1 min-w-[100px] py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${activeChartTab === 'spent' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
@@ -245,43 +259,51 @@ const Budget = () => {
                 </button>
               </div>
 
-              <div className={`card mb-6 ${activeChartTab === 'budgetVsActual' ? 'block' : 'hidden'} lg:block`}>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  Budget vs. Actual Spending
-                </h2>
-                <div className="h-[220px] lg:h-[350px]">
-                  <ChartJsBarChart
-                    data={budgetReport.map((item) => ({
-                      category: item.category,
-                      amount: item.budgetAmount,
-                      actual: item.actualSpent,
-                    }))}
-                  />
-                </div>
-              </div>
-
+              {/* Main Charts Area */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                 {/* Budget vs Actual Bar Chart */}
+                 <div className={`card ${activeChartTab === 'budgetVsActual' ? 'block' : 'hidden'} lg:col-span-2 lg:block`}>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    Budget vs. Actual Spending
+                  </h2>
+                  <div className="h-[220px] lg:h-[300px]">
+                    <ChartJsBarChart
+                      data={[
+                        {
+                            category: "Total (All)",
+                            amount: budgets.reduce((sum, b) => sum + (b.amount || 0), 0),
+                            actual: totalExpenses
+                        },
+                        ...budgetReport.map((item) => ({
+                            category: item.category,
+                            amount: item.budgetAmount,
+                            actual: item.actualSpent,
+                        }))
+                      ]}
+                    />
+                  </div>
+                </div>
+
+                {/* Budget Allocation Pie Chart */}
                 <div className={`card ${activeChartTab === 'budgeted' ? 'block' : 'hidden'} lg:block`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                    Budgeted Amount by Category
+                    Budget Allocation
                   </h2>
                   <div className="h-auto flex flex-col">
                     <div className="h-[250px] relative flex items-center justify-center shrink-0">
-                        <ChartJsDoughnutChart
+                        <ChartJsPieChart
                           data={budgetReport.map((item) => ({
                             category: item.category,
                             amount: item.budgetAmount,
                           }))}
-                          colors={[
-                            "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4",
-                          ]}
+                          colors={getChartColors(budgetReport.length)}
                           showLegend={false}
                         />
                     </div>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
                          {budgetReport.map((item, index) => (
                             <div key={index} className="flex items-center gap-2">
-                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4"][index % 8] }}></span>
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: getChartColors(budgetReport.length)[index] }}></span>
                               <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
                                 {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.budgetAmount)}
                               </span>
@@ -291,29 +313,34 @@ const Budget = () => {
                   </div>
                 </div>
 
+                {/* Actual Spending Pie Chart */}
                 <div className={`card ${activeChartTab === 'spent' ? 'block' : 'hidden'} lg:block`}>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                     Actual Spending by Category
                   </h2>
                   <div className="h-auto flex flex-col">
                     <div className="h-[250px] relative flex items-center justify-center shrink-0">
-                        <ChartJsDoughnutChart
-                          data={budgetReport.map((item) => ({
-                            category: item.category,
-                            amount: item.actualSpent,
-                          }))}
-                          colors={[
-                            "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981", "#14b8a6",
-                          ]}
-                          showLegend={false}
-                        />
+                        {expenseDistribution.length > 0 ? (
+                            <ChartJsPieChart
+                            data={expenseDistribution.map((item) => ({
+                                category: item.category,
+                                amount: item.amount,
+                            }))}
+                            colors={getChartColors(expenseDistribution.length)}
+                            showLegend={false}
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-500">
+                                No spending data available
+                            </div>
+                        )}
                     </div>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
-                         {budgetReport.map((item, index) => (
+                         {expenseDistribution.map((item, index) => (
                             <div key={index} className="flex items-center gap-2">
-                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981", "#14b8a6"][index % 8] }}></span>
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: getChartColors(expenseDistribution.length)[index] }}></span>
                               <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
-                                {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.actualSpent)}
+                                {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount)}
                               </span>
                             </div>
                          ))}
@@ -323,28 +350,25 @@ const Budget = () => {
               </div>
             </>
           ) : budgets.length > 0 ? (
-            <>
-              <div className="card mb-6">
+            <div className="card mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Budget Distribution
                 </h2>
                 <div className="h-auto flex flex-col">
                     <div className="h-[250px] relative flex items-center justify-center shrink-0">
-                      <ChartJsDoughnutChart
+                      <ChartJsPieChart
                         data={budgets.map((item) => ({
                           category: item.category,
                           amount: item.amount,
                         }))}
-                        colors={[
-                          "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4",
-                        ]}
+                        colors={getChartColors(budgets.length)}
                         showLegend={false}
                       />
                     </div>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
                          {budgets.map((item, index) => (
                             <div key={index} className="flex items-center gap-2">
-                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#6366f1", "#f97316", "#06b6d4"][index % 8] }}></span>
+                              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: getChartColors(budgets.length)[index] }}></span>
                               <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.category}>
                                 {item.category}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount)}
                               </span>
@@ -353,7 +377,6 @@ const Budget = () => {
                     </div>
                   </div>
               </div>
-            </>
           ) : null}
 
           {budgets.length === 0 ? (

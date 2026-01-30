@@ -178,6 +178,22 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
     ).select('amount category date').lean();
 
 
+
+    // Calculate total expenses for the period (to avoid double counting in frontend)
+    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+    // Calculate Expense Distribution (Group by Category)
+    const expenseDistributionMap = expenses.reduce((acc, curr) => {
+        const cat = (curr.category || "Uncategorized").trim();
+        acc[cat] = (acc[cat] || 0) + curr.amount;
+        return acc;
+    }, {});
+
+    const expenseDistribution = Object.keys(expenseDistributionMap).map(key => ({
+        category: key,
+        amount: expenseDistributionMap[key]
+    }));
+
     console.log(`Expenses Found (Count): ${expenses.length}`);
     if (expenses.length > 0) {
         console.log(`Sample Expense: ${JSON.stringify(expenses[0])}`);
@@ -190,7 +206,9 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
     // 4. Merge in Memory (Map expenses to budgets)
     const report = budgets.map(budget => {
         const budgetCategory = (budget.category || "").trim().toLowerCase();
-        const isGlobalBudget = ['total', 'all', 'budget', 'overall', 'monthly budget'].includes(budgetCategory);
+        // Check if category name implies a global/total budget
+        const globalKeywords = ['total', 'all', 'budget', 'overall', 'monthly', 'year'];
+        const isGlobalBudget = globalKeywords.some(keyword => budgetCategory.includes(keyword));
         
 
         console.log(`Processing Budget: "${budget.category}" (isGlobal: ${isGlobalBudget})`);
@@ -234,7 +252,9 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         status: "success",
         results: report.length,
         data: {
-            report
+            report,
+            totalExpenses, // Send the grand total
+            expenseDistribution // Send breakdown of all expenses
         }
     });
 });

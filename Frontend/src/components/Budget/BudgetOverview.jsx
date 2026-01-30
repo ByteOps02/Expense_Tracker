@@ -9,18 +9,22 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, reportEndDate, setReportEndDate, budgetReport, budgets }) => {
+const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, reportEndDate, setReportEndDate, budgetReport, budgets, totalExpenses }) => {
   const [showAtRiskDetails, setShowAtRiskDetails] = useState(false);
   
   const hasReportData = budgetReport && budgetReport.length > 0;
   
-  const totalBudgeted = hasReportData 
-    ? budgetReport.reduce((sum, b) => sum + (b.budgetAmount || 0), 0)
-    : budgets?.reduce((sum, b) => sum + (b.amount || 0), 0) || 0;
+  // Total Budgeted: Sum of all budgets (If 'Total' exists, this might be double counting if not handled, but sticking to simple sum for now as per conventional logic)
+  // Actually, let's refine: If there is a budget named "Total", maybe we should use THAT as the total? 
+  // For now, let's keep the sum logic but maybe in the future we can add a toggle.
+  const totalBudgeted = budgets?.reduce((sum, b) => sum + (b.amount || 0), 0) || 0;
   
-  const totalSpent = hasReportData
-    ? budgetReport.reduce((sum, b) => sum + (b.actualSpent || 0), 0)
-    : 0; // Fallback to 0 if no report data (optimized)
+  // Total Spent: Use the grand total provided by backend if available, otherwise fallback to sum (which might be inaccurate)
+  const totalSpent = totalExpenses !== undefined ? totalExpenses : (
+    hasReportData
+      ? budgetReport.reduce((sum, b) => sum + (b.actualSpent || 0), 0)
+      : 0
+  );
 
   const totalRemaining = totalBudgeted - totalSpent;
   
@@ -108,7 +112,7 @@ const BudgetOverview = ({ onAddBudget, reportStartDate, setReportStartDate, repo
           <div className="space-y-2">
             {atRiskCategories.map((category, idx) => {
               if (hasReportData) {
-                const overspentAmount = (category.actualSpent || 0) - (category.budgetAmount || 0);
+                const overspentAmount = (category.actualSpent || 0) - (category.budgetAmount || category.amount || 0); // fallback to amount if budgetAmount missing
                 return (
                   <div key={idx} className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg">
                     <div>

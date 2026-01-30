@@ -28,19 +28,36 @@ const ChartJsBarChart = ({ data }) => {
     );
   }
 
+  // Check if we have 'actual' data to decide on datasets
+  const hasActual = data.some(item => item.actual !== undefined);
+
+  const datasets = [
+    {
+      label: "Budget",
+      data: data.map((item) => item.amount),
+      backgroundColor: "#8b5cf6", // Purple
+      borderRadius: 4,
+      borderSkipped: false,
+      barThickness: hasActual ? 20 : 40,
+      maxBarThickness: 50,
+    }
+  ];
+
+  if (hasActual) {
+    datasets.push({
+      label: "Actual",
+      data: data.map((item) => item.actual),
+      backgroundColor: "#f59e0b", // Amber/Orange for contrast
+      borderRadius: 4,
+      borderSkipped: false,
+      barThickness: 20,
+      maxBarThickness: 50,
+    });
+  }
+
   const chartData = {
     labels: data.map((item) => item?.name || item?.month || item?.source || item?.category),
-    datasets: [
-      {
-        label: "Amount",
-        data: data.map((item) => item.amount),
-        backgroundColor: "#8b5cf6",
-        borderRadius: 6,
-        borderSkipped: false,
-        barThickness: 40,
-        maxBarThickness: 50,
-      },
-    ],
+    datasets: datasets,
   };
 
   const options = {
@@ -48,7 +65,16 @@ const ChartJsBarChart = ({ data }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true, // Enable legend to distinguish Budget vs Actual
+        position: 'top',
+        align: 'end',
+        labels: {
+            usePointStyle: true,
+            boxWidth: 8,
+            font: {
+                size: 11
+            }
+        }
       },
       tooltip: {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -57,7 +83,7 @@ const ChartJsBarChart = ({ data }) => {
         borderColor: "#e5e7eb",
         borderWidth: 1,
         padding: 10,
-        displayColors: false,
+        displayColors: true,
         callbacks: {
           label: function (context) {
             let label = context.dataset.label || "";
@@ -111,6 +137,10 @@ const ChartJsBarChart = ({ data }) => {
           display: false,
         },
       },
+    },
+    interaction: {
+        mode: 'index',
+        intersect: false,
     },
   };
 
