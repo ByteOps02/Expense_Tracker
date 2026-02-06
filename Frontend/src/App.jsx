@@ -6,6 +6,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 
 import UserProvider from "./context/UserContext.jsx";
 import { UserContext } from "./context/UserContextDefinition";
@@ -90,6 +91,7 @@ const App = () => {
                   </Suspense>
                 </ErrorBoundary>
               </Router>
+              <Analytics />
             </div>
           </ThemeProvider>
         </UserProvider>
