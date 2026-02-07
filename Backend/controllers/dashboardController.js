@@ -20,11 +20,9 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
-            // OPTIMIZED: REMOVED allIncomes full fetch
           incomeLast30Days: [
             { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
             { $sort: { date: -1 } },
-            // Limit just in case, though usually this is for graph data
           ],
           last5Incomes: [
             { $sort: { date: -1 } },
@@ -43,7 +41,6 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $facet: {
-            // OPTIMIZED: REMOVED allExpenses full fetch
           expenseLast30Days: [
             { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
             { $sort: { date: -1 } },

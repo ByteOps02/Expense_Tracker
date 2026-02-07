@@ -14,17 +14,6 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
-
-  // OPTIMIZATION: Instead of fetching ALL, we fetch 'limit' + 'skip' from EACH collection
-  // This is safe because if we want top 10 overall, the top 10 MUST be in the top 10 of one of the lists.
-  // Actually to be correct for pagination we need to fetch (skip + limit) from each to guarantee correct sort order merge,
-  // but for deep pagination this gets slow.
-  // A better approach for "Get All" mixed list without $unionWith is:
-  // 1. Fetch recent 'limit' items from both
-  // 2. Merge and Sort
-  // 3. Slice
-  // However, simple pagination is tricky with two collections without aggregation.
-  // We will assume Mongo 4.4+ ($unionWith) is available as it's standard now.
   
   const pipeline = [
       { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },

@@ -64,7 +64,6 @@ exports.getAllExpenses = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  // If no pagination is requested, return all (backward compatibility)
   if (!page && !limit) {
     const expenses = await Expense.find(query).sort({ date: -1 }).lean();
     return res.status(200).json({

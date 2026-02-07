@@ -19,7 +19,7 @@ const router = express.Router();
 
 // Rate limiter for budget endpoints
 const budgetLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, 
   max: 200,
   message: "Too many requests to budget endpoints, please try again later.",
   standardHeaders: true,

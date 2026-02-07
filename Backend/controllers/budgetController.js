@@ -178,8 +178,6 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
     ).select('amount category date').lean();
 
 
-
-    // Calculate total expenses for the period (to avoid double counting in frontend)
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
     // Calculate Expense Distribution (Group by Category)

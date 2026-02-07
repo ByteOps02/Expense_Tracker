@@ -13,7 +13,6 @@ const { validateObjectId } = require("../utils/queryValidator");
 exports.addIncome = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, source, category, date, note } = req.body;
 
-  // Sanitize amount
   const numericAmount = Number(amount);
   if (isNaN(numericAmount)) {
     return next(new AppError("Amount must be a valid number", 400));
