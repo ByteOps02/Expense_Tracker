@@ -14,7 +14,7 @@ A comprehensive, full-stack web application for personal finance management, des
 
 ## ✨ Features
 
-- 🔐 **Secure Authentication:** JWT-based login with **Show/Hide Password** toggle, biometric support (WebAuthn), and secure profile management.
+- 🔐 **Secure Authentication:** JWT-based login with **Show/Hide Password** toggle and secure profile management.
 - 📊 **Interactive Dashboard:** Real-time financial overview with recent transactions and data visualization through multiple chart types (bar, line, doughnut charts).
 - 💰 **Complete Income & Expense Management:** Full CRUD operations for financial records with categorization, dates, descriptions, and notes.
 - 💵 **Budget Tracking:** Create and manage budgets with recurring options (daily, weekly, monthly, annually) to monitor spending limits.
@@ -84,7 +84,6 @@ A comprehensive, full-stack web application for personal finance management, des
 | **compression** | ^1.7.4 | Response compression |
 | **express-session** | ^1.18.2 | Session management |
 | **node-cache** | ^5.1.2 | In-memory caching |
-| **speakeasy** | ^2.0.0 | 2FA / OTP generation |
 | **base64url** | ^3.0.1 | Base64 URL encoding |
 | **cbor** | ^10.0.11 | CBOR encoding (WebAuthn) |
 | **nodemon** | ^3.1.10 | Dev server auto-restart |
