@@ -35,10 +35,10 @@ const MonthlyAnalytics = ({ monthlyData, monthName }) => {
       </div>
 
       {/* Charts Side-by-Side Grid */}
-      <div className="flex lg:grid lg:grid-cols-2 gap-8 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 no-scrollbar snap-x snap-mandatory">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 w-full">
         
         {/* Expense Breakdown Card */}
-        <div className="bg-gray-50/50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col h-auto w-[85vw] lg:w-full shrink-0 snap-center">
+        <div className="bg-gray-50/50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col h-auto w-full shrink-0 snap-center">
           <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Expense Breakdown by Category
           </h6>
@@ -85,7 +85,7 @@ const MonthlyAnalytics = ({ monthlyData, monthName }) => {
         </div>
 
         {/* Income Breakdown Card */}
-        <div className="bg-gray-50/50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col h-auto w-[85vw] lg:w-full shrink-0 snap-center">
+        <div className="bg-gray-50/50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col h-auto w-full shrink-0 snap-center">
           <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Income Breakdown by Source
           </h6>

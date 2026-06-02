@@ -51,12 +51,20 @@ const Navbar = ({ activeMenu }) => {
       </button>
 
       {openSideMenu && (
-        <div className="fixed top-[61px] left-0 w-64 h-[calc(100vh-61px)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out">
-          <SideMenu
-            activeMenu={activeMenu}
-            onClose={() => setOpenSideMenu(false)}
+        <>
+          {/* Backdrop for mobile drawer */}
+          <div
+            className="fixed inset-0 top-[61px] bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-all duration-300"
+            onClick={() => setOpenSideMenu(false)}
           />
-        </div>
+          {/* Drawer Menu */}
+          <div className="fixed top-[61px] left-0 w-64 h-[calc(100vh-61px)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out">
+            <SideMenu
+              activeMenu={activeMenu}
+              onClose={() => setOpenSideMenu(false)}
+            />
+          </div>
+        </>
       )}
     </div>
   );

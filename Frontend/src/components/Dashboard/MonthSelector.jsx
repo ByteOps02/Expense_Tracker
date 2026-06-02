@@ -71,29 +71,29 @@ const MonthSelector = ({ selectedMonth, onMonthChange }) => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between p-3 transition-all duration-300">
-      <div className="flex items-center gap-2">
+    <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between p-2 sm:p-3 gap-2 transition-all duration-300">
+      <div className="flex items-center gap-1 sm:gap-2">
         {/* Left Chevron */}
         <button
           onClick={handlePreviousMonth}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg transition-all duration-200 active:scale-95"
+          className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg transition-all duration-200 active:scale-95"
           title="Previous Month"
           aria-label="Previous Month"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
 
         {/* Month Picker dropdown trigger */}
         <div className="relative">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 px-4 py-1.5 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 border border-purple-200/50 dark:border-purple-800/30 rounded-lg hover:shadow-sm transition-all duration-200 whitespace-nowrap text-purple-700 dark:text-purple-400 font-semibold text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 border border-purple-200/50 dark:border-purple-800/30 rounded-lg hover:shadow-sm transition-all duration-200 whitespace-nowrap text-purple-700 dark:text-purple-400 font-semibold text-xs sm:text-sm"
           >
-            <Calendar size={16} />
+            <Calendar size={14} className="sm:w-[16px] sm:h-[16px]" />
             <span>
               {monthNames[displayMonth.getMonth()]} {displayMonth.getFullYear()}
             </span>
-            <ChevronDown size={14} className="opacity-80" />
+            <ChevronDown size={12} className="opacity-80 sm:w-[14px] sm:h-[14px]" />
           </button>
 
           {/* Month & Year Picker Dropdown */}
@@ -178,18 +178,18 @@ const MonthSelector = ({ selectedMonth, onMonthChange }) => {
         {/* Right Chevron */}
         <button
           onClick={handleNextMonth}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg transition-all duration-200 active:scale-95"
+          className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg transition-all duration-200 active:scale-95"
           title="Next Month"
           aria-label="Next Month"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
 
       {/* Right Action Button: Today */}
       <button
         onClick={handleCurrentMonth}
-        className={`px-4 py-1.5 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all duration-200 ${
+        className={`px-3 sm:px-4 py-1.5 rounded-lg font-semibold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 whitespace-nowrap ${
           isCurrentMonth
             ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 cursor-default"
             : "bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"

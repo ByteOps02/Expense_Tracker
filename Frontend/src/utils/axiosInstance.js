@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "./apiPath";
+import { clearCache } from "./apiCache";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -24,7 +25,13 @@ axiosInstance.interceptors.request.use(
 
 // Response Interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const method = response.config.method?.toUpperCase();
+    if (method === "POST" || method === "PUT" || method === "DELETE") {
+      clearCache();
+    }
+    return response;
+  },
   (error) => {
     // Handle common errors globally
     if (error.response) {

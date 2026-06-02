@@ -9,6 +9,7 @@ import MonthlyTrendAnalysis from "../../components/Dashboard/MonthlyTrendAnalysi
 import InfoCard from "../../components/Cards/InfoCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { addThousandsSeparator } from "../../utils/helper";
+import { getCachedData, setCachedData } from "../../utils/apiCache";
 import {
   MdAccountBalanceWallet,
   MdTrendingUp,
@@ -30,18 +31,28 @@ const MonthlyAnalyticsPage = () => {
 
   // Fetch monthly data when selected month changes
   const fetchMonthlyData = useCallback(async () => {
-    setLoading(true);
+    const formattedMonth = getFormattedMonth(selectedMonth);
+    const cacheKey = `${API_PATHS.DASHBOARD.GET_MONTHLY_SUMMARY}?month=${formattedMonth}`;
+    const cached = getCachedData(cacheKey);
+
+    if (cached) {
+      setMonthlyData(cached.data);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError(null);
+
     try {
-      const formattedMonth = getFormattedMonth(selectedMonth);
-      const res = await axiosInstance.get(
-        `${API_PATHS.DASHBOARD.GET_MONTHLY_SUMMARY}?month=${formattedMonth}`
-      );
+      const res = await axiosInstance.get(cacheKey);
+      setCachedData(cacheKey, res.data);
       setMonthlyData(res.data.data);
     } catch (err) {
       console.error("Error fetching monthly data:", err);
-      setError("Failed to load monthly data");
-      setMonthlyData(null);
+      if (!cached) {
+        setError("Failed to load monthly data");
+        setMonthlyData(null);
+      }
     } finally {
       setLoading(false);
     }

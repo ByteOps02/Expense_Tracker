@@ -11,6 +11,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import MonthSelector from "../../components/Dashboard/MonthSelector";
 import { LuDownload, LuFileText } from "react-icons/lu";
 import { generatePDF } from "../../utils/pdfGenerator";
+import { getCachedData, setCachedData } from "../../utils/apiCache";
 
 // Expense page component
 const Expense = () => {
@@ -158,16 +159,26 @@ const Expense = () => {
    * @desc    Fetches expense records for the selected month
    */
   const fetchExpenseDetails = useCallback(async () => {
-    setLoading(true);
+    const formattedMonth = getFormattedMonth(selectedMonth);
+    const cacheKey = `${API_PATHS.DASHBOARD.GET_MONTHLY_EXPENSES}?month=${formattedMonth}&page=${page}&limit=${limit}`;
+    const cached = getCachedData(cacheKey);
+
+    if (cached) {
+      setExpenseData(cached.data.expenses);
+      if (cached.totalPages) {
+        setTotalPages(cached.totalPages);
+      }
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError(null);
 
     try {
-      const formattedMonth = getFormattedMonth(selectedMonth);
-      const url = `${API_PATHS.DASHBOARD.GET_MONTHLY_EXPENSES}?month=${formattedMonth}&page=${page}&limit=${limit}`;
-
-      const response = await axiosInstance.get(url);
+      const response = await axiosInstance.get(cacheKey);
 
       if (response.data && response.data.data.expenses) {
+        setCachedData(cacheKey, response.data);
         setExpenseData(response.data.data.expenses);
         if (response.data.totalPages) {
           setTotalPages(response.data.totalPages);
@@ -177,8 +188,10 @@ const Expense = () => {
       }
     } catch (error) {
       console.error("Error fetching expenses:", error);
-      setError("Failed to load expense data. Please try again.");
-      setExpenseData([]);
+      if (!cached) {
+        setError("Failed to load expense data. Please try again.");
+        setExpenseData([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -197,6 +210,11 @@ const Expense = () => {
   return (
     <DashboardLayout activeMenu="Expense">
       <div className="w-full max-w-[1400px] mx-auto">
+        {/* Page Title */}
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Expense
+        </h1>
+
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner text="Loading expense data..." />

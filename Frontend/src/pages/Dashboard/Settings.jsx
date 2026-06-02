@@ -94,7 +94,7 @@ const Settings = () => {
   return (
     <DashboardLayout activeMenu="Settings">
       <div className="w-full">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Settings</h3>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors duration-300">

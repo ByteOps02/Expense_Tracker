@@ -10,7 +10,7 @@ const Last30DaysExpenses = ({ data }) => {
   );
 
   return (
-    <div className="card h-auto min-h-[450px] transition-all duration-300 ease-in-out flex flex-col pb-6 w-[85vw] lg:w-full shrink-0 snap-center">
+    <div className="card h-auto min-h-[450px] transition-all duration-300 ease-in-out flex flex-col pb-6 w-full shrink-0 snap-center">
       <div className="flex items-center justify-between px-2 pt-2">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Last 30 Days Expenses

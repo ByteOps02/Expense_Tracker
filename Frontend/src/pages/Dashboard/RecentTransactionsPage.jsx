@@ -11,6 +11,7 @@ import MonthSelector from "../../components/Dashboard/MonthSelector";
 import { LuDownload, LuFileText } from "react-icons/lu";
 import TransactionsTable from "../../components/Transactions/TransactionsTable";
 import { generatePDF } from "../../utils/pdfGenerator";
+import { getCachedData, setCachedData } from "../../utils/apiCache";
 
 // RecentTransactionsPage component
 
@@ -66,14 +67,25 @@ const RecentTransactionsPage = () => {
    * @desc    Fetches transaction records for the selected month
    */
   const fetchAllTransactions = useCallback(async () => {
-    setLoading(true);
+    const formattedMonth = getFormattedMonth(selectedMonth);
+    const cacheKey = `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?month=${formattedMonth}&page=${page}&limit=${limit}`;
+    const cached = getCachedData(cacheKey);
+
+    if (cached) {
+      setTransactions(cached.data.transactions);
+      if (cached.data.pagination) {
+        setTotalPages(cached.data.pagination.totalPages);
+      }
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError(null);
+
     try {
-      const formattedMonth = getFormattedMonth(selectedMonth);
-      const response = await axiosInstance.get(
-        `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?month=${formattedMonth}&page=${page}&limit=${limit}`,
-      );
+      const response = await axiosInstance.get(cacheKey);
       if (response.data && response.data.data.transactions) {
+        setCachedData(cacheKey, response.data);
         setTransactions(response.data.data.transactions);
         
         // Update pagination info
@@ -85,7 +97,9 @@ const RecentTransactionsPage = () => {
       }
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      setError("Failed to load transaction data. Please try again.");
+      if (!cached) {
+        setError("Failed to load transaction data. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

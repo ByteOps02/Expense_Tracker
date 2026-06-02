@@ -4,6 +4,7 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import { UserContext } from "../../context/UserContextDefinition";
+import { getCachedData, setCachedData } from "../../utils/apiCache";
 import InfoCard from "../../components/Cards/InfoCard";
 import {
   MdAccountBalanceWallet,
@@ -38,8 +39,14 @@ const Home = () => {
   // Fetch default dashboard data on component mount
   useEffect(() => {
     const fetchDashboardData = async () => {
+      const cacheKey = `${API_PATHS.DASHBOARD.GET_DATA}`;
+      const cached = getCachedData(cacheKey);
+      if (cached) {
+        setDashboardData(cached.data);
+      }
       try {
-        const res = await axiosInstance.get(`${API_PATHS.DASHBOARD.GET_DATA}`);
+        const res = await axiosInstance.get(cacheKey);
+        setCachedData(cacheKey, res.data);
         setDashboardData(res.data.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -52,16 +59,24 @@ const Home = () => {
   // Fetch monthly data when selected month changes
   useEffect(() => {
     const fetchMonthlyData = async () => {
-      setLoading(true);
+      const formattedMonth = getFormattedMonth(selectedMonth);
+      const cacheKey = `${API_PATHS.DASHBOARD.GET_MONTHLY_SUMMARY}?month=${formattedMonth}`;
+      const cached = getCachedData(cacheKey);
+      if (cached) {
+        setMonthlyData(cached.data);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
       try {
-        const formattedMonth = getFormattedMonth(selectedMonth);
-        const res = await axiosInstance.get(
-          `${API_PATHS.DASHBOARD.GET_MONTHLY_SUMMARY}?month=${formattedMonth}`
-        );
+        const res = await axiosInstance.get(cacheKey);
+        setCachedData(cacheKey, res.data);
         setMonthlyData(res.data.data);
       } catch (error) {
         console.error("Error fetching monthly data:", error);
-        setMonthlyData(null);
+        if (!cached) {
+          setMonthlyData(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -84,6 +99,11 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="w-full max-w-[1400px] mx-auto">
+        {/* Page Title */}
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Dashboard
+        </h1>
+
         {/* Month Selector */}
         <div className="mb-8">
           <MonthSelector
@@ -178,7 +198,7 @@ const Home = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="stagger-children delay-300 flex lg:grid lg:grid-cols-2 gap-6 mb-8 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 no-scrollbar snap-x snap-mandatory">
+        <div className="stagger-children delay-300 flex flex-col lg:grid lg:grid-cols-2 gap-6 mb-8 w-full">
           <RecentIncomeWithChart
             data={
               monthlyData?.monthlyTransactions
