@@ -10,6 +10,11 @@ export const API_PATHS = {
   },
   DASHBOARD: {
     GET_DATA: "/api/v1/dashboard",
+    GET_MONTHLY_SUMMARY: "/api/v1/dashboard/monthly-summary",
+    GET_MONTHLY_EXPENSES: "/api/v1/dashboard/monthly-expenses",
+    GET_MONTHLY_INCOME: "/api/v1/dashboard/monthly-income",
+    GET_EXPENSE_SUMMARY: "/api/v1/dashboard/expense-summary-by-category",
+    GET_TREND_SUMMARY: "/api/v1/dashboard/trend-summary",
   },
   INCOME: {
     ADD_INCOME: "/api/v1/income",

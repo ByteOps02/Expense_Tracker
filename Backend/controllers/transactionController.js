@@ -15,14 +15,28 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
   
+  let matchQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
+  let expenseMatchQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
+
+  const { month } = req.query;
+  if (month) {
+    const [year, monthNum] = month.split("-");
+    if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
+      const startDate = new Date(year, monthNum - 1, 1);
+      const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+      matchQuery.date = { $gte: startDate, $lte: endDate };
+      expenseMatchQuery.date = { $gte: startDate, $lte: endDate };
+    }
+  }
+
   const pipeline = [
-      { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+      { $match: matchQuery },
       { $addFields: { type: "income" } },
       { 
         $unionWith: { 
           coll: "expenses", 
           pipeline: [
-            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+            { $match: expenseMatchQuery },
             { $addFields: { type: "expense" } }
           ] 
         } 
@@ -63,8 +77,22 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
-  const incomes = await Income.find({ user: req.user.id }).lean();
-  const expenses = await Expense.find({ user: req.user.id }).lean();
+  let incomeQuery = { user: req.user.id };
+  let expenseQuery = { user: req.user.id };
+
+  const { month } = req.query;
+  if (month) {
+    const [year, monthNum] = month.split("-");
+    if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
+      const startDate = new Date(year, monthNum - 1, 1);
+      const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+      incomeQuery.date = { $gte: startDate, $lte: endDate };
+      expenseQuery.date = { $gte: startDate, $lte: endDate };
+    }
+  }
+
+  const incomes = await Income.find(incomeQuery).lean();
+  const expenses = await Expense.find(expenseQuery).lean();
 
   const transactions = [...incomes, ...expenses];
 

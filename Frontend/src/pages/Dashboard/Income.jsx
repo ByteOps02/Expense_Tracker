@@ -1,5 +1,5 @@
-// Import necessary packages and components
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
+import { UserContext } from "../../context/UserContextDefinition";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import IncomeOverview from "../../components/Income/IncomeOverview";
 import TransactionsTable from "../../components/Transactions/TransactionsTable"; // Replaced IncomeList
@@ -8,7 +8,8 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddIncomeForm from "../../components/Income/AddIncomeForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { LuDownload, LuSearch, LuX, LuFileText } from "react-icons/lu";
+import MonthSelector from "../../components/Dashboard/MonthSelector";
+import { LuDownload, LuFileText } from "react-icons/lu";
 import { generatePDF } from "../../utils/pdfGenerator";
 
 // Income page component
@@ -19,17 +20,12 @@ const Income = () => {
   const [openAddIncomeModal, setOpenAddIncomeModal] = useState(false);
   const [error, setError] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
+  const { selectedMonth, setSelectedMonth } = useContext(UserContext);
 
   // Pagination & Filter State
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(15);
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // Filter State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   /**
    * @desc    Handles adding or updating an income record
@@ -48,7 +44,6 @@ const Income = () => {
       setEditingIncome(null);
     } catch (error) {
       console.error("Error saving income:", error);
-      // Error handling already mostly in sub-functions or can be consolidated here
     }
   };
 
@@ -72,10 +67,6 @@ const Income = () => {
   const updateIncome = async (id, data) => {
     try {
       const response = await axiosInstance.put(
-        // Assuming endpoint structure, check apiPath if needed. 
-        // Usually ID is part of URL for PUT.
-        // From apiPath.js: ADD_INCOME: "/api/v1/income", DELETE is /:id. 
-        // We need to verfiy PUT endpoint. Based on typical REST: /api/v1/income/:id
         `${API_PATHS.INCOME.ADD_INCOME}/${id}`,
         data
       );
@@ -148,26 +139,30 @@ const Income = () => {
     }
   };
 
+  // Format month to YYYY-MM format
+  const getFormattedMonth = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
   /**
-   * @desc    Fetches all income records for the user
+   * @desc    Fetches income records for the selected month
    */
   const fetchIncomeDetails = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      let url = `${API_PATHS.INCOME.GET_ALL_INCOME}?page=${page}&limit=${limit}`;
-
-      if (debouncedSearchTerm) url += `&search=${encodeURIComponent(debouncedSearchTerm)}`;
-      if (startDate) url += `&startDate=${startDate}`;
-      if (endDate) url += `&endDate=${endDate}`;
+      const formattedMonth = getFormattedMonth(selectedMonth);
+      const url = `${API_PATHS.DASHBOARD.GET_MONTHLY_INCOME}?month=${formattedMonth}&page=${page}&limit=${limit}`;
 
       const response = await axiosInstance.get(url);
 
       if (response.data && response.data.data.incomes) {
         setIncomeData(response.data.data.incomes);
-        if (response.data.pagination) {
-          setTotalPages(response.data.pagination.totalPages);
+        if (response.data.totalPages) {
+          setTotalPages(response.data.totalPages);
         }
       } else {
         setIncomeData([]);
@@ -179,28 +174,16 @@ const Income = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, debouncedSearchTerm, startDate, endDate]);
-
-  // Debounce Search Term
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      setPage(1); // Reset to page 1 on search change
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [page, limit, selectedMonth]);
 
   // Fetch Data on Change
   useEffect(() => {
+    setPage(1); // Reset to page 1 on month change
     fetchIncomeDetails();
-  }, [fetchIncomeDetails]);
+  }, [selectedMonth, fetchIncomeDetails]);
 
-
-
-  // Handler for date change to reset page
-  const handleDateChange = (setter, value) => {
-    setter(value);
-    setPage(1);
+  const handleMonthChange = (newDate) => {
+    setSelectedMonth(newDate);
   };
 
   return (
@@ -225,57 +208,12 @@ const Income = () => {
         ) : (
           <div className="space-y-6">
 
-            {/* SEARCH & FILTER CONTROLS */}
-            <div className="flex flex-col md:flex-row gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-              {/* Search */}
-              <div className="flex-1 relative">
-                <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search income..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                  >
-                    <LuX />
-                  </button>
-                )}
-              </div>
-
-              {/* Date Range */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="flex-1 min-w-[130px] w-full sm:w-40">
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => handleDateChange(setStartDate, e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white text-sm"
-                    placeholder="Start Date"
-                  />
-                </div>
-                <div className="flex-1 min-w-[130px] w-full sm:w-40">
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => handleDateChange(setEndDate, e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white text-sm"
-                    placeholder="End Date"
-                  />
-                </div>
-                {(startDate || endDate) && (
-                  <button
-                    onClick={() => { setStartDate(""); setEndDate(""); setPage(1); }}
-                    className="px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
+            {/* MONTH SELECTOR */}
+            <div className="mb-8">
+              <MonthSelector
+                selectedMonth={selectedMonth}
+                onMonthChange={handleMonthChange}
+              />
             </div>
 
             {/* Income overview and add income button */}

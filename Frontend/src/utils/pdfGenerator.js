@@ -18,7 +18,7 @@ export const generatePDF = async (title, transactions, chartIds = [], type = "in
     // Format Data
     transactions.forEach((item) => {
         const rowData = [
-            moment(item.date).format("MMM Do, YYYY"),
+            moment(item.date).format("DD/MM/YYYY"),
             item.title,
             item.category || item.source,
             new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount)

@@ -7,6 +7,7 @@ import {
 } from "chart.js";
 import { Pie, Doughnut } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
+import { CHART_COLORS } from "../../utils/helper";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -28,14 +29,7 @@ const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, label
     );
   }
 
-  const defaultColors = [
-    "#8b5cf6", // Purple
-    "#ec4899", // Pink
-    "#f59e0b", // Amber
-    "#10b981", // Emerald
-    "#3b82f6", // Blue
-    "#6366f1", // Indigo
-  ];
+  const defaultColors = CHART_COLORS;
 
   const chartData = {
     labels: data.map((item) => item[labelKey] || item.name || item.category || item.source),
@@ -53,7 +47,7 @@ const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, label
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: donut ? "65%" : "0%",
+    cutout: donut ? "75%" : "0%",
     animation: { duration: 1000, easing: 'easeOutQuart' },
     plugins: {
       legend: {

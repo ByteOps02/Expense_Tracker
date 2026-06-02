@@ -1,10 +1,12 @@
 // src/pages/Dashboard/RecentTransactionsPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
+import { UserContext } from "../../context/UserContextDefinition";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
+import MonthSelector from "../../components/Dashboard/MonthSelector";
 
 import { LuDownload, LuFileText } from "react-icons/lu";
 import TransactionsTable from "../../components/Transactions/TransactionsTable";
@@ -17,6 +19,7 @@ const RecentTransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { selectedMonth, setSelectedMonth } = useContext(UserContext);
   
   // Pagination State
   const [page, setPage] = useState(1);
@@ -52,18 +55,23 @@ const RecentTransactionsPage = () => {
     }
   };
 
+  // Format month to YYYY-MM format
+  const getFormattedMonth = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
   /**
-
-   * @desc    Fetches all transaction records for the user
-
+   * @desc    Fetches transaction records for the selected month
    */
-
-  const fetchAllTransactions = async () => {
+  const fetchAllTransactions = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
+      const formattedMonth = getFormattedMonth(selectedMonth);
       const response = await axiosInstance.get(
-        `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?page=${page}&limit=${limit}`,
+        `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?month=${formattedMonth}&page=${page}&limit=${limit}`,
       );
       if (response.data && response.data.data.transactions) {
         setTransactions(response.data.data.transactions);
@@ -81,21 +89,29 @@ const RecentTransactionsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, selectedMonth]);
 
-  // Fetch transaction data on component mount
+  // Fetch transaction data on component mount and when month changes
+  useEffect(() => {
+    setPage(1); // Reset to page 1 on month change
+    fetchAllTransactions();
+  }, [selectedMonth, fetchAllTransactions]);
 
+  // Fetch when page changes
   useEffect(() => {
     fetchAllTransactions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, fetchAllTransactions]);
+
+  const handleMonthChange = (newDate) => {
+    setSelectedMonth(newDate);
+  };
 
   return (
-    <DashboardLayout activeMenu="Recent Transactions">
+    <DashboardLayout activeMenu="Transactions">
       <div className="w-full max-w-[1400px] mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Recent Transactions
+            Transactions
           </h1>
 
           <div className="flex gap-2">
@@ -107,6 +123,15 @@ const RecentTransactionsPage = () => {
             </button>
           </div>
         </div>
+
+        {/* MONTH SELECTOR */}
+        <div className="mb-8">
+          <MonthSelector
+            selectedMonth={selectedMonth}
+            onMonthChange={handleMonthChange}
+          />
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner text="Loading transaction data..." />

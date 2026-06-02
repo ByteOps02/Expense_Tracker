@@ -12,7 +12,7 @@ const InfoCard = ({ icon, label, value, color }) => {
   const iconClasses = bgIcon[color] || "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
 
   return (
-    <div className="card card-interactive group flex items-center gap-5 p-6 w-full">
+    <div className="card card-interactive group flex items-center gap-5 p-6 w-[85vw] md:w-full shrink-0 snap-center">
       {/* Icon with hover scale + ring glow */}
       <div
         className={`w-12 h-12 flex items-center justify-center text-2xl rounded-xl flex-shrink-0

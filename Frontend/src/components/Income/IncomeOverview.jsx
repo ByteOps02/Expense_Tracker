@@ -3,6 +3,8 @@ import { LuPlus } from "react-icons/lu";
 import {
   prepareIncomeBarChartData,
   prepareTitleAndCategoryData,
+  CHART_COLORS,
+  addThousandsSeparator,
 } from "../../utils/helper";
 import ChartJsBarChart from "../Charts/ChartJsBarChart";
 import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
@@ -17,6 +19,10 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
     () => prepareTitleAndCategoryData(transactions),
     [transactions]
   );
+
+  const totalIncomeValue = useMemo(() => {
+    return sourceChartData.reduce((sum, item) => sum + (item.amount || item.value || 0), 0);
+  }, [sourceChartData]);
 
   const [chartView, setChartView] = React.useState('trend');
 
@@ -73,9 +79,19 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
             Income Sources
           </h6>
           <div className="flex flex-col h-full">
-            <div className="h-[200px] lg:h-[250px] relative flex items-center justify-center shrink-0">
+            <div className="w-full h-[220px] lg:h-[300px] relative flex items-center justify-center shrink-0">
               {sourceChartData.length > 0 ? (
-                <ChartJsDoughnutChart data={sourceChartData} showLegend={false} />
+                <>
+                  <ChartJsDoughnutChart data={sourceChartData} showLegend={false} />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                      Total Income
+                    </span>
+                    <span className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                      ₹{addThousandsSeparator(totalIncomeValue)}
+                    </span>
+                  </div>
+                </>
               ) : (
                 <div className="text-gray-400 text-sm">No data available</div>
               )}
@@ -85,7 +101,7 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
                 {sourceChartData.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'][index % 5] }}></span>
+                    <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}></span>
                     <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.name}>
                       {item.name}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount || item.value)}
                     </span>

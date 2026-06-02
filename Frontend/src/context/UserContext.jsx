@@ -6,6 +6,7 @@ import { API_PATHS } from "../utils/apiPath";
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -45,11 +46,12 @@ const UserProvider = ({ children }) => {
    */
   const clearUser = useCallback(() => {
     setUser(null);
+    setSelectedMonth(new Date());
     localStorage.removeItem("token");
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, updateUser, clearUser }}>
+    <UserContext.Provider value={{ user, loading, updateUser, clearUser, selectedMonth, setSelectedMonth }}>
       {children}
     </UserContext.Provider>
   );

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
+import { UserContext } from "../../context/UserContextDefinition";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import ExpenseOverview from "../../components/Expense/ExpenseOverview";
 import TransactionsTable from "../../components/Transactions/TransactionsTable"; // Replaced ExpenseList
@@ -7,7 +8,8 @@ import { API_PATHS } from "../../utils/apiPath";
 import Modal from "../../components/layouts/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { LuDownload, LuSearch, LuX, LuFileText } from "react-icons/lu";
+import MonthSelector from "../../components/Dashboard/MonthSelector";
+import { LuDownload, LuFileText } from "react-icons/lu";
 import { generatePDF } from "../../utils/pdfGenerator";
 
 // Expense page component
@@ -18,17 +20,12 @@ const Expense = () => {
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
   const [error, setError] = useState(null);
   const [editingExpense, setEditingExpense] = useState(null);
+  const { selectedMonth, setSelectedMonth } = useContext(UserContext);
 
   // Pagination & Filter State
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(15);
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // Filter State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   /**
    * @desc    Handles adding or updating an expense record
@@ -150,26 +147,30 @@ const Expense = () => {
     }
   };
 
+  // Format month to YYYY-MM format
+  const getFormattedMonth = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
   /**
-   * @desc    Fetches all expense records for the user
+   * @desc    Fetches expense records for the selected month
    */
   const fetchExpenseDetails = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      let url = `${API_PATHS.EXPENSE.GET_ALL_EXPENSE}?page=${page}&limit=${limit}`;
-
-      if (debouncedSearchTerm) url += `&search=${encodeURIComponent(debouncedSearchTerm)}`;
-      if (startDate) url += `&startDate=${startDate}`;
-      if (endDate) url += `&endDate=${endDate}`;
+      const formattedMonth = getFormattedMonth(selectedMonth);
+      const url = `${API_PATHS.DASHBOARD.GET_MONTHLY_EXPENSES}?month=${formattedMonth}&page=${page}&limit=${limit}`;
 
       const response = await axiosInstance.get(url);
 
       if (response.data && response.data.data.expenses) {
         setExpenseData(response.data.data.expenses);
-        if (response.data.pagination) {
-          setTotalPages(response.data.pagination.totalPages);
+        if (response.data.totalPages) {
+          setTotalPages(response.data.totalPages);
         }
       } else {
         setExpenseData([]);
@@ -181,29 +182,16 @@ const Expense = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, debouncedSearchTerm, startDate, endDate]);
-
-  // Fetch expense data on component mount
-  // Debounce Search Term
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      setPage(1); // Reset to page 1 on search change
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [page, limit, selectedMonth]);
 
   // Fetch Data on Change
   useEffect(() => {
+    setPage(1); // Reset to page 1 on month change
     fetchExpenseDetails();
-  }, [fetchExpenseDetails]);
+  }, [selectedMonth, fetchExpenseDetails]);
 
-
-
-  // Handler for date change to reset page
-  const handleDateChange = (setter, value) => {
-    setter(value);
-    setPage(1);
+  const handleMonthChange = (newDate) => {
+    setSelectedMonth(newDate);
   };
 
   return (
@@ -225,57 +213,12 @@ const Expense = () => {
         ) : (
           <div className="space-y-6">
 
-            {/* SEARCH & FILTER CONTROLS */}
-            <div className="flex flex-col md:flex-row gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-              {/* Search */}
-              <div className="flex-1 relative">
-                <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search expenses..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                  >
-                    <LuX />
-                  </button>
-                )}
-              </div>
-
-              {/* Date Range */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="flex-1 min-w-[130px] w-full sm:w-40">
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => handleDateChange(setStartDate, e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white text-sm"
-                    placeholder="Start Date"
-                  />
-                </div>
-                <div className="flex-1 min-w-[130px] w-full sm:w-40">
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => handleDateChange(setEndDate, e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border-none focus:ring-2 focus:ring-purple-500/50 outline-none text-gray-900 dark:text-white text-sm"
-                    placeholder="End Date"
-                  />
-                </div>
-                {(startDate || endDate) && (
-                  <button
-                    onClick={() => { setStartDate(""); setEndDate(""); setPage(1); }}
-                    className="px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
+            {/* MONTH SELECTOR */}
+            <div className="mb-8">
+              <MonthSelector
+                selectedMonth={selectedMonth}
+                onMonthChange={handleMonthChange}
+              />
             </div>
 
             {/* Expense overview and add expense button */}

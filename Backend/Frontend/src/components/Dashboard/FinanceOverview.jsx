@@ -14,7 +14,7 @@ const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) => {
   ] : [];
 
   return (
-    <div className="card h-auto min-h-[450px] transition-all duration-300 ease-in-out flex flex-col pb-6">
+    <div className="card h-auto min-h-[450px] lg:min-h-[520px] transition-all duration-300 ease-in-out flex flex-col pb-6">
       <div className="flex items-center justify-between px-2 pt-2">
         <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
           Financial Overview

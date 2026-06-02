@@ -3,6 +3,8 @@ import { LuPlus } from "react-icons/lu";
 import {
   prepareExpenseLineChartData,
   prepareTitleAndCategoryData,
+  CHART_COLORS,
+  addThousandsSeparator,
 } from "../../utils/helper";
 import ChartJsLineChart from "../Charts/ChartJsLineChart";
 import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
@@ -10,6 +12,10 @@ import ChartJsDoughnutChart from "../Charts/ChartJsDoughnutChart";
 const ExpenseOverview = ({ transactions, onAddExpense }) => {
   const lineChartData = useMemo(() => prepareExpenseLineChartData(transactions), [transactions]);
   const categoryChartData = useMemo(() => prepareTitleAndCategoryData(transactions), [transactions]);
+
+  const totalExpenseValue = useMemo(() => {
+    return categoryChartData.reduce((sum, item) => sum + (item.amount || item.value || 0), 0);
+  }, [categoryChartData]);
 
   const [chartView, setChartView] = React.useState('trend');
 
@@ -55,9 +61,19 @@ const ExpenseOverview = ({ transactions, onAddExpense }) => {
         <div id="expense-doughnut-chart" className={`${chartView === 'category' ? 'block' : 'hidden'} lg:block bg-gray-50/50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col h-auto`}>
           <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Category Breakdown</h6>
           <div className="flex flex-col h-full">
-            <div className="h-[200px] lg:h-[250px] relative flex items-center justify-center shrink-0">
+            <div className="w-full h-[220px] lg:h-[300px] relative flex items-center justify-center shrink-0">
               {categoryChartData.length > 0 ? (
-                <ChartJsDoughnutChart data={categoryChartData} showLegend={false} />
+                <>
+                  <ChartJsDoughnutChart data={categoryChartData} showLegend={false} />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                      Total Expense
+                    </span>
+                    <span className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                      ₹{addThousandsSeparator(totalExpenseValue)}
+                    </span>
+                  </div>
+                </>
               ) : (
                 <div className="text-gray-400 text-sm">No data available</div>
               )}
@@ -66,7 +82,7 @@ const ExpenseOverview = ({ transactions, onAddExpense }) => {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
                 {categoryChartData.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'][index % 5] }}></span>
+                    <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}></span>
                     <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.name}>
                       {item.name}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount || item.value)}
                     </span>

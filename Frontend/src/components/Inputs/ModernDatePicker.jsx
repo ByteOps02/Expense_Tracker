@@ -82,19 +82,11 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
       today: "border-purple-600 text-purple-600 dark:text-purple-300",
     };
 
-  // ⛔ FIX timezone issue when displaying date
   const formatDisplayDate = (date) => {
     if (!date) return "Select date";
 
     const [y, m, d] = date.split("-");
-    return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }
-    );
+    return `${d}/${m}/${y}`;
   };
 
   const getDaysInMonth = (date) => {

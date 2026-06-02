@@ -79,7 +79,7 @@ const TransactionsTable = ({
                             </td>
                             <td className="hidden md:table-cell px-3 md:px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-500 dark:text-gray-300">
-                                    {moment(item.date).format("Do MMM YYYY")}
+                                    {moment(item.date).format("DD/MM/YYYY")}
                                 </div>
                             </td>
                             <td className="px-3 md:px-6 py-4 whitespace-nowrap">

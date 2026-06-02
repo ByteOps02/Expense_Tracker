@@ -40,7 +40,7 @@ export const prepareExpenseLineChartData = (data = []) => {
   const chartData = sortedData.map((item) => {
     if (!item) return null;
     return {
-      month: new Date(item.date).toLocaleDateString("en-US", {
+      month: new Date(item.date).toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -64,7 +64,7 @@ export const prepareIncomeBarChartData = (data = []) => {
   );
 
   const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-US", {
+    month: new Date(item?.date).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -106,3 +106,18 @@ export const prepareTitleAndCategoryData = (data = []) => {
     amount,
   }));
 };
+
+export const CHART_COLORS = [
+  "#875CF5", // Primary Purple
+  "#FA2C37", // Vibrant Red
+  "#FF6900", // Vibrant Orange
+  "#4ADE80", // Mint/Green
+  "#3B82F6", // Sky Blue
+  "#ec4899", // Deep Pink
+  "#06b6d4", // Teal/Cyan
+  "#f59e0b", // Amber Yellow
+  "#6366f1", // Indigo
+  "#14b8a6", // Teal
+  "#a855f7", // Light Purple
+  "#0ea5e9", // Light Blue
+];

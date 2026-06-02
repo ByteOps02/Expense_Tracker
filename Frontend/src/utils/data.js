@@ -6,6 +6,7 @@ import {
   LuSettings,
   LuPiggyBank,
   LuArrowRightLeft,
+  LuTrendingUp,
 } from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
@@ -29,24 +30,24 @@ export const SIDE_MENU_DATA = [
   },
   {
     id: "04",
-    label: "Recent Transactions",
+    label: "Transactions",
     icon: LuArrowRightLeft,
     path: "/recent-transactions",
   },
-  { // New Budget entry
+  {
     id: "05",
-    label: "Budget",
-    icon: LuPiggyBank,
-    path: "/budget",
+    label: "Monthly Analytics",
+    icon: LuTrendingUp,
+    path: "/monthly-analytics",
   },
   {
-    id: "06", // Updated ID
+    id: "06",
     label: "Settings",
     icon: LuSettings,
     path: "/settings",
   },
   {
-    id: "07", // Updated ID
+    id: "07",
     label: "Logout",
     icon: LuLogOut,
     path: "/logout",

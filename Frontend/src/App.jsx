@@ -22,8 +22,8 @@ const Home = lazy(() => import("./pages/Dashboard/Home"));
 const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
-const Budget = lazy(() => import("./pages/Dashboard/Budget"));
 const RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransactionsPage"));
+const MonthlyAnalyticsPage = lazy(() => import("./pages/Dashboard/MonthlyAnalytics"));
 
 /**
  * @desc Protected Route wrapper
@@ -80,12 +80,12 @@ const App = () => {
                         element={<ProtectedRoute Component={Settings} />}
                       />
                       <Route
-                        path="/budget"
-                        element={<ProtectedRoute Component={Budget} />}
-                      />
-                      <Route
                         path="/recent-transactions"
                         element={<ProtectedRoute Component={RecentTransactionsPage} />}
+                      />
+                      <Route
+                        path="/monthly-analytics"
+                        element={<ProtectedRoute Component={MonthlyAnalyticsPage} />}
                       />
                     </Routes>
                   </Suspense>

@@ -7,6 +7,7 @@ import {
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
+import { CHART_COLORS } from "../../utils/helper";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -28,14 +29,7 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
     );
   }
 
-  const defaultColors = [
-    "#8b5cf6", // Purple
-    "#ec4899", // Pink
-    "#f59e0b", // Amber
-    "#10b981", // Emerald
-    "#3b82f6", // Blue
-    "#6366f1", // Indigo
-  ];
+  const defaultColors = CHART_COLORS;
 
   const chartData = {
     labels: data.map((item) => item.name || item.category || item.source),
@@ -43,9 +37,9 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
       {
         data: data.map((item) => item.amount || item.value),
         backgroundColor: colors || defaultColors,
-        borderColor: "#ffffff",
+        borderColor: theme === "dark" ? "#1f2937" : "#ffffff",
         borderWidth: 2,
-        hoverOffset: 4,
+        hoverOffset: 6,
       },
     ],
   };
