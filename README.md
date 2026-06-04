@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A comprehensive, full-stack web application for personal finance management, designed to help users track income, manage expenses, and monitor budgets with an intuitive and responsive interface. Built with modern technologies and deployed on Vercel for seamless scalability.
+A comprehensive, full-stack web application for personal finance management, designed to help users track income, manage expenses, and perform deep monthly financial analytics with an intuitive and responsive interface. Built with modern technologies and deployed on Vercel for seamless scalability.
 ---
 
 ## Key Features
@@ -8,8 +8,9 @@ A comprehensive, full-stack web application for personal finance management, des
 - **Secure Authentication:** JWT-based login with **Show/Hide Password** toggle, biometric support (WebAuthn), and secure profile management
 - **Interactive Dashboard:** Real-time financial overview with recent transactions and data visualization through multiple chart types (bar, line, doughnut charts)
 - **Complete Income & Expense Management:** Full CRUD operations for financial records with categorization, dates, descriptions, and notes
-- **Budget Tracking:** Create and manage budgets with recurring options (daily, weekly, monthly, annually) to monitor spending limits
-- **Advanced Analytics:** Multiple visualization options including Recharts and Chart.js for comprehensive financial insights
+- **Monthly Analytics & Trends:** Deep-dive into monthly income sources, expense categories, savings, and historical 12-month trends (income vs. expense, savings, transaction volumes) using interactive charts (Chart.js and React-Chartjs-2)
+- **Monthly Wise Data & Filtering:** Global month selector allowing users to filter and view all dashboard stats, charts, recent transactions, and category breakdowns for any specific month
+- **Advanced Analytics:** Dynamic visualization options including Chart.js and React-Chartjs-2 for comprehensive financial insights
 - **Advanced Filtering:** Powerful search and date range filtering for precise transaction tracking
 - **PDF Reports:** Generate professional PDF reports with embedded charts and transaction tables
 - **Enhanced UI/UX:** Responsive design with optimized Dark/Light mode, polished card designs, and responsive table layouts
@@ -120,11 +121,6 @@ Expense_Tracker/
 ├── Frontend/                      # React/Vite Web Application
 │   ├── src/
 │   │   ├── components/            # Reusable React components
-│   │   │   ├── Budget/            # Budget-related components
-│   │   │   │   ├── AddBudgetForm.jsx
-│   │   │   │   ├── BudgetList.jsx
-│   │   │   │   ├── BudgetOverview.jsx
-│   │   │   │   └── BudgetVsActualChart.jsx
 │   │   │   ├── Cards/             # Information card components
 │   │   │   │   ├── CharAvatar.jsx
 │   │   │   │   ├── InfoCard.jsx
@@ -134,11 +130,16 @@ Expense_Tracker/
 │   │   │   │   ├── ChartJsDoughnutChart.jsx
 │   │   │   │   ├── ChartJsLineChart.jsx
 │   │   │   │   └── CustomTooltip.jsx
-│   │   │   ├── Dashboard/         # Dashboard-specific components
+│   │   │   ├── Dashboard/         # Dashboard & Monthly Analytics components
 │   │   │   │   ├── DashboardWidget.jsx
 │   │   │   │   ├── FinanceOverview.jsx
 │   │   │   │   ├── RecentTransactions.jsx
-│   │   │   │   └── ExpenseTransactions.jsx
+│   │   │   │   ├── ExpenseTransactions.jsx
+│   │   │   │   ├── MonthSelector.jsx
+│   │   │   │   ├── MonthlyAnalytics.jsx
+│   │   │   │   ├── MonthlyTrendAnalysis.jsx
+│   │   │   │   ├── RecentIncome.jsx
+│   │   │   │   └── RecentIncomeWithChart.jsx
 │   │   │   ├── Expense/           # Expense-related components
 │   │   │   │   ├── AddExpenseForm.jsx
 │   │   │   │   ├── ExpenseList.jsx
@@ -174,7 +175,8 @@ Expense_Tracker/
 │   │   │       ├── Home.jsx
 │   │   │       ├── Income.jsx
 │   │   │       ├── Expense.jsx
-│   │   │       ├── Budget.jsx
+│   │   │       ├── MonthlyAnalytics.jsx
+│   │   │       ├── Last30DaysExpenses.jsx
 │   │   │       ├── Settings.jsx
 │   │   │       └── RecentTransactionsPage.jsx
 │   │   ├── utils/                 # Utility functions
@@ -414,7 +416,7 @@ openssl rand -base64 32
 | PUT | `/:id` | Update income | ✅ |
 | DELETE | `/:id` | Delete income | ✅ |
 
-### Budgets (`/api/v1/budgets`)
+### Budgets (Backend Only / Deprecated - `/api/v1/budgets`)
 | Method | Endpoint | Description | Protected |
 |:-------|:---------|:------------|:----------|
 | GET | `/` | Get all budgets | ✅ |
@@ -423,11 +425,15 @@ openssl rand -base64 32
 | PUT | `/:id` | Update budget | ✅ |
 | DELETE | `/:id` | Delete budget | ✅ |
 
-### Dashboard (`/api/v1/dashboard`)
+### Dashboard & Analytics (`/api/v1/dashboard`)
 | Method | Endpoint | Description | Protected |
 |:-------|:---------|:------------|:----------|
-| GET | `/` | Get dashboard overview | ✅ |
-| GET | `/statistics` | Get financial statistics | ✅ |
+| GET | `/` | Get overall dashboard overview | ✅ |
+| GET | `/expense-summary-by-category` | Get category-wise expense summary (last 30 days) | ✅ |
+| GET | `/monthly-summary` | Get monthly overview & category breakdowns (by `?month=YYYY-MM`) | ✅ |
+| GET | `/trend-summary` | Get 12-month historical trends (by `?month=YYYY-MM`) | ✅ |
+| GET | `/monthly-expenses` | Get paginated monthly expenses (by `?month=YYYY-MM`) | ✅ |
+| GET | `/monthly-income` | Get paginated monthly income (by `?month=YYYY-MM`) | ✅ |
 
 ### Transactions (`/api/v1/transactions`)
 | Method | Endpoint | Description | Protected |
