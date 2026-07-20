@@ -13,9 +13,8 @@ import { LuDownload, LuFileText } from "react-icons/lu";
 import { generatePDF } from "../../utils/pdfGenerator";
 import { getCachedData, setCachedData } from "../../utils/apiCache";
 
-// Expense page component
-const Expense = () => {
-  // State variables for expense data, loading state, and modal visibility
+// Expense Component
+let Expense = () => {
   const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
@@ -23,29 +22,21 @@ const Expense = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const { selectedMonth, setSelectedMonth } = useContext(UserContext);
 
-  // Pagination & Filter State
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(15);
 
-  /**
-   * @desc    Handles adding or updating an expense record
-   * @param   {object} expenseData - The expense data from the form
-   */
   const handleSaveExpense = async (data) => {
     try {
       if (data._id) {
-        // Update
         await updateExpense(data._id, data);
       } else {
-        // Add
         await addExpense(data);
       }
       setOpenAddExpenseModal(false);
       setEditingExpense(null);
     } catch (error) {
       console.error("Error saving expense:", error.response || error);
-      // Error handling mostly in sub-functions or can be done here
     }
   };
 
@@ -102,10 +93,7 @@ const Expense = () => {
     setEditingExpense(null);
   };
 
-  /**
-   * @desc    Handles deleting an expense record
-   * @param   {string} expenseId - The ID of the expense record to delete
-   */
+  // delete an expense
   const handleDeleteExpense = async (expenseId) => {
     if (!window.confirm("Are you sure you want to delete this expense?")) return;
 
@@ -123,9 +111,7 @@ const Expense = () => {
     }
   };
 
-  /**
-   * @desc    Handles downloading expense data as an Excel file
-   */
+  // download expenses to excel
   const handleDownloadExpense = async () => {
     try {
       const response = await axiosInstance.get(
@@ -155,9 +141,7 @@ const Expense = () => {
     return `${year}-${month}`;
   };
 
-  /**
-   * @desc    Fetches expense records for the selected month
-   */
+  // get expenses for the month
   const fetchExpenseDetails = useCallback(async () => {
     const formattedMonth = getFormattedMonth(selectedMonth);
     const cacheKey = `${API_PATHS.DASHBOARD.GET_MONTHLY_EXPENSES}?month=${formattedMonth}&page=${page}&limit=${limit}`;

@@ -1,4 +1,4 @@
-// Import necessary packages and components
+// imports
 import React, { lazy, Suspense, useContext } from "react";
 import {
   BrowserRouter as Router,
@@ -15,23 +15,19 @@ import { ThemeProvider } from "./context/ThemeContext.jsx";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// Lazy load page components
-const Login = lazy(() => import("./pages/Auth/Login"));
-const SignUp = lazy(() => import("./pages/Auth/SignUp"));
-const Home = lazy(() => import("./pages/Dashboard/Home"));
-const Income = lazy(() => import("./pages/Dashboard/Income"));
-const Expense = lazy(() => import("./pages/Dashboard/Expense"));
-const Settings = lazy(() => import("./pages/Dashboard/Settings"));
-const RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransactionsPage"));
-const MonthlyAnalyticsPage = lazy(() => import("./pages/Dashboard/MonthlyAnalytics"));
+// lazy loading pages to make it faster
+let Login = lazy(() => import("./pages/Auth/Login"));
+let SignUp = lazy(() => import("./pages/Auth/SignUp"));
+let Home = lazy(() => import("./pages/Dashboard/Home"));
+let Income = lazy(() => import("./pages/Dashboard/Income"));
+let Expense = lazy(() => import("./pages/Dashboard/Expense"));
+let Settings = lazy(() => import("./pages/Dashboard/Settings"));
+let RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransactionsPage"));
+let MonthlyAnalyticsPage = lazy(() => import("./pages/Dashboard/MonthlyAnalytics"));
 
-/**
- * @desc Protected Route wrapper
- *       Shows a loading spinner while checking auth state.
- *       Redirects to login if user is not authenticated.
- */
-const ProtectedRoute = ({ Component }) => {
-  const { user, loading } = useContext(UserContext);
+// wrapper for protected routes
+let ProtectedRoute = ({ Component }) => {
+  let { user, loading } = useContext(UserContext);
 
   if (loading) {
     return <LoadingSpinner fullScreen text="Authenticating..." />;
@@ -40,10 +36,9 @@ const ProtectedRoute = ({ Component }) => {
   return user ? <Component /> : <Navigate to="/login" replace />;
 };
 
-// Main App component
-const App = () => {
+// main app
+let App = () => {
   return (
-
       <ErrorBoundary>
         <UserProvider>
           <ThemeProvider>
@@ -56,13 +51,13 @@ const App = () => {
                     }
                   >
                     <Routes>
-                      {/* Always redirect root to login */}
+                      {/* redirect to login */}
                       <Route path="/" element={<Navigate to="/login" replace />} />
   
                       <Route path="/login" element={<Login />} />
                       <Route path="/signup" element={<SignUp />} />
   
-                      {/* Protected routes */}
+                      {/* pages that need login */}
                       <Route
                         path="/dashboard"
                         element={<ProtectedRoute Component={Home} />}
@@ -96,7 +91,6 @@ const App = () => {
           </ThemeProvider>
         </UserProvider>
       </ErrorBoundary>
-
   );
 };
 

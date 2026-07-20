@@ -14,38 +14,32 @@ const {
   validateMongoId,
 } = require("../middleware/validationMiddleware");
 
-const router = express.Router();
+let router = express.Router();
 
-// Rate limiter for income endpoints
-const incomeLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Relaxed for personal use — 30 was too low, hit instantly with pagination + search
-  message: "Too many requests to income endpoints, please try again later.",
+// income rate limiter
+let incomeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  message: "Too many requests to income, wait a bit",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Apply rate limiter to all routes
 router.use(incomeLimiter);
 
-// Route to add a new income
-// This is a protected route
+// add income
 router.post("/", Protect, validateIncome, handleValidationErrors, addIncome);
 
-// Route to get all incomes for the user
-// This is a protected route
+// get incomes
 router.get("/", Protect, getAllIncome);
 
-// Route to update an existing income
-// This is a protected route
+// update income
 router.put("/:id", Protect, validateMongoId, validateIncome, handleValidationErrors, updateIncome);
 
-// Route to delete an income
-// This is a protected route
+// delete income
 router.delete("/:id", Protect, validateMongoId, handleValidationErrors, deleteIncome);
 
-// Route to download all incomes as an Excel file
-// This is a protected route
+// download excel
 router.get("/download-excel", Protect, downloadIncomeExcel);
 
 module.exports = router;

@@ -21,17 +21,17 @@ import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithCh
 import RecentIncome from "../../components/Dashboard/RecentIncome";
 import MonthSelector from "../../components/Dashboard/MonthSelector";
 
-// Home component for the dashboard
-const Home = () => {
-  const navigate = useNavigate();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [monthlyData, setMonthlyData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { updateUser, selectedMonth, setSelectedMonth } = useContext(UserContext);
+// Home page
+let Home = () => {
+  let navigate = useNavigate();
+  let [dashboardData, setDashboardData] = useState(null);
+  let [monthlyData, setMonthlyData] = useState(null);
+  let [loading, setLoading] = useState(false);
+  let { updateUser, selectedMonth, setSelectedMonth } = useContext(UserContext);
 
   // Format month to YYYY-MM format
-  const getFormattedMonth = (date) => {
-    const year = date.getFullYear();
+  let getFormattedMonth = (date) => {
+    let year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     return `${year}-${month}`;
   };

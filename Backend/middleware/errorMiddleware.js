@@ -1,28 +1,26 @@
-// middleware/errorMiddleware.js
-
 const AppError = require('../utils/AppError');
 
-const handleCastErrorDB = (err) => {
-  const message = `Invalid ${err.path}: ${err.value}.`;
+let handleCastErrorDB = (err) => {
+  let message = `Invalid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
 };
 
-const handleDuplicateFieldsDB = (err) => {
-  const value = err.errmsg.match(/(['"])[^'"]*\1/)[0];
-  const message = `Duplicate field value: ${value}. Please use another value!`;
+let handleDuplicateFieldsDB = (err) => {
+  let value = err.errmsg.match(/(['"])[^'"]*\1/)[0];
+  let message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
 
-const handleValidationErrorDB = (err) => {
-  const errors = Object.values(err.errors).map((el) => el.message);
-  const message = `Invalid input data. ${errors.join('. ')}`;
+let handleValidationErrorDB = (err) => {
+  let errors = Object.values(err.errors).map((el) => el.message);
+  let message = `Invalid input data. ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
 
-const handleJWTError = () => new AppError('Invalid token. Please log in again!', 401);
-const handleJWTExpiredError = () => new AppError('Your token has expired! Please log in again.', 401);
+let handleJWTError = () => new AppError('Invalid token. Please log in again!', 401);
+let handleJWTExpiredError = () => new AppError('Your token has expired! Please log in again.', 401);
 
-const sendErrorDev = (err, res) => {
+let sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -31,14 +29,14 @@ const sendErrorDev = (err, res) => {
   });
 };
 
-const sendErrorProd = (err, res) => {
+let sendErrorProd = (err, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   } else {
-    console.error('ERROR 💥', err);
+    console.error('ERROR ', err);
     res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!',

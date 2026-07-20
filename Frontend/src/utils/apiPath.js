@@ -1,6 +1,6 @@
-export const BASE_URL = import.meta.env.VITE_BASE_URL;
-// utils/apiPath.js
-export const API_PATHS = {
+export let BASE_URL = import.meta.env.VITE_BASE_URL;
+// my api paths
+export let API_PATHS = {
   AUTH: {
     LOGIN: "/api/v1/auth/login",
     REGISTER: "/api/v1/auth/register",

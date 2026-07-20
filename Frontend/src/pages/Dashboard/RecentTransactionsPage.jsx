@@ -14,8 +14,7 @@ import { generatePDF } from "../../utils/pdfGenerator";
 import { getCachedData, setCachedData } from "../../utils/apiCache";
 
 // RecentTransactionsPage component
-
-const RecentTransactionsPage = () => {
+let RecentTransactionsPage = () => {
   // State variables for transaction data and loading state
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,19 +26,16 @@ const RecentTransactionsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(15); // Show 15 items per page
 
-  /**
-   * @desc    Handles the download of transaction data as an Excel file.
-   */
+  // download to excel
   const handleDownloadExcel = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
         API_PATHS.TRANSACTIONS.DOWNLOAD_EXCEL,
         {
-          responseType: "blob", // Important for downloading files
+          responseType: "blob",
         },
       );
-      // Create a blob from the response data
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -63,9 +59,7 @@ const RecentTransactionsPage = () => {
     return `${year}-${month}`;
   };
 
-  /**
-   * @desc    Fetches transaction records for the selected month
-   */
+  // fetch transactions for month
   const fetchAllTransactions = useCallback(async () => {
     const formattedMonth = getFormattedMonth(selectedMonth);
     const cacheKey = `${API_PATHS.TRANSACTIONS.GET_ALL_TRANSACTIONS}?month=${formattedMonth}&page=${page}&limit=${limit}`;

@@ -139,7 +139,7 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
       {
         label: "Income",
         data: trendData.map((item) => item.income),
-        borderColor: "#10b981", // Emerald
+        borderColor: "#10b981", 
         backgroundColor: (context) => {
           if (!context.chart.chartArea) return "rgba(16, 185, 129, 0.1)";
           const ctx = context.chart.ctx;
@@ -159,7 +159,7 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
       {
         label: "Expense",
         data: trendData.map((item) => item.expense),
-        borderColor: "#ef4444", // Red
+        borderColor: "#ef4444", 
         backgroundColor: (context) => {
           if (!context.chart.chartArea) return "rgba(239, 68, 68, 0.1)";
           const ctx = context.chart.ctx;

@@ -14,7 +14,7 @@ import { generatePDF } from "../../utils/pdfGenerator";
 import { getCachedData, setCachedData } from "../../utils/apiCache";
 
 // Income page component
-const Income = () => {
+let Income = () => {
   // State variables for income data, loading state, and modal visibility
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,10 +28,7 @@ const Income = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(15);
 
-  /**
-   * @desc    Handles adding or updating an income record
-   * @param   {object} incomeData - The income data from the form
-   */
+  // add or update income
   const handleSaveIncome = async (data) => {
     try {
       if (data._id) {
@@ -94,10 +91,7 @@ const Income = () => {
     setEditingIncome(null);
   };
 
-  /**
-   * @desc    Handles deleting an income record
-   * @param   {string} incomeId - The ID of the income record to delete
-   */
+  // delete an income
   const handleDeleteIncome = async (incomeId) => {
     if (!window.confirm("Are you sure you want to delete this income?")) return;
 
@@ -115,9 +109,7 @@ const Income = () => {
     }
   };
 
-  /**
-   * @desc    Handles downloading income data as an Excel file
-   */
+  // download income to excel
   const handleDownloadIncome = async () => {
     try {
       const response = await axiosInstance.get(
@@ -147,9 +139,7 @@ const Income = () => {
     return `${year}-${month}`;
   };
 
-  /**
-   * @desc    Fetches income records for the selected month
-   */
+  // get incomes for the month
   const fetchIncomeDetails = useCallback(async () => {
     const formattedMonth = getFormattedMonth(selectedMonth);
     const cacheKey = `${API_PATHS.DASHBOARD.GET_MONTHLY_INCOME}?month=${formattedMonth}&page=${page}&limit=${limit}`;

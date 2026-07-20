@@ -2,7 +2,7 @@ const express = require('express');
 const { Protect } = require('../middleware/authMiddleware');
 const { getAllTransactions, downloadTransactionsExcel } = require('../controllers/transactionController');
 
-const router = express.Router();
+let router = express.Router();
 
 router.route('/')
     .get(Protect, getAllTransactions);

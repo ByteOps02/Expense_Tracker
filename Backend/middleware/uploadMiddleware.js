@@ -1,10 +1,10 @@
 const multer = require("multer");
-const storage = multer.memoryStorage();
+let storage = multer.memoryStorage();
 
-const upload = multer({
+let upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
+    let allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
     if (allowedFormats.includes(file.mimetype)) {
       cb(null, true);
     } else {

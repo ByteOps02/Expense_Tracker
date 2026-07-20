@@ -1,15 +1,8 @@
-/**
- * Validation middleware for user inputs
- * Provides input validation and sanitization to prevent injection attacks
- */
-
 const { body, validationResult, param } = require("express-validator");
 
-/**
- * Middleware to check validation errors
- */
+// error handler for validation
 const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
+  let errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error("Validation errors:", errors.array());
     return res.status(400).json({ 
@@ -20,12 +13,8 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-/**
- * Middleware to sanitize MongoDB query parameters
- * Prevents NoSQL injection attacks
- */
+// sanitize mongodb params
 const sanitizeMongoParams = (req, res, next) => {
-  // Sanitize req.params
   Object.keys(req.params).forEach((key) => {
     if (typeof req.params[key] === 'string') {
       req.params[key] = req.params[key].trim();
@@ -41,9 +30,7 @@ const sanitizeMongoParams = (req, res, next) => {
   next();
 };
 
-/**
- * Income validation rules
- */
+// validate income
 const validateIncome = [
   body("title")
     .trim()
@@ -77,9 +64,7 @@ const validateIncome = [
     .isLength({ max: 100 }).withMessage("Icon must not exceed 100 characters"),
 ];
 
-/**
- * Expense validation rules
- */
+// validate expense
 const validateExpense = [
   body("title")
     .trim()
@@ -108,9 +93,7 @@ const validateExpense = [
     .isLength({ max: 100 }).withMessage("Icon must not exceed 100 characters"),
 ];
 
-/**
- * Budget validation rules
- */
+// validate budget
 const validateBudget = [
   body("category")
     .trim()
@@ -135,7 +118,7 @@ const validateBudget = [
     .isIn(["daily", "weekly", "monthly", "annually"]).withMessage("Invalid recurrence type"),
   body("endDate")
     .custom((endDate, { req }) => {
-      const startDate = req.body.startDate;
+      let startDate = req.body.startDate;
       if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
         throw new Error('End date must be after or equal to start date');
       }
@@ -143,9 +126,7 @@ const validateBudget = [
     }),
 ];
 
-/**
- * Auth validation rules
- */
+// validate registration
 const validateRegister = [
   body("fullName")
     .trim()
@@ -174,6 +155,7 @@ const validateRegister = [
     .isURL().withMessage("Profile image URL must be a valid URL"),
 ];
 
+// validate login
 const validateLogin = [
   body("email")
     .trim()
@@ -184,6 +166,7 @@ const validateLogin = [
     .notEmpty().withMessage("Password is required"),
 ];
 
+// validate change password
 const validateChangePassword = [
   body("currentPassword")
     .notEmpty().withMessage("Current password is required"),
@@ -192,6 +175,7 @@ const validateChangePassword = [
     .isLength({ min: 8 }).withMessage("New password must be at least 8 characters"),
 ];
 
+// validate update user
 const validateUpdateUser = [
   body("fullName")
     .optional()
@@ -209,9 +193,7 @@ const validateUpdateUser = [
     .isURL().withMessage("Profile image URL must be a valid URL"),
 ];
 
-/**
- * ID validation rules
- */
+// validate mongo id
 const validateMongoId = [
   param("id")
     .isMongoId().withMessage("Invalid ID format"),

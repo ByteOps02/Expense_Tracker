@@ -1,27 +1,23 @@
-// Import necessary models
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
 const mongoose = require("mongoose");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 
-/**
- * @desc    Get a summary of dashboard data
- * @route   GET /api/v1/dashboard
- * @access  Private
- */
+// getting dashboard summary
 exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  let uId = req.user.id;
+  let today = new Date();
+  let pastMonth = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const [incomeStats, expenseStats] = await Promise.all([
+  // get stats for income and expense
+  let [incomeStats, expenseStats] = await Promise.all([
     Income.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(uId) } },
       {
         $facet: {
           incomeLast30Days: [
-            { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
+            { $match: { date: { $gte: pastMonth, $lte: today } } },
             { $sort: { date: -1 } },
           ],
           last5Incomes: [
@@ -31,18 +27,18 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
           ],
           totalIncome: [{ $group: { _id: null, total: { $sum: "$amount" } } }],
           totalIncomeLast30Days: [
-            { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
+            { $match: { date: { $gte: pastMonth, $lte: today } } },
             { $group: { _id: null, total: { $sum: "$amount" } } },
           ],
         },
       },
     ]),
     Expense.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(uId) } },
       {
         $facet: {
           expenseLast30Days: [
-            { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
+            { $match: { date: { $gte: pastMonth, $lte: today } } },
             { $sort: { date: -1 } },
           ],
           last5Expenses: [
@@ -52,7 +48,7 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
           ],
           totalExpense: [{ $group: { _id: null, total: { $sum: "$amount" } } }],
           totalExpenseLast30Days: [
-            { $match: { date: { $gte: thirtyDaysAgo, $lte: now } } },
+            { $match: { date: { $gte: pastMonth, $lte: today } } },
             { $group: { _id: null, total: { $sum: "$amount" } } },
           ],
         },
@@ -60,103 +56,90 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
     ]),
   ]);
 
-  const incomeData = incomeStats[0];
-  const expenseData = expenseStats[0];
+  let incData = incomeStats[0];
+  let expData = expenseStats[0];
 
-  const last5Transactions = [
-    ...(incomeData.last5Incomes || []),
-    ...(expenseData.last5Expenses || []),
+  let last5Transactions = [
+    ...(incData.last5Incomes || []),
+    ...(expData.last5Expenses || []),
   ]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
-  const totalIncome = incomeData.totalIncome[0]?.total || 0;
-  const totalExpense = expenseData.totalExpense[0]?.total || 0;
-  const totalIncomeLast30Days =
-    incomeData.totalIncomeLast30Days[0]?.total || 0;
-  const totalExpenseLast30Days =
-    expenseData.totalExpenseLast30Days[0]?.total || 0;
-  const balance = totalIncome - totalExpense;
+  let totalInc = incData.totalIncome[0]?.total || 0;
+  let totalExp = expData.totalExpense[0]?.total || 0;
+  let totalIncLast30 = incData.totalIncomeLast30Days[0]?.total || 0;
+  let totalExpLast30 = expData.totalExpenseLast30Days[0]?.total || 0;
+  let myBalance = totalInc - totalExp;
 
   res.status(200).json({
     status: "success",
     data: {
-      // removed allIncomes/allExpenses from response
-      incomeLast30Days: incomeData.incomeLast30Days,
-      totalIncomeLast30Days,
-      expenseLast30Days: expenseData.expenseLast30Days,
-      totalExpenseLast30Days,
-      last5Transactions,
-      balance,
-      totalIncome,
-      totalExpense,
+      incomeLast30Days: incData.incomeLast30Days,
+      totalIncomeLast30Days: totalIncLast30,
+      expenseLast30Days: expData.expenseLast30Days,
+      totalExpenseLast30Days: totalExpLast30,
+      last5Transactions: last5Transactions,
+      balance: myBalance,
+      totalIncome: totalInc,
+      totalExpense: totalExp,
     },
   });
 });
 
-
-/**
- * @desc    Get total expenses by category for the last 30 days
- * @route   GET /api/v1/dashboard/expense-summary-by-category
- * @access  Private
- */
+// get expenses by category for last 30 days
 exports.getDashboardExpenseSummary = asyncHandler(async (req, res, next) => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const userId = req.user.id;
+  let pastMonth = new Date();
+  pastMonth.setDate(pastMonth.getDate() - 30);
+  let uId = req.user.id;
 
-    const summary = await Expense.aggregate([
-        {
-            $match: {
-                user: new mongoose.Types.ObjectId(userId),
-                date: { $gte: thirtyDaysAgo }
-            }
-        },
-        {
-            $group: {
-                _id: "$category",
-                totalAmount: { $sum: "$amount" }
-            }
-        },
-        {
-            $sort: { totalAmount: -1 }
-        }
-    ]);
+  let mySummary = await Expense.aggregate([
+    {
+      $match: {
+        user: new mongoose.Types.ObjectId(uId),
+        date: { $gte: pastMonth }
+      }
+    },
+    {
+      $group: {
+        _id: "$category",
+        totalAmount: { $sum: "$amount" }
+      }
+    },
+    {
+      $sort: { totalAmount: -1 }
+    }
+  ]);
 
-    res.status(200).json({
-        status: "success",
-        results: summary.length,
-        data: {
-            summary
-        }
-    });
+  res.status(200).json({
+    status: "success",
+    results: mySummary.length,
+    data: {
+      summary: mySummary
+    }
+  });
 });
 
-/**
- * @desc    Get monthly summary data (income, expenses, savings)
- * @route   GET /api/v1/dashboard/monthly-summary?month=2026-04
- * @access  Private
- */
+// get summary for a specific month
 exports.getMonthlyDashboardSummary = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
-  const { month } = req.query;
+  let uId = req.user.id;
+  let { month } = req.query;
 
   if (!month) {
-    return next(new AppError("Month parameter is required (format: YYYY-MM)", 400));
+    return next(new AppError("Need a month parameter", 400));
   }
 
-  // Parse month string (format: YYYY-MM)
-  const [year, monthNum] = month.split("-");
+  let [year, monthNum] = month.split("-");
   if (!year || !monthNum || isNaN(year) || isNaN(monthNum)) {
-    return next(new AppError("Invalid month format. Use YYYY-MM", 400));
+    return next(new AppError("Wrong month format", 400));
   }
 
-  const startDate = new Date(year, monthNum - 1, 1);
-  const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+  let startDate = new Date(year, monthNum - 1, 1);
+  let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
 
-  const [incomeStats, expenseStats] = await Promise.all([
+  let [incomeStats, expenseStats] = await Promise.all([
     Income.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(uId) } },
       {
         $facet: {
           monthlyIncomes: [
@@ -177,7 +160,7 @@ exports.getMonthlyDashboardSummary = asyncHandler(async (req, res, next) => {
       },
     ]),
     Expense.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $match: { user: new mongoose.Types.ObjectId(uId) } },
       {
         $facet: {
           monthlyExpenses: [
@@ -199,170 +182,157 @@ exports.getMonthlyDashboardSummary = asyncHandler(async (req, res, next) => {
     ]),
   ]);
 
-  const incomeData = incomeStats[0];
-  const expenseData = expenseStats[0];
+  let incData = incomeStats[0];
+  let expData = expenseStats[0];
 
-  const totalIncome = incomeData.totalIncome[0]?.total || 0;
-  const totalExpense = expenseData.totalExpense[0]?.total || 0;
-  const totalSavings = totalIncome - totalExpense;
-  const transactionCount = (incomeData.monthlyIncomes?.length || 0) + (expenseData.monthlyExpenses?.length || 0);
+  let totalInc = incData.totalIncome[0]?.total || 0;
+  let totalExp = expData.totalExpense[0]?.total || 0;
+  let savings = totalInc - totalExp;
+  let totalCount = (incData.monthlyIncomes?.length || 0) + (expData.monthlyExpenses?.length || 0);
 
-  const monthlyTransactions = [
-    ...(incomeData.monthlyIncomes || []),
-    ...(expenseData.monthlyExpenses || []),
+  let allTransactions = [
+    ...(incData.monthlyIncomes || []),
+    ...(expData.monthlyExpenses || []),
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   res.status(200).json({
     status: "success",
     data: {
-      month,
-      totalIncome,
-      totalExpense,
-      totalSavings,
-      transactionCount,
-      monthlyTransactions,
-      incomeBySource: incomeData.incomeBySource || [],
-      expenseByCategory: expenseData.expenseByCategory || [],
+      month: month,
+      totalIncome: totalInc,
+      totalExpense: totalExp,
+      totalSavings: savings,
+      transactionCount: totalCount,
+      monthlyTransactions: allTransactions,
+      incomeBySource: incData.incomeBySource || [],
+      expenseByCategory: expData.expenseByCategory || [],
     },
   });
 });
 
-/**
- * @desc    Get monthly expenses data with pagination
- * @route   GET /api/v1/dashboard/monthly-expenses?month=2026-04&page=1&limit=10
- * @access  Private
- */
+// get only monthly expenses with pages
 exports.getMonthlyExpenses = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
-  const { month, page = 1, limit = 20 } = req.query;
+  let uId = req.user.id;
+  let { month, page = 1, limit = 20 } = req.query;
 
   if (!month) {
-    return next(new AppError("Month parameter is required (format: YYYY-MM)", 400));
+    return next(new AppError("Need month parameter", 400));
   }
 
-  const [year, monthNum] = month.split("-");
+  let [year, monthNum] = month.split("-");
   if (!year || !monthNum || isNaN(year) || isNaN(monthNum)) {
-    return next(new AppError("Invalid month format. Use YYYY-MM", 400));
+    return next(new AppError("Wrong month format", 400));
   }
 
-  const startDate = new Date(year, monthNum - 1, 1);
-  const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
-  const pageNum = Math.max(1, parseInt(page));
-  const limitNum = Math.max(1, parseInt(limit));
-  const skip = (pageNum - 1) * limitNum;
+  let startDate = new Date(year, monthNum - 1, 1);
+  let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+  let pageNo = Math.max(1, parseInt(page));
+  let limitVal = Math.max(1, parseInt(limit));
+  let skipVal = (pageNo - 1) * limitVal;
 
-  const [expenses, totalCount] = await Promise.all([
+  let [myExpenses, totalCount] = await Promise.all([
     Expense.find({
-      user: userId,
+      user: uId,
       date: { $gte: startDate, $lte: endDate },
     })
       .sort({ date: -1 })
-      .skip(skip)
-      .limit(limitNum)
+      .skip(skipVal)
+      .limit(limitVal)
       .lean(),
     Expense.countDocuments({
-      user: userId,
+      user: uId,
       date: { $gte: startDate, $lte: endDate },
     }),
   ]);
 
   res.status(200).json({
     status: "success",
-    results: expenses.length,
-    totalCount,
-    totalPages: Math.ceil(totalCount / limitNum),
-    currentPage: pageNum,
+    results: myExpenses.length,
+    totalCount: totalCount,
+    totalPages: Math.ceil(totalCount / limitVal),
+    currentPage: pageNo,
     data: {
-      expenses,
+      expenses: myExpenses,
     },
   });
 });
 
-/**
- * @desc    Get monthly income data with pagination
- * @route   GET /api/v1/dashboard/monthly-income?month=2026-04&page=1&limit=10
- * @access  Private
- */
+// get monthly income with pages
 exports.getMonthlyIncome = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
-  const { month, page = 1, limit = 20 } = req.query;
+  let uId = req.user.id;
+  let { month, page = 1, limit = 20 } = req.query;
 
   if (!month) {
-    return next(new AppError("Month parameter is required (format: YYYY-MM)", 400));
+    return next(new AppError("Need month parameter", 400));
   }
 
-  const [year, monthNum] = month.split("-");
+  let [year, monthNum] = month.split("-");
   if (!year || !monthNum || isNaN(year) || isNaN(monthNum)) {
-    return next(new AppError("Invalid month format. Use YYYY-MM", 400));
+    return next(new AppError("Wrong format", 400));
   }
 
-  const startDate = new Date(year, monthNum - 1, 1);
-  const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
-  const pageNum = Math.max(1, parseInt(page));
-  const limitNum = Math.max(1, parseInt(limit));
-  const skip = (pageNum - 1) * limitNum;
+  let startDate = new Date(year, monthNum - 1, 1);
+  let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+  let pageNo = Math.max(1, parseInt(page));
+  let limitVal = Math.max(1, parseInt(limit));
+  let skipVal = (pageNo - 1) * limitVal;
 
-  const [incomes, totalCount] = await Promise.all([
+  let [myIncomes, totalCount] = await Promise.all([
     Income.find({
-      user: userId,
+      user: uId,
       date: { $gte: startDate, $lte: endDate },
     })
       .sort({ date: -1 })
-      .skip(skip)
-      .limit(limitNum)
+      .skip(skipVal)
+      .limit(limitVal)
       .lean(),
     Income.countDocuments({
-      user: userId,
+      user: uId,
       date: { $gte: startDate, $lte: endDate },
     }),
   ]);
 
   res.status(200).json({
     status: "success",
-    results: incomes.length,
-    totalCount,
-    totalPages: Math.ceil(totalCount / limitNum),
-    currentPage: pageNum,
+    results: myIncomes.length,
+    totalCount: totalCount,
+    totalPages: Math.ceil(totalCount / limitVal),
+    currentPage: pageNo,
     data: {
-      incomes,
+      incomes: myIncomes,
     },
   });
 });
 
-/**
- * @desc    Get 12-month summary data (income, expenses, savings, transactions) for trend charts
- * @route   GET /api/v1/dashboard/trend-summary?month=2026-04
- * @access  Private
- */
+// get trend data for the last 12 months
 exports.getTrendSummary = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
-  const { month } = req.query;
+  let uId = req.user.id;
+  let { month } = req.query;
 
   if (!month) {
-    return next(new AppError("Month parameter is required (format: YYYY-MM)", 400));
+    return next(new AppError("Need month parameter", 400));
   }
 
-  const [year, monthNum] = month.split("-");
+  let [year, monthNum] = month.split("-");
   if (!year || !monthNum || isNaN(year) || isNaN(monthNum)) {
-    return next(new AppError("Invalid month format. Use YYYY-MM", 400));
+    return next(new AppError("Wrong format", 400));
   }
 
-  // Parse month string and set date to 1st of selected month
-  const currentDate = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+  let currentDate = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
 
-  // Generate range: 11 months ago to current month
-  const startDate = new Date(currentDate);
+  // getting last 11 months + current
+  let startDate = new Date(currentDate);
   startDate.setMonth(startDate.getMonth() - 11);
   startDate.setDate(1);
   startDate.setHours(0, 0, 0, 0);
 
-  const endDate = new Date(parseInt(year), parseInt(monthNum), 0, 23, 59, 59, 999);
+  let endDate = new Date(parseInt(year), parseInt(monthNum), 0, 23, 59, 59, 999);
 
-  const [incomeStats, expenseStats] = await Promise.all([
+  let [incomeStats, expenseStats] = await Promise.all([
     Income.aggregate([
       {
         $match: {
-          user: new mongoose.Types.ObjectId(userId),
+          user: new mongoose.Types.ObjectId(uId),
           date: { $gte: startDate, $lte: endDate },
         },
       },
@@ -380,7 +350,7 @@ exports.getTrendSummary = asyncHandler(async (req, res, next) => {
     Expense.aggregate([
       {
         $match: {
-          user: new mongoose.Types.ObjectId(userId),
+          user: new mongoose.Types.ObjectId(uId),
           date: { $gte: startDate, $lte: endDate },
         },
       },
@@ -397,32 +367,33 @@ exports.getTrendSummary = asyncHandler(async (req, res, next) => {
     ]),
   ]);
 
-  // Create lookup maps
-  const incomeMap = {};
-  incomeStats.forEach((item) => {
-    const key = `${item._id.year}-${String(item._id.month).padStart(2, "0")}`;
+  let incomeMap = {};
+  for (let i = 0; i < incomeStats.length; i++) {
+    let item = incomeStats[i];
+    let key = `${item._id.year}-${String(item._id.month).padStart(2, "0")}`;
     incomeMap[key] = item;
-  });
+  }
 
-  const expenseMap = {};
-  expenseStats.forEach((item) => {
-    const key = `${item._id.year}-${String(item._id.month).padStart(2, "0")}`;
+  let expenseMap = {};
+  for (let i = 0; i < expenseStats.length; i++) {
+    let item = expenseStats[i];
+    let key = `${item._id.year}-${String(item._id.month).padStart(2, "0")}`;
     expenseMap[key] = item;
-  });
+  }
 
-  // Generate sequence of 12 months chronologically
-  const trendData = [];
+  // put it into an array
+  let trendData = [];
   for (let i = 11; i >= 0; i--) {
-    const d = new Date(currentDate);
+    let d = new Date(currentDate);
     d.setMonth(d.getMonth() - i);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const key = `${y}-${m}`;
+    let y = d.getFullYear();
+    let m = String(d.getMonth() + 1).padStart(2, "0");
+    let key = `${y}-${m}`;
 
-    const inc = incomeMap[key]?.totalIncome || 0;
-    const exp = expenseMap[key]?.totalExpense || 0;
-    const incCount = incomeMap[key]?.transactionCount || 0;
-    const expCount = expenseMap[key]?.transactionCount || 0;
+    let inc = incomeMap[key]?.totalIncome || 0;
+    let exp = expenseMap[key]?.totalExpense || 0;
+    let incCount = incomeMap[key]?.transactionCount || 0;
+    let expCount = expenseMap[key]?.transactionCount || 0;
 
     trendData.push({
       month: key,
@@ -441,4 +412,4 @@ exports.getTrendSummary = asyncHandler(async (req, res, next) => {
     status: "success",
     data: trendData,
   });
-});
+});

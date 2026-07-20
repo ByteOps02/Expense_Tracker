@@ -2,19 +2,18 @@ import axios from "axios";
 import { BASE_URL } from "./apiPath";
 import { clearCache } from "./apiCache";
 
-const axiosInstance = axios.create({
+let axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 60000,
   headers: {
     Accept: "application/json",
-    // Do not set Content-Type here!
   },
 });
 
-// Request Interceptor
+// adding token to request
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,20 +22,19 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response Interceptor
+// handling responses
 axiosInstance.interceptors.response.use(
   (response) => {
-    const method = response.config.method?.toUpperCase();
+    let method = response.config.method?.toUpperCase();
     if (method === "POST" || method === "PUT" || method === "DELETE") {
       clearCache();
     }
     return response;
   },
   (error) => {
-    // Handle common errors globally
     if (error.response) {
       if (error.response.status === 401) {
-        // Redirect to login page
+        // go back to login
         window.location.href = "/login";
       } else if (error.response.status === 500) {
         console.error("Server error. Please try again later.");

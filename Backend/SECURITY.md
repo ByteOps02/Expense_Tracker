@@ -1,11 +1,3 @@
-# Security Policy
-
-## Supported Versions
-
-| Version | Supported | Security Updates |
-| ------- | :--------: | :--------: |
-| 1.0.x   | ✅ | Active |
-
 ## Security Measures Implemented
 
 This application includes comprehensive security measures to protect user data and prevent common web vulnerabilities:
@@ -59,24 +51,6 @@ This application includes comprehensive security measures to protect user data a
 - Example template provided in `.env.example`
 - NODE_ENV-based configuration for development vs production
 
-## Critical Security Practices
-
-### For Developers
-
-1. **Never commit `.env` files** - Use `.env.example` as a template
-2. **Generate strong secrets** - Use OpenSSL or similar tools:
-   ```bash
-   openssl rand -base64 32
-   ```
-3. **Keep dependencies updated**:
-   ```bash
-   npm audit
-   npm audit fix
-   npm outdated
-   ```
-4. **Test with malicious inputs** - Verify validation catches attacks
-5. **Review API responses** - Ensure no sensitive data is exposed
-
 ### For Environment Setup
 
 **Backend Environment Variables** (`.env`):
@@ -108,52 +82,3 @@ VITE_BASE_URL=https://api.yourdomain.com
 4. **Regular Updates** - Keep dependencies patched
 5. **Monitor Logs** - Watch for suspicious activity
 6. **Rotate Secrets** - Every 3-6 months
-
-## Vulnerability Disclosure
-
-For security vulnerabilities, **DO NOT** open a public GitHub issue.
-
-Instead, please contact the maintainers directly:
-- Email: [security contact email]
-- GPG Key: [if applicable]
-
-Please include:
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if available)
-
-**Response Timeline**:
-- Initial acknowledgment: Within 48 hours
-- Security update release: Within 7 days (if critical)
-- Public disclosure: 30 days after fix is released
-
-## Security Testing
-
-### Regular Testing Recommendations
-1. Run `npm audit` regularly
-2. Use OWASP ZAP for API security scanning
-3. Test input validation with malicious payloads
-4. Verify rate limiting functionality
-5. Check CORS configuration on different domains
-
-### Known Vulnerabilities
-Currently, there are no known security vulnerabilities in active versions.
-
-## Additional Resources
-
-- [OWASP Top 10 Web Vulnerabilities](https://owasp.org/www-project-top-ten/)
-- [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [Express.js Security](https://expressjs.com/en/advanced/best-practice-security.html)
-- [MongoDB Security Checklist](https://docs.mongodb.com/manual/security-checklist/)
-- [Helmet.js Documentation](https://helmetjs.github.io/)
-
-## Version History
-
-| Date | Version | Changes |
-|------|---------|---------|
-| 2025-12-22 | 1.0 | Initial security implementation with rate limiting, input validation, CSRF protection, and secure authentication |
-
----
-
-*Last Updated: 2025-12-22*

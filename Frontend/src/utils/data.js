@@ -4,12 +4,11 @@ import {
   LuWalletMinimal,
   LuLogOut,
   LuSettings,
-  LuPiggyBank,
   LuArrowRightLeft,
   LuTrendingUp,
 } from "react-icons/lu";
 
-export const SIDE_MENU_DATA = [
+export let SIDE_MENU_DATA = [
   {
     id: "01",
     label: "Dashboard",

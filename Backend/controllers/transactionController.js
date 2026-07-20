@@ -1,109 +1,110 @@
-// Import necessary packages and models
 const mongoose = require("mongoose");
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
 const asyncHandler = require("../utils/asyncHandler");
 const ExcelJS = require("exceljs");
 
-/**
- * @desc    Get all transactions (income and expenses) for the logged-in user
- * @route   GET /api/v1/transactions
- * @access  Private
- */
+// get all my transactions
 exports.getAllTransactions = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
-  
-  let matchQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
-  let expenseMatchQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
+  let pageNo = parseInt(req.query.page) || 1;
+  let limitVal = parseInt(req.query.limit) || 10;
+  let skipVal = (pageNo - 1) * limitVal;
 
-  const { month } = req.query;
+  let myMatchQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
+  let expenseQuery = { user: new mongoose.Types.ObjectId(req.user.id) };
+
+  let month = req.query.month;
   if (month) {
-    const [year, monthNum] = month.split("-");
+    let parts = month.split("-");
+    let year = parts[0];
+    let monthNum = parts[1];
+
     if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
-      const startDate = new Date(year, monthNum - 1, 1);
-      const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
-      matchQuery.date = { $gte: startDate, $lte: endDate };
-      expenseMatchQuery.date = { $gte: startDate, $lte: endDate };
-    }
-  }
-
-  const pipeline = [
-      { $match: matchQuery },
-      { $addFields: { type: "income" } },
-      { 
-        $unionWith: { 
-          coll: "expenses", 
-          pipeline: [
-            { $match: expenseMatchQuery },
-            { $addFields: { type: "expense" } }
-          ] 
-        } 
-      },
-      { $sort: { date: -1 } },
-      {
-        $facet: {
-          metadata: [{ $count: "total" }],
-          data: [{ $skip: skip }, { $limit: limit }]
-        }
-      }
-    ];
-
-    const result = await Income.aggregate(pipeline);
-    
-    const transactions = result[0].data;
-    const total = result[0].metadata[0] ? result[0].metadata[0].total : 0;
-    const totalPages = Math.ceil(total / limit);
-
-  res.status(200).json({
-    status: "success",
-    results: transactions.length,
-    pagination: {
-        total,
-        page,
-        limit,
-        totalPages
-    },
-    data: {
-      transactions,
-    },
-  });
-});
-
-/**
- * @desc    Download all transactions (income and expenses) for the logged-in user as an Excel file
- * @route   GET /api/v1/transactions/download-excel
- * @access  Private
- */
-exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
-  let incomeQuery = { user: req.user.id };
-  let expenseQuery = { user: req.user.id };
-
-  const { month } = req.query;
-  if (month) {
-    const [year, monthNum] = month.split("-");
-    if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
-      const startDate = new Date(year, monthNum - 1, 1);
-      const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
-      incomeQuery.date = { $gte: startDate, $lte: endDate };
+      let startDate = new Date(year, monthNum - 1, 1);
+      let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+      myMatchQuery.date = { $gte: startDate, $lte: endDate };
       expenseQuery.date = { $gte: startDate, $lte: endDate };
     }
   }
 
-  const incomes = await Income.find(incomeQuery).lean();
-  const expenses = await Expense.find(expenseQuery).lean();
+  let myPipeline = [
+    { $match: myMatchQuery },
+    { $addFields: { type: "income" } },
+    {
+      $unionWith: {
+        coll: "expenses",
+        pipeline: [
+          { $match: expenseQuery },
+          { $addFields: { type: "expense" } }
+        ]
+      }
+    },
+    { $sort: { date: -1 } },
+    {
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [{ $skip: skipVal }, { $limit: limitVal }]
+      }
+    }
+  ];
 
-  const transactions = [...incomes, ...expenses];
+  let result = await Income.aggregate(myPipeline);
 
-  // Sort transactions by date
-  transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+  let allTransactions = result[0].data;
+  let totalCount = result[0].metadata[0] ? result[0].metadata[0].total : 0;
+  let totalPages = Math.ceil(totalCount / limitVal);
 
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Transactions");
+  res.status(200).json({
+    status: "success",
+    results: allTransactions.length,
+    pagination: {
+      total: totalCount,
+      page: pageNo,
+      limit: limitVal,
+      totalPages: totalPages
+    },
+    data: {
+      transactions: allTransactions,
+    },
+  });
+});
 
-  // Define columns
-  worksheet.columns = [
+// download all transactions in excel format
+exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
+  let incomeQ = { user: req.user.id };
+  let expenseQ = { user: req.user.id };
+
+  let month = req.query.month;
+  if (month) {
+    let parts = month.split("-");
+    let year = parts[0];
+    let monthNum = parts[1];
+
+    if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
+      let startDate = new Date(year, monthNum - 1, 1);
+      let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+      incomeQ.date = { $gte: startDate, $lte: endDate };
+      expenseQ.date = { $gte: startDate, $lte: endDate };
+    }
+  }
+
+  let myIncomes = await Income.find(incomeQ).lean();
+  let myExpenses = await Expense.find(expenseQ).lean();
+
+  let allTransactions = [];
+  for (let i = 0; i < myIncomes.length; i++) {
+    allTransactions.push(myIncomes[i]);
+  }
+  for (let i = 0; i < myExpenses.length; i++) {
+    allTransactions.push(myExpenses[i]);
+  }
+
+  allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  let wb = new ExcelJS.Workbook();
+  let ws = wb.addWorksheet("Transactions");
+
+  ws.columns = [
     { header: "Date", key: "date", width: 15 },
     { header: "Type", key: "type", width: 10 },
     { header: "Category/Source", key: "categorySource", width: 25 },
@@ -111,20 +112,19 @@ exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
     { header: "Amount", key: "amount", width: 15 },
   ];
 
-  // Add rows
-  transactions.forEach((transaction) => {
-    const type = transaction.source ? "Income" : "Expense";
-    const categorySource = transaction.source || transaction.category;
-    worksheet.addRow({
-      date: new Date(transaction.date).toLocaleDateString(),
+  for (let i = 0; i < allTransactions.length; i++) {
+    let t = allTransactions[i];
+    let type = t.source ? "Income" : "Expense";
+    let catSource = t.source || t.category;
+    ws.addRow({
+      date: new Date(t.date).toLocaleDateString(),
       type: type,
-      categorySource: categorySource,
-      description: transaction.description,
-      amount: transaction.amount,
+      categorySource: catSource,
+      description: t.description,
+      amount: t.amount,
     });
-  });
+  }
 
-  // Set response headers
   res.setHeader(
     "Content-Type",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -134,6 +134,6 @@ exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
     "attachment; filename=" + "transactions.xlsx"
   );
 
-  await workbook.xlsx.write(res);
+  await wb.xlsx.write(res);
   res.end();
 });

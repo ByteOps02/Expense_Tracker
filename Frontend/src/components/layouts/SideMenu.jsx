@@ -4,17 +4,16 @@ import { UserContext } from "../../context/UserContextDefinition";
 import { useNavigate } from "react-router-dom";
 import CharAvatar from "../Cards/CharAvatar";
 
-const SideMenu = ({ activeMenu, onClose }) => {
+let SideMenu = ({ activeMenu, onClose }) => {
   const { user, clearUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleClick = (path) => {
+  let handleClick = (path) => {
     if (path === "/logout") {
       handleLogout();
       return;
     }
 
-    // Close mobile menu if it's open (must happen before potential early return or navigation)
     if (onClose) {
       onClose();
     }
@@ -22,7 +21,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
     navigate(path);
   };
 
-  const handleLogout = () => {
+  let handleLogout = () => {
     localStorage.clear();
     clearUser();
     navigate("/login");

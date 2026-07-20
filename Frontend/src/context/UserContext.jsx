@@ -3,27 +3,27 @@ import { UserContext } from "./UserContextDefinition";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPath";
 
-const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+let UserProvider = ({ children }) => {
+  let [user, setUser] = useState(null);
+  let [loading, setLoading] = useState(true);
+  let [selectedMonth, setSelectedMonth] = useState(new Date());
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = localStorage.getItem("token");
+    let fetchUserInfo = async () => {
+      let token = localStorage.getItem("token");
       if (!token) {
         setLoading(false);
         return;
       }
 
       try {
-        const response = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
+        let response = await axiosInstance.get(API_PATHS.AUTH.GET_USER_INFO);
         if (response?.data?.data?.user) {
           setUser(response.data.data.user);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
-        // Token might be invalid, so clear it
+        // remove token if it's invalid
         localStorage.removeItem("token");
       } finally {
         setLoading(false);
@@ -33,18 +33,13 @@ const UserProvider = ({ children }) => {
     fetchUserInfo();
   }, []);
 
-  /**
-   * @desc    Function to update the user data in the context
-   * @param   {object} userData - The new user data
-   */
-  const updateUser = useCallback((userData) => {
+  // update the user state
+  let updateUser = useCallback((userData) => {
     setUser(userData);
   }, []);
 
-  /**
-   * @desc    Function to clear the user data from the context
-   */
-  const clearUser = useCallback(() => {
+  // remove the user data
+  let clearUser = useCallback(() => {
     setUser(null);
     setSelectedMonth(new Date());
     localStorage.removeItem("token");

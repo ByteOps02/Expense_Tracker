@@ -6,33 +6,34 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateObjectId } = require("../utils/queryValidator");
 
+// create a budget
 exports.createBudget = asyncHandler(async (req, res, next) => {
-    const { category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
+    let { category, amount, startDate, endDate, isRecurring, recurrenceType } = req.body;
 
-    // Calculate total income
-    const incomeAggregation = await Income.aggregate([
+    // get total income
+    let incAgg = await Income.aggregate([
         { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
         { $group: { _id: null, total: { $sum: "$amount" } } }
     ]);
-    const totalIncome = incomeAggregation.length > 0 ? incomeAggregation[0].total : 0;
+    let totalIncome = incAgg.length > 0 ? incAgg[0].total : 0;
 
-    // Calculate total existing budgets
-    const budgetAggregation = await Budget.aggregate([
+    // get total budgets
+    let budAgg = await Budget.aggregate([
         { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
         { $group: { _id: null, total: { $sum: "$amount" } } }
     ]);
-    const totalBudgets = budgetAggregation.length > 0 ? budgetAggregation[0].total : 0;
+    let totalBudgets = budAgg.length > 0 ? budAgg[0].total : 0;
 
     if (totalBudgets + amount > totalIncome) {
-        return next(new AppError(`Total budget (${totalBudgets + amount}) cannot exceed total income (${totalIncome})`, 400));
+        return next(new AppError(`Total budget (${totalBudgets + amount}) cannot be more than total income (${totalIncome})`, 400));
     }
 
-    const newBudget = await Budget.create({
+    let newBud = await Budget.create({
         user: req.user.id,
-        category,
-        amount,
-        startDate,
-        endDate,
+        category: category,
+        amount: amount,
+        startDate: startDate,
+        endDate: endDate,
         isRecurring: isRecurring || false,
         recurrenceType: isRecurring ? recurrenceType : null
     });
@@ -40,97 +41,98 @@ exports.createBudget = asyncHandler(async (req, res, next) => {
     res.status(201).json({
         status: "success",
         data: {
-            budget: newBudget
+            budget: newBud
         }
     });
 });
 
+// get all budgets
 exports.getBudgets = asyncHandler(async (req, res, next) => {
-    const budgets = await Budget.find({ user: req.user.id }).sort({ startDate: -1 });
+    let allBudgets = await Budget.find({ user: req.user.id }).sort({ startDate: -1 });
     res.status(200).json({
         status: "success",
-        results: budgets.length,
+        results: allBudgets.length,
         data: {
-            budgets
+            budgets: allBudgets
         }
     });
 });
 
+// get one budget
 exports.getBudget = asyncHandler(async (req, res, next) => {
-    const budgetId = validateObjectId(req.params.id, 'Budget ID');
-    const userId = validateObjectId(req.user.id, 'User ID');
+    let bId = validateObjectId(req.params.id, 'Budget ID');
+    let uId = validateObjectId(req.user.id, 'User ID');
 
-    const budget = await Budget.findOne({ _id: budgetId, user: userId });
+    let myBudget = await Budget.findOne({ _id: bId, user: uId });
 
-    if (!budget) {
-        return next(new AppError("No budget found with that ID for this user", 404));
+    if (!myBudget) {
+        return next(new AppError("Cannot find budget", 404));
     }
 
     res.status(200).json({
         status: "success",
         data: {
-            budget
+            budget: myBudget
         }
     });
 });
 
+// update budget
 exports.updateBudget = asyncHandler(async (req, res, next) => {
-    const budgetId = validateObjectId(req.params.id, 'Budget ID');
-    const userId = validateObjectId(req.user.id, 'User ID');
+    let bId = validateObjectId(req.params.id, 'Budget ID');
+    let uId = validateObjectId(req.user.id, 'User ID');
 
-    const { amount } = req.body;
+    let { amount } = req.body;
 
-    // If not recurring, ensure recurrenceType is null to pass Mongoose enum validation
     if (!req.body.isRecurring) {
         req.body.recurrenceType = null;
     }
 
     if (amount !== undefined) {
-        // Calculate total income
-        const incomeAggregation = await Income.aggregate([
+        let incAgg = await Income.aggregate([
             { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
-        const totalIncome = incomeAggregation.length > 0 ? incomeAggregation[0].total : 0;
+        let totalIncome = incAgg.length > 0 ? incAgg[0].total : 0;
 
-        // Calculate total other budgets (excluding this one)
-        const budgetAggregation = await Budget.aggregate([
-            { $match: { user: new mongoose.Types.ObjectId(req.user.id), _id: { $ne: new mongoose.Types.ObjectId(budgetId) } } },
+        let budAgg = await Budget.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(req.user.id), _id: { $ne: new mongoose.Types.ObjectId(bId) } } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
-        const totalOtherBudgets = budgetAggregation.length > 0 ? budgetAggregation[0].total : 0;
+        let totalOtherBudgets = budAgg.length > 0 ? budAgg[0].total : 0;
 
         if (totalOtherBudgets + amount > totalIncome) {
-            return next(new AppError(`Total budget (${totalOtherBudgets + amount}) cannot exceed total income (${totalIncome})`, 400));
+            return next(new AppError(`Total budget (${totalOtherBudgets + amount}) cannot be more than income (${totalIncome})`, 400));
         }
     }
 
-    const budget = await Budget.findOneAndUpdate(
-        { _id: budgetId, user: userId },
+    let updatedBudget = await Budget.findOneAndUpdate(
+        { _id: bId, user: uId },
         req.body,
         { new: true, runValidators: true }
     );
 
-    if (!budget) {
-        return next(new AppError("No budget found with that ID for this user", 404));
+    if (!updatedBudget) {
+        return next(new AppError("Cannot find budget to update", 404));
     }
 
     res.status(200).json({
         status: "success",
         data: {
-            budget
+            budget: updatedBudget
         }
     });
 });
 
+// delete budget
 exports.deleteBudget = asyncHandler(async (req, res, next) => {
-    const budgetId = validateObjectId(req.params.id, 'Budget ID');
-    const userId = validateObjectId(req.user.id, 'User ID');
+    let bId = validateObjectId(req.params.id, 'Budget ID');
+    let uId = validateObjectId(req.user.id, 'User ID');
 
-    const budget = await Budget.findOneAndDelete({ _id: budgetId, user: userId });
+    let deletedBudget = await Budget.findOneAndDelete({ _id: bId, user: uId });
 
-    if (!budget) {
-        return next(new AppError("No budget found with that ID for this user", 404));
+    if (!deletedBudget) {
+        return next(new AppError("Cannot find budget to delete", 404));
     }
 
     res.status(204).json({
@@ -139,15 +141,14 @@ exports.deleteBudget = asyncHandler(async (req, res, next) => {
     });
 });
 
+// compare budget and actual expenses
 exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
-    const userId = new mongoose.Types.ObjectId(req.user.id);
-    const { startDate, endDate } = req.query;
+    let uId = new mongoose.Types.ObjectId(req.user.id);
+    let { startDate, endDate } = req.query;
 
-    // Fetch ALL budgets for the user (do NOT filter budgets by query date range;
-    // the date range only constrains which expenses are counted per budget)
-    const budgets = await Budget.find({ user: userId }).sort({ startDate: -1 }).lean();
+    let myBudgets = await Budget.find({ user: uId }).sort({ startDate: -1 }).lean();
 
-    if (!budgets || budgets.length === 0) {
+    if (!myBudgets || myBudgets.length === 0) {
         return res.status(200).json({
             status: "success",
             results: 0,
@@ -155,80 +156,93 @@ exports.getBudgetVsActual = asyncHandler(async (req, res, next) => {
         });
     }
 
-    // Build expense date filter from query params (or fall back to widest budget range)
-    const minDate = startDate
-        ? (() => { const d = new Date(startDate); d.setHours(0, 0, 0, 0); return d; })()
-        : budgets.reduce((min, b) => new Date(b.startDate) < min ? new Date(b.startDate) : min, new Date(8640000000000000));
-    const maxDate = endDate
-        ? new Date(endDate)
-        : budgets.reduce((max, b) => new Date(b.endDate) > max ? new Date(b.endDate) : max, new Date(-8640000000000000));
-    // Include the full last day
+    let minDate = startDate ? new Date(startDate) : new Date(8640000000000000);
+    if (startDate) {
+        minDate.setHours(0, 0, 0, 0);
+    } else {
+        for (let i = 0; i < myBudgets.length; i++) {
+            let bDate = new Date(myBudgets[i].startDate);
+            if (bDate < minDate) minDate = bDate;
+        }
+    }
+
+    let maxDate = endDate ? new Date(endDate) : new Date(-8640000000000000);
+    if (!endDate) {
+        for (let i = 0; i < myBudgets.length; i++) {
+            let bDate = new Date(myBudgets[i].endDate);
+            if (bDate > maxDate) maxDate = bDate;
+        }
+    }
     maxDate.setHours(23, 59, 59, 999);
 
-    // Fetch Expenses within the resolved date range
-    const expenses = await Expense.find({
-        user: userId,
+    let myExpenses = await Expense.find({
+        user: uId,
         date: { $gte: minDate, $lte: maxDate }
     }).select('amount category title date').lean();
 
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    let totalExp = 0;
+    for (let i = 0; i < myExpenses.length; i++) {
+        totalExp += myExpenses[i].amount;
+    }
 
-    // Expense distribution — grouped by title with category label
-    const expenseDistributionMap = expenses.reduce((acc, curr) => {
-        const title = (curr.title || curr.category || "Uncategorized").trim();
-        const cat = (curr.category || "Uncategorized").trim();
-        const key = `${title}|||${cat}`;
-        acc[key] = (acc[key] || 0) + curr.amount;
-        return acc;
-    }, {});
+    let expDistMap = {};
+    for (let i = 0; i < myExpenses.length; i++) {
+        let curr = myExpenses[i];
+        let title = (curr.title || curr.category || "Uncategorized").trim();
+        let cat = (curr.category || "Uncategorized").trim();
+        let key = `${title}|||${cat}`;
+        if (!expDistMap[key]) expDistMap[key] = 0;
+        expDistMap[key] += curr.amount;
+    }
 
-    const expenseDistribution = Object.keys(expenseDistributionMap).map(key => {
-        const [title, category] = key.split("|||");
-        // Only append category in parentheses when it differs from the title
-        const label = title.toLowerCase() === category.toLowerCase()
-            ? title
-            : `${title} (${category})`;
-        return {
-            label,
-            category,
-            amount: expenseDistributionMap[key]
-        };
-    });
+    let expDist = [];
+    for (let key in expDistMap) {
+        let parts = key.split("|||");
+        let title = parts[0];
+        let category = parts[1];
+        let label = title.toLowerCase() === category.toLowerCase() ? title : `${title} (${category})`;
+        expDist.push({
+            label: label,
+            category: category,
+            amount: expDistMap[key]
+        });
+    }
 
-    // Map expenses to each budget by EXACT category name (case-insensitive) and date range
-    const report = budgets.map(budget => {
-        const budgetCategory = (budget.category || "").trim().toLowerCase();
+    let myReport = [];
+    for (let i = 0; i < myBudgets.length; i++) {
+        let b = myBudgets[i];
+        let bCat = (b.category || "").trim().toLowerCase();
+        let bStart = new Date(b.startDate);
+        let bEnd = new Date(b.endDate);
+        bEnd.setHours(23, 59, 59, 999);
 
-        const budgetStart = new Date(budget.startDate);
-        const budgetEnd = new Date(budget.endDate);
-        budgetEnd.setHours(23, 59, 59, 999);
+        let actualSpent = 0;
+        for (let j = 0; j < myExpenses.length; j++) {
+            let exp = myExpenses[j];
+            let expCat = (exp.category || "").trim().toLowerCase();
+            let expDate = new Date(exp.date);
+            if (expCat === bCat && expDate >= bStart && expDate <= bEnd) {
+                actualSpent += exp.amount;
+            }
+        }
 
-        const actualSpent = expenses.reduce((sum, expense) => {
-            const expenseCategory = (expense.category || "").trim().toLowerCase();
-            const isCategoryMatch = expenseCategory === budgetCategory;
-            const expenseDate = new Date(expense.date);
-            const isDateMatch = expenseDate >= budgetStart && expenseDate <= budgetEnd;
-            return (isCategoryMatch && isDateMatch) ? sum + expense.amount : sum;
-        }, 0);
-
-        const status = actualSpent > budget.amount ? 'overspent' : 'within_budget';
-
-        return {
-            ...budget,
-            budgetAmount: budget.amount,
-            actualSpent,
-            remaining: budget.amount - actualSpent,
-            status
-        };
-    });
+        let myStatus = actualSpent > b.amount ? 'overspent' : 'within_budget';
+        myReport.push({
+            ...b,
+            budgetAmount: b.amount,
+            actualSpent: actualSpent,
+            remaining: b.amount - actualSpent,
+            status: myStatus
+        });
+    }
 
     res.status(200).json({
         status: "success",
-        results: report.length,
+        results: myReport.length,
         data: {
-            report,
-            totalExpenses,
-            expenseDistribution
+            report: myReport,
+            totalExpenses: totalExp,
+            expenseDistribution: expDist
         }
     });
 });

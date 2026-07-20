@@ -17,30 +17,24 @@ const {
   validateUpdateUser,
 } = require("../middleware/validationMiddleware");
 
-const router = express.Router();
+let router = express.Router();
 
-// Route for user registration
-// This route is used to create a new user account
+// register route
 router.post("/register", validateRegister, handleValidationErrors, registerUser);
 
-// Route for user login
-// This route is used to authenticate a user and get a JWT token
+// login route
 router.post("/login", validateLogin, handleValidationErrors, loginUser);
 
-// Route to get user information
-// This is a protected route, meaning the user must be authenticated to access it
+// get user info
 router.get("/getUser", Protect, getUserInfo);
 
-// Route to update user information
-// This is a protected route
+// update user
 router.put("/update", Protect, validateUpdateUser, handleValidationErrors, updateUser);
 
-// Route for changing user password
-// This is a protected route
+// change password
 router.post("/change-password", Protect, validateChangePassword, handleValidationErrors, changePassword);
 
-// Route for uploading a profile image
-// This route uses the "upload" middleware to handle the file upload
+// upload image
 router.post("/upload-image", upload.single("image"), uploadProfileImage);
 
 module.exports = router;

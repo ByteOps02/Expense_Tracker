@@ -15,15 +15,15 @@ const {
     validateMongoId,
 } = require('../middleware/validationMiddleware');
 
-const router = express.Router();
+let router = express.Router();
 
-// Rate limiter for budget endpoints
-const budgetLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 200,
-  message: "Too many requests to budget endpoints, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
+// budget rate limiter
+let budgetLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    message: "Too many requests to budget, wait a bit",
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
 router.use(budgetLimiter);
@@ -32,8 +32,6 @@ router.route('/')
     .post(Protect, validateBudget, handleValidationErrors, createBudget)
     .get(Protect, getBudgets);
 
-// IMPORTANT: This specific route MUST be declared before /:id to avoid
-// Express treating "report" as a Mongo ID parameter.
 router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
 
 router.route('/:id')

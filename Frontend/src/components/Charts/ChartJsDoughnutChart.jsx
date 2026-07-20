@@ -11,7 +11,6 @@ import { CHART_COLORS } from "../../utils/helper";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Custom positioner: tooltip follows the cursor so it never appears inside the donut hole
 if (!Tooltip.positioners.cursor) {
   Tooltip.positioners.cursor = function (_items, eventPos) {
     return { x: eventPos.x, y: eventPos.y };

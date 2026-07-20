@@ -1,13 +1,12 @@
-// Import necessary packages and components
 import React, { useContext } from "react";
 import { UserContext } from "../../context/UserContextDefinition";
 import Navbar from "./Navbar";
 import SideMenu from "./SideMenu";
 
 // Layout component for the dashboard pages
-const DashboardLayout = ({ children, activeMenu }) => {
+let DashboardLayout = ({ children, activeMenu }) => {
   // Get the user from the UserContext
-  const { user } = useContext(UserContext);
+  let { user } = useContext(UserContext);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden w-full max-w-[100vw] relative">

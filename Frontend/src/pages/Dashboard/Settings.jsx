@@ -8,7 +8,7 @@ import { UserContext } from "../../context/UserContextDefinition";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 import uploadImage from "../../utils/uploadImage";
 
-const Settings = () => {
+let Settings = () => {
   const { user, updateUser } = useContext(UserContext);
 
   const [currentPassword, setCurrentPassword] = useState("");

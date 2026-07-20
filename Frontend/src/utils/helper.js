@@ -1,12 +1,14 @@
-export const validateEmail = (email) => {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// check email format
+export let validateEmail = (email) => {
+  let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 };
 
-export const getInitials = (name) => {
+// get name initials
+export let getInitials = (name) => {
   if (!name) return "";
 
-  const words = name.split(" ");
+  let words = name.split(" ");
   let initials = "";
 
   for (let i = 0; i < Math.min(words.length, 2); i++) {
@@ -16,108 +18,130 @@ export const getInitials = (name) => {
   return initials.toUpperCase();
 };
 
-export const addThousandsSeparator = (num) => {
+// add commas to numbers
+export let addThousandsSeparator = (num) => {
   if (num == null || isNaN(num)) return "";
 
-  const [integerPart, fractionalPart] = num.toString().split(".");
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return fractionalPart !== undefined
-    ? `${formattedInteger}.${fractionalPart}`
-    : formattedInteger;
+  let parts = num.toString().split(".");
+  let integerPart = parts[0];
+  let fractionalPart = parts[1];
+  
+  let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+  if (fractionalPart !== undefined) {
+      return `${formattedInteger}.${fractionalPart}`;
+  }
+  return formattedInteger;
 };
 
-
-export const prepareExpenseLineChartData = (data = []) => {
-  // Ensure data is an array and handle null/undefined cases
+export let prepareExpenseLineChartData = (data = []) => {
   if (!Array.isArray(data)) {
     return [];
   }
 
-  const sortedData = [...data].sort(
+  let sortedData = [...data].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
   );
 
-  const chartData = sortedData.map((item) => {
-    if (!item) return null;
-    return {
-      month: new Date(item.date).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }),
-      amount: item.amount,
-      category: item.category,
-    };
-  }).filter(Boolean);
+  let chartData = [];
+  for (let i = 0; i < sortedData.length; i++) {
+      let item = sortedData[i];
+      if (item) {
+          chartData.push({
+              month: new Date(item.date).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+              }),
+              amount: item.amount,
+              category: item.category,
+          });
+      }
+  }
 
   return chartData;
 };
 
-export const prepareIncomeBarChartData = (data = []) => {
-  // Ensure data is an array and handle null/undefined cases
+export let prepareIncomeBarChartData = (data = []) => {
   if (!Array.isArray(data)) {
     return [];
   }
 
-  const sortedData = [...data].sort(
+  let sortedData = [...data].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
   );
 
-  const chartData = sortedData.map((item) => ({
-    month: new Date(item?.date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    amount: item?.amount,
-    source: item?.source,
-  }));
+  let chartData = [];
+  for (let i = 0; i < sortedData.length; i++) {
+      let item = sortedData[i];
+      chartData.push({
+          month: new Date(item?.date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+          }),
+          amount: item?.amount,
+          source: item?.source,
+      });
+  }
 
   return chartData;
 };
 
-export const prepareCategoryData = (data = [], key = "category") => {
+export let prepareCategoryData = (data = [], key = "category") => {
   if (!Array.isArray(data)) return [];
 
-  const grouped = data.reduce((acc, item) => {
-    const label = item[key] || "Other";
-    acc[label] = (acc[label] || 0) + (item.amount || 0);
-    return acc;
-  }, {});
+  let grouped = {};
+  for (let i = 0; i < data.length; i++) {
+      let item = data[i];
+      let label = item[key] || "Other";
+      if (!grouped[label]) {
+          grouped[label] = 0;
+      }
+      grouped[label] += (item.amount || 0);
+  }
 
-  return Object.entries(grouped).map(([label, amount]) => ({
-    name: label,
-    amount,
-  }));
+  let result = [];
+  for (let label in grouped) {
+      result.push({ name: label, amount: grouped[label] });
+  }
+  
+  return result;
 };
 
-export const prepareTitleAndCategoryData = (data = []) => {
+export let prepareTitleAndCategoryData = (data = []) => {
   if (!Array.isArray(data)) return [];
 
-  const grouped = data.reduce((acc, item) => {
-    if (!item) return acc;
-    const label = `${item.title || 'Unknown'} (${item.category || item.source || "N/A"})`;
-    acc[label] = (acc[label] || 0) + (item.amount || 0);
-    return acc;
-  }, {});
+  let grouped = {};
+  for (let i = 0; i < data.length; i++) {
+      let item = data[i];
+      if (!item) continue;
+      let label = `${item.title || 'Unknown'} (${item.category || item.source || "N/A"})`;
+      if (!grouped[label]) {
+          grouped[label] = 0;
+      }
+      grouped[label] += (item.amount || 0);
+  }
 
-  return Object.entries(grouped).map(([label, amount]) => ({
-    name: label,
-    amount,
-  }));
+  let result = [];
+  for (let label in grouped) {
+      result.push({ name: label, amount: grouped[label] });
+  }
+
+  return result;
 };
 
 export const CHART_COLORS = [
-  "#875CF5", // Primary Purple
-  "#FA2C37", // Vibrant Red
-  "#FF6900", // Vibrant Orange
-  "#4ADE80", // Mint/Green
-  "#3B82F6", // Sky Blue
-  "#ec4899", // Deep Pink
-  "#06b6d4", // Teal/Cyan
-  "#f59e0b", // Amber Yellow
-  "#6366f1", // Indigo
-  "#14b8a6", // Teal
-  "#a855f7", // Light Purple
-  "#0ea5e9", // Light Blue
+  "#875CF5",
+  "#FA2C37", 
+  "#FF6900", 
+  "#4ADE80", 
+  "#3B82F6", 
+  "#ec4899", 
+  "#06b6d4", 
+  "#f59e0b", 
+  "#6366f1", 
+  "#14b8a6", 
+  "#a855f7", 
+  "#0ea5e9", 
 ];

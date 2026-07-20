@@ -1,7 +1,7 @@
 import React from "react";
 
-const InfoCard = ({ icon, label, value, color }) => {
-  const bgIcon = {
+let InfoCard = ({ icon, label, value, color }) => {
+  let bgIcon = {
     "bg-purple-500": "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
     "bg-orange-500": "bg-orange-100 dark:bg-orange-900/40 text-orange-500 dark:text-orange-400",
     "bg-red-500": "bg-red-100 dark:bg-red-900/40 text-red-500 dark:text-red-400",
@@ -9,7 +9,7 @@ const InfoCard = ({ icon, label, value, color }) => {
     "bg-blue-500": "bg-blue-100 dark:bg-blue-900/40 text-blue-500 dark:text-blue-400",
   };
 
-  const iconClasses = bgIcon[color] || "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
+  let iconClasses = bgIcon[color] || "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
 
   return (
     <div className="card card-interactive group flex items-center gap-5 p-6 w-[85vw] md:w-full shrink-0 snap-center">

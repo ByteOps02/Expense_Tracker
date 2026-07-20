@@ -14,7 +14,7 @@ const TransactionsTable = ({
     onEdit,
     onDelete,
     showActions = true,
-    type = "income" // "income" or "expense" to control amount color
+    type = "income" 
 }) => {
     if (!data || data.length === 0) {
         return (

@@ -1,130 +1,119 @@
-// Import necessary packages and models
 const Income = require("../models/Income");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateObjectId } = require("../utils/queryValidator");
 
-/**
- * @desc    Add a new income
- * @route   POST /api/v1/income
- * @access  Private
- */
+// add new income function
 exports.addIncome = asyncHandler(async (req, res, next) => {
-  const { title, icon, amount, source, category, date, note } = req.body;
-
-  const numericAmount = Number(amount);
-  if (isNaN(numericAmount)) {
-    return next(new AppError("Amount must be a valid number", 400));
+  let { title, icon, amount, source, category, date, note } = req.body;
+  
+  let myAmt = Number(amount);
+  if (isNaN(myAmt)) {
+    return next(new AppError("Amount must be a number", 400));
   }
 
-  const income = await Income.create({
+  // create the income in db
+  let newIncome = await Income.create({
     user: req.user.id,
-    title,
-    icon,
-    amount: numericAmount,
-    source,
-    category,
-    date,
-    note,
+    title: title,
+    icon: icon,
+    amount: myAmt,
+    source: source,
+    category: category,
+    date: date,
+    note: note,
   });
 
   res.status(201).json({
     status: "success",
     data: {
-      income,
+      income: newIncome,
     },
   });
 });
 
-/**
- * @desc    Get all incomes for the logged-in user
- * @route   GET /api/v1/income
- * @access  Private
- */
+// get all incomes for the user
 exports.getAllIncome = asyncHandler(async (req, res, next) => {
-  const { page, limit, startDate, endDate, search } = req.query;
+  let page = req.query.page;
+  let limit = req.query.limit;
+  let startDate = req.query.startDate;
+  let endDate = req.query.endDate;
+  let search = req.query.search;
 
-  const query = { user: req.user.id };
+  let myQuery = { user: req.user.id };
 
-  // Date filtering — supports startDate only, endDate only, or both
+  // filter by date
   if (startDate || endDate) {
-    query.date = {};
+    myQuery.date = {};
     if (startDate) {
-      const start = new Date(startDate);
+      let start = new Date(startDate);
       start.setHours(0, 0, 0, 0);
-      query.date.$gte = start;
+      myQuery.date.$gte = start;
     }
     if (endDate) {
-      const end = new Date(endDate);
+      let end = new Date(endDate);
       end.setHours(23, 59, 59, 999);
-      query.date.$lte = end;
+      myQuery.date.$lte = end;
     }
   }
 
-  // Search filtering
   if (search) {
-    const searchRegex = new RegExp(search, "i");
-    query.$or = [
-      { title: searchRegex },
-      { category: searchRegex },
-      { source: searchRegex },
+    let searchWord = new RegExp(search, "i");
+    myQuery.$or = [
+      { title: searchWord },
+      { category: searchWord },
+      { source: searchWord },
     ];
   }
 
-  // If no pagination is requested, return all (backward compatibility)
   if (!page && !limit) {
-    const incomes = await Income.find(query).sort({ date: -1 }).lean();
+    let allIncomes = await Income.find(myQuery).sort({ date: -1 }).lean();
     return res.status(200).json({
       status: "success",
-      results: incomes.length,
-      data: { incomes },
+      results: allIncomes.length,
+      data: { incomes: allIncomes },
     });
   }
 
-  // Pagination logic
-  const pageNum = parseInt(page) || 1;
-  const limitNum = parseInt(limit) || 10;
-  const skip = (pageNum - 1) * limitNum;
+  // pagination code
+  let pageNo = parseInt(page) || 1;
+  let limitVal = parseInt(limit) || 10;
+  let skipVal = (pageNo - 1) * limitVal;
 
-  const incomes = await Income.find(query)
+  let finalIncomes = await Income.find(myQuery)
     .sort({ date: -1 })
-    .skip(skip)
-    .limit(limitNum)
+    .skip(skipVal)
+    .limit(limitVal)
     .lean();
 
-  const total = await Income.countDocuments(query);
+  let totalCount = await Income.countDocuments(myQuery);
 
   res.status(200).json({
     status: "success",
-    results: incomes.length,
+    results: finalIncomes.length,
     pagination: {
-      total,
-      page: pageNum,
-      limit: limitNum,
-      totalPages: Math.ceil(total / limitNum),
+      total: totalCount,
+      page: pageNo,
+      limit: limitVal,
+      totalPages: Math.ceil(totalCount / limitVal),
     },
-    data: { incomes },
+    data: { incomes: finalIncomes },
   });
 });
 
-/**
- * @desc    Delete an income
- * @route   DELETE /api/v1/income/:id
- * @access  Private
- */
+// delete an income
 exports.deleteIncome = asyncHandler(async (req, res, next) => {
-  // Validate income ID and user ID
-  const incomeId = validateObjectId(req.params.id, 'Income ID');
-  const userId = validateObjectId(req.user.id, 'User ID');
+  let incId = validateObjectId(req.params.id, 'Income ID');
+  let uId = validateObjectId(req.user.id, 'User ID');
 
-  const income = await Income.findOneAndDelete({
-    _id: incomeId,
-    user: userId,
+  let deletedInc = await Income.findOneAndDelete({
+    _id: incId,
+    user: uId,
   });
 
-  if (!income) {
-    return next(new AppError("No income found with that ID for this user", 404));
+  if (!deletedInc) {
+    return next(new AppError("Could not find income to delete", 404));
   }
 
   res.status(204).json({
@@ -133,66 +122,65 @@ exports.deleteIncome = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @desc    Update an income
- * @route   PUT /api/v1/income/:id
- * @access  Private
- */
+// update an income
 exports.updateIncome = asyncHandler(async (req, res, next) => {
-  const { title, icon, amount, source, category, date, note } = req.body;
+  let { title, icon, amount, source, category, date, note } = req.body;
 
-  // Sanitize amount
-  const numericAmount = Number(amount);
-  if (isNaN(numericAmount)) {
-    return next(new AppError("Amount must be a valid number", 400));
+  let myAmt = Number(amount);
+  if (isNaN(myAmt)) {
+    return next(new AppError("Amount must be a number", 400));
   }
 
-  // Validate income ID and user ID
-  const incomeId = validateObjectId(req.params.id, 'Income ID');
-  const userId = validateObjectId(req.user.id, 'User ID');
+  let incId = validateObjectId(req.params.id, 'Income ID');
+  let uId = validateObjectId(req.user.id, 'User ID');
 
-  const income = await Income.findOneAndUpdate(
-    { _id: incomeId, user: userId },
-    { title, icon, amount: numericAmount, source, category, date, note },
-    { new: true, runValidators: true },
+  let updatedInc = await Income.findOneAndUpdate(
+    { _id: incId, user: uId },
+    { title: title, icon: icon, amount: myAmt, source: source, category: category, date: date, note: note },
+    { new: true, runValidators: true }
   );
 
-  if (!income) {
-    return next(new AppError("No income found with that ID for this user", 404));
+  if (!updatedInc) {
+    return next(new AppError("Could not find income to update", 404));
   }
 
   res.status(200).json({
     status: "success",
     data: {
-      income,
+      income: updatedInc,
     },
   });
 });
 
-/**
- * @desc    Download all incomes as an Excel file
- * @route   GET /api/v1/income/download-excel
- * @access  Private
- */
+// download incomes in excel format
 exports.downloadIncomeExcel = asyncHandler(async (req, res, next) => {
-  const incomes = await Income.find({ user: req.user.id }).lean();
-  if (!incomes.length) {
-    return next(new AppError("No incomes found to export", 404));
+  let myIncomes = await Income.find({ user: req.user.id }).lean();
+  if (myIncomes.length === 0) {
+    return next(new AppError("No incomes to download", 404));
   }
 
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Incomes");
+  let wb = new ExcelJS.Workbook();
+  let ws = wb.addWorksheet("Incomes");
 
-  const data = incomes.map(
-    ({ _id, user, __v, createdAt, updatedAt, ...rest }) => rest
-  );
-
-  if (data.length > 0) {
-    const headers = Object.keys(data[0]);
-    worksheet.addRow(headers);
-    data.forEach((income) => {
-      worksheet.addRow(Object.values(income));
+  let cleanData = [];
+  for (let i = 0; i < myIncomes.length; i++) {
+    let item = myIncomes[i];
+    cleanData.push({
+      title: item.title,
+      amount: item.amount,
+      source: item.source,
+      category: item.category,
+      date: item.date,
+      note: item.note
     });
+  }
+
+  if (cleanData.length > 0) {
+    let myHeaders = Object.keys(cleanData[0]);
+    ws.addRow(myHeaders);
+    for (let j = 0; j < cleanData.length; j++) {
+      ws.addRow(Object.values(cleanData[j]));
+    }
   }
 
   res.setHeader(
@@ -204,6 +192,6 @@ exports.downloadIncomeExcel = asyncHandler(async (req, res, next) => {
     "attachment; filename=incomes.xlsx"
   );
 
-  await workbook.xlsx.write(res);
+  await wb.xlsx.write(res);
   res.end();
 });

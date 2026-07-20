@@ -11,7 +11,7 @@ import { validateEmail } from "../../utils/helper";
 import AuthBranding from "../../components/layouts/AuthBranding";
 
 // Login component
-const Login = () => {
+let Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,11 +22,8 @@ const Login = () => {
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  /**
-   * @desc    Handles the standard email/password login process
-   * @param   {object} e - The form submission event
-   */
-  const handleLogin = async (e) => {
+  // handle login submit
+  let handleLogin = async (e) => {
     e.preventDefault();
 
     // Basic validation

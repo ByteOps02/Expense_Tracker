@@ -13,7 +13,7 @@ import AuthBranding from "../../components/layouts/AuthBranding";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 
 // SignUp component
-const SignUp = () => {
+let SignUp = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,11 +26,8 @@ const SignUp = () => {
   const { theme, toggleTheme } = useTheme();
   const { updateUser } = useContext(UserContext);
 
-  /**
-   * @desc    Handles the user sign-up process
-   * @param   {object} e - The form submission event
-   */
-  const handleSignUp = async (e) => {
+  // handle sign up submit
+  let handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!fullName || !email || !password || !confirmPassword) {

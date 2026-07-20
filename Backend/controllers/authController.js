@@ -1,4 +1,3 @@
-// Import necessary packages and models
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("../config/cloudinary");
@@ -6,106 +5,83 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateEmail, validateObjectId } = require("../utils/queryValidator");
 
-/**
- * @desc    Generate JWT token
- * @param   {string} id - User ID
- * @returns {string} - JWT token
- */
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
-    throw new AppError("JWT_SECRET is not defined in environment variables", 500);
+    throw new AppError("JWT_SECRET is missing", 500);
   }
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
-/**
- * @desc    Register a new user
- * @route   POST /api/v1/auth/register
- * @access  Public
- */
+// register user function
 exports.registerUser = asyncHandler(async (req, res, next) => {
-  const { fullName, email, password, profileImageUrl } = req.body;
-  
-  // Validate email format
-  const validEmail = validateEmail(email);
+  let { fullName, email, password, profileImageUrl } = req.body;
 
-  const existingUser = await User.findOne({ email: validEmail });
-  if (existingUser) {
-    return next(new AppError("Email already in use", 400));
+  let myEmail = validateEmail(email);
+
+  let userExists = await User.findOne({ email: myEmail });
+  if (userExists) {
+    return next(new AppError("Email is already used", 400));
   }
 
-  const user = await User.create({
+  let newUser = await User.create({
     fullName,
     email,
     password,
-    profileImageUrl,
+    profileImageUrl
   });
 
   res.status(201).json({
     status: "success",
-    token: generateToken(user._id),
+    token: generateToken(newUser._id),
     data: {
-      user,
+      user: newUser,
     },
   });
 });
 
-/**
- * @desc    Authenticate a user and get a token
- * @route   POST /api/v1/auth/login
- * @access  Public
- */
+// login user function
 exports.loginUser = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  
-  // Validate email format
-  const validEmail = validateEmail(email);
+  let { email, password } = req.body;
 
-  const user = await User.findOne({ email: validEmail }).select('+password');
-  if (!user || !(await user.comparePassword(password))) {
-    return next(new AppError("Invalid credentials", 401));
+  // check email
+  let myEmail = validateEmail(email);
+
+  let foundUser = await User.findOne({ email: myEmail }).select('+password');
+  if (!foundUser || !(await foundUser.comparePassword(password))) {
+    return next(new AppError("Wrong email or password", 401));
   }
 
   res.status(200).json({
     status: "success",
-    token: generateToken(user._id),
+    token: generateToken(foundUser._id),
     data: {
-      user,
+      user: foundUser,
     },
   });
 });
 
-/**
- * @desc    Get user information
- * @route   GET /api/v1/auth/getUser
- * @access  Private
- */
+// get user info
 exports.getUserInfo = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select("-password");
-  if (!user) {
+  let myUser = await User.findById(req.user.id).select("-password");
+  if (!myUser) {
     return next(new AppError("User not found", 404));
   }
 
   res.status(200).json({
     status: "success",
-    data: { user }
+    data: { user: myUser }
   });
 });
 
-/**
- * @desc    Update user information
- * @route   PUT /api/v1/auth/update
- * @access  Private
- */
+// update user
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  const { fullName, email, profileImageUrl } = req.body;
-  
-  // Validate user ID
-  const userId = validateObjectId(req.user.id, 'User ID');
+  let { fullName, email, profileImageUrl } = req.body;
 
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    { fullName, email, profileImageUrl },
+  let uId = validateObjectId(req.user.id, 'User ID');
+
+  let updatedUser = await User.findByIdAndUpdate(
+    uId,
+    { fullName: fullName, email: email, profileImageUrl: profileImageUrl },
     { new: true, runValidators: true }
   ).select("-password");
 
@@ -121,47 +97,39 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @desc    Change user password
- * @route   POST /api/v1/auth/change-password
- * @access  Private
- */
+// change password function
 exports.changePassword = asyncHandler(async (req, res, next) => {
-  const { currentPassword, newPassword } = req.body;
+  let { currentPassword, newPassword } = req.body;
 
-  const user = await User.findById(req.user.id).select('+password');
+  let myUser = await User.findById(req.user.id).select('+password');
 
-  if (!user || !(await user.comparePassword(currentPassword))) {
-    return next(new AppError("Invalid current password", 401));
+  if (!myUser || !(await myUser.comparePassword(currentPassword))) {
+    return next(new AppError("Wrong current password", 401));
   }
 
-  user.password = newPassword;
-  await user.save();
+  myUser.password = newPassword;
+  await myUser.save();
 
   res.status(200).json({
     status: "success",
-    message: "Password changed successfully"
+    message: "Password changed"
   });
 });
 
-/**
- * @desc    Upload a profile image
- * @route   POST /api/v1/auth/upload-image
- * @access  Private
- */
+// upload profile pic
 exports.uploadProfileImage = asyncHandler(async (req, res, next) => {
   if (!req.file) {
-    return next(new AppError("No File Uploaded", 400));
+    return next(new AppError("Please upload a file", 400));
   }
 
-  const uploadStream = cloudinary.uploader.upload_stream(
+  let uploadTask = cloudinary.uploader.upload_stream(
     {
       folder: "expense_tracker_uploads",
     },
     (error, result) => {
       if (error) {
-        console.error("Cloudinary Upload Error Details:", JSON.stringify(error, null, 2));
-        return next(new AppError("Failed to upload image", 500));
+        console.error("Cloudinary error:", JSON.stringify(error, null, 2));
+        return next(new AppError("Image upload failed", 500));
       }
       res.status(200).json({
         status: "success",
@@ -172,6 +140,5 @@ exports.uploadProfileImage = asyncHandler(async (req, res, next) => {
     }
   );
 
-  uploadStream.end(req.file.buffer);
+  uploadTask.end(req.file.buffer);
 });
-    
