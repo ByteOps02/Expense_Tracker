@@ -21,7 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const ChartJsLineChart = ({ data }) => {
@@ -70,11 +70,13 @@ const ChartJsLineChart = ({ data }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 1000, easing: 'easeOutQuart' },
+    animation: { duration: 1000, easing: "easeOutQuart" },
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        backgroundColor: isDark
+          ? "rgba(15,23,42,0.95)"
+          : "rgba(255,255,255,0.97)",
         titleColor: isDark ? "#f1f5f9" : "#1f2937",
         bodyColor: isDark ? "#cbd5e1" : "#374151",
         borderColor: isDark ? "#334155" : "#e5e7eb",

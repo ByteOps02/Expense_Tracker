@@ -1,10 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie, Doughnut } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
 import { CHART_COLORS } from "../../utils/helper";
@@ -17,7 +12,13 @@ if (!Tooltip.positioners.cursor) {
   };
 }
 
-const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, labelKey = "category" }) => {
+const ChartJsPieChart = ({
+  data,
+  colors,
+  showLegend = true,
+  donut = false,
+  labelKey = "category",
+}) => {
   const { theme } = useContext(ThemeContext);
 
   if (!data || data.length === 0) {
@@ -31,7 +32,9 @@ const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, label
   const defaultColors = CHART_COLORS;
 
   const chartData = {
-    labels: data.map((item) => item[labelKey] || item.name || item.category || item.source),
+    labels: data.map(
+      (item) => item[labelKey] || item.name || item.category || item.source,
+    ),
     datasets: [
       {
         data: data.map((item) => item.amount || item.value),
@@ -47,7 +50,7 @@ const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, label
     responsive: true,
     maintainAspectRatio: false,
     cutout: donut ? "75%" : "0%",
-    animation: { duration: 1000, easing: 'easeOutQuart' },
+    animation: { duration: 1000, easing: "easeOutQuart" },
     plugins: {
       legend: {
         display: showLegend,
@@ -65,7 +68,8 @@ const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, label
       },
       tooltip: {
         position: "cursor",
-        backgroundColor: theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+        backgroundColor:
+          theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
         titleColor: theme === "dark" ? "#f1f5f9" : "#1f2937",
         bodyColor: theme === "dark" ? "#cbd5e1" : "#1f2937",
         borderColor: theme === "dark" ? "#334155" : "#e5e7eb",

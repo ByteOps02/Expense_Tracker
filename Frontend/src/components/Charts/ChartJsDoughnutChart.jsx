@@ -1,10 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
 import { CHART_COLORS } from "../../utils/helper";
@@ -47,7 +42,7 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
     responsive: true,
     maintainAspectRatio: false,
     cutout: "75%",
-    animation: { duration: 1000, easing: 'easeOutQuart' },
+    animation: { duration: 1000, easing: "easeOutQuart" },
     plugins: {
       legend: {
         display: showLegend,
@@ -65,7 +60,8 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
       },
       tooltip: {
         position: "cursor",
-        backgroundColor: theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+        backgroundColor:
+          theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
         titleColor: theme === "dark" ? "#f1f5f9" : "#1f2937",
         bodyColor: theme === "dark" ? "#cbd5e1" : "#1f2937",
         borderColor: theme === "dark" ? "#334155" : "#e5e7eb",

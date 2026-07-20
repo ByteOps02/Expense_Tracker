@@ -22,16 +22,35 @@ let expenseLimiter = rateLimit({
 router.use(expenseLimiter);
 
 // add expense
-router.post("/", Protect, validateExpense, handleValidationErrors, expenseController.addExpense);
+router.post(
+  "/",
+  Protect,
+  validateExpense,
+  handleValidationErrors,
+  expenseController.addExpense,
+);
 
 // get expenses
 router.get("/", Protect, expenseController.getAllExpenses);
 
 // update expense
-router.put("/:id", Protect, validateMongoId, validateExpense, handleValidationErrors, expenseController.updateExpense);
+router.put(
+  "/:id",
+  Protect,
+  validateMongoId,
+  validateExpense,
+  handleValidationErrors,
+  expenseController.updateExpense,
+);
 
 // delete expense
-router.delete("/:id", Protect, validateMongoId, handleValidationErrors, expenseController.deleteExpense);
+router.delete(
+  "/:id",
+  Protect,
+  validateMongoId,
+  handleValidationErrors,
+  expenseController.deleteExpense,
+);
 
 // download excel
 router.get("/download-excel", Protect, expenseController.downloadExpenseExcel);

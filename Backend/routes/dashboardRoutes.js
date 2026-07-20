@@ -7,7 +7,7 @@ const {
   getMonthlyDashboardSummary,
   getMonthlyExpenses,
   getMonthlyIncome,
-  getTrendSummary
+  getTrendSummary,
 } = require("../controllers/dashboardController");
 
 let router = express.Router();

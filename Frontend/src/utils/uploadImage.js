@@ -10,7 +10,7 @@ let uploadImage = async (imageFile) => {
     formData,
     {
       headers: {
-        "Content-Type": "multipart/form-data", 
+        "Content-Type": "multipart/form-data",
       },
     },
   );

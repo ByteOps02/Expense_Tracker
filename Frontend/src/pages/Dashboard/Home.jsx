@@ -120,7 +120,7 @@ let Home = () => {
             value={
               "₹" +
               addThousandsSeparator(
-                monthlyData?.totalIncome ?? dashboardData?.totalIncome ?? 0
+                monthlyData?.totalIncome ?? dashboardData?.totalIncome ?? 0,
               )
             }
             color="bg-orange-500"
@@ -131,7 +131,7 @@ let Home = () => {
             value={
               "₹" +
               addThousandsSeparator(
-                monthlyData?.totalExpense ?? dashboardData?.totalExpense ?? 0
+                monthlyData?.totalExpense ?? dashboardData?.totalExpense ?? 0,
               )
             }
             color="bg-red-500"
@@ -162,7 +162,9 @@ let Home = () => {
             />
             <RecentIncome
               transactions={
-                monthlyData?.monthlyTransactions?.filter((t) => t.type === "income") ||
+                monthlyData?.monthlyTransactions?.filter(
+                  (t) => t.type === "income",
+                ) ||
                 dashboardData?.incomeLast30Days ||
                 []
               }
@@ -175,7 +177,9 @@ let Home = () => {
           <div className="flex flex-col gap-6">
             <ExpenseTransactions
               transactions={
-                monthlyData?.monthlyTransactions?.filter((t) => t.type === "expense") ||
+                monthlyData?.monthlyTransactions?.filter(
+                  (t) => t.type === "expense",
+                ) ||
                 dashboardData?.expenseLast30Days ||
                 []
               }
@@ -183,9 +187,7 @@ let Home = () => {
             />
             <FinanceOverview
               totalBalance={
-                monthlyData?.totalSavings ??
-                dashboardData?.balance ??
-                0
+                monthlyData?.totalSavings ?? dashboardData?.balance ?? 0
               }
               totalIncome={
                 monthlyData?.totalIncome ?? dashboardData?.totalIncome ?? 0
@@ -207,17 +209,22 @@ let Home = () => {
               dashboardData?.incomeLast30Days?.slice(0, 4) ||
               []
             }
-            totalIncome={monthlyData?.totalIncome ?? dashboardData?.totalIncomeLast30Days ?? 0}
+            totalIncome={
+              monthlyData?.totalIncome ??
+              dashboardData?.totalIncomeLast30Days ??
+              0
+            }
           />
           <Last30DaysExpenses
             data={
               monthlyData?.monthlyTransactions?.filter(
-                (t) => t.type === "expense"
-              ) || dashboardData?.expenseLast30Days || []
+                (t) => t.type === "expense",
+              ) ||
+              dashboardData?.expenseLast30Days ||
+              []
             }
           />
         </div>
-
       </div>
     </DashboardLayout>
   );

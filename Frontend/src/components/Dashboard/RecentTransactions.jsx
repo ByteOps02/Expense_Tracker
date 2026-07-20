@@ -12,10 +12,10 @@ const RecentTransactions = ({ transactions = [], onSeeMore }) => {
 
   return (
     <DashboardWidget title="Transactions" onSeeMore={onSeeMore}>
-        <TransactionsTable 
-            data={sortedTransactions.slice(0, 5)} 
-            showActions={false}
-        />
+      <TransactionsTable
+        data={sortedTransactions.slice(0, 5)}
+        showActions={false}
+      />
     </DashboardWidget>
   );
 };

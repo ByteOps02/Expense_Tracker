@@ -23,8 +23,11 @@ const Modal = ({ children, isOpen, onClose, title }) => {
 
   return ReactDOM.createPortal(
     <div
-      className={`fixed inset-0 z-[100] flex justify-center items-center overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${isVisible ? "bg-gray-900/60 backdrop-blur-sm opacity-100" : "bg-transparent backdrop-blur-none opacity-0"
-        }`}
+      className={`fixed inset-0 z-[100] flex justify-center items-center overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${
+        isVisible
+          ? "bg-gray-900/60 backdrop-blur-sm opacity-100"
+          : "bg-transparent backdrop-blur-none opacity-0"
+      }`}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           setIsVisible(false);
@@ -33,12 +36,17 @@ const Modal = ({ children, isOpen, onClose, title }) => {
       }}
     >
       <div
-        className={`relative p-4 md:p-6 w-full max-w-2xl mx-auto transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isVisible ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
-          }`}
+        className={`relative p-4 md:p-6 w-full max-w-2xl mx-auto transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          isVisible
+            ? "scale-100 opacity-100 translate-y-0"
+            : "scale-95 opacity-0 translate-y-4"
+        }`}
       >
         <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-800/50">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h3>
 
             <button
               type="button"
@@ -71,7 +79,7 @@ const Modal = ({ children, isOpen, onClose, title }) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

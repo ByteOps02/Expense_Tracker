@@ -61,10 +61,7 @@ exports.getAllExpenses = asyncHandler(async (req, res, next) => {
   // filter by search term
   if (search) {
     let searchWord = new RegExp(search, "i");
-    myQuery.$or = [
-      { title: searchWord },
-      { category: searchWord },
-    ];
+    myQuery.$or = [{ title: searchWord }, { category: searchWord }];
   }
 
   if (!page && !limit) {
@@ -104,8 +101,8 @@ exports.getAllExpenses = asyncHandler(async (req, res, next) => {
 
 // delete an expense
 exports.deleteExpense = asyncHandler(async (req, res, next) => {
-  let expId = validateObjectId(req.params.id, 'Expense ID');
-  let uId = validateObjectId(req.user.id, 'User ID');
+  let expId = validateObjectId(req.params.id, "Expense ID");
+  let uId = validateObjectId(req.user.id, "User ID");
 
   let deletedExp = await Expense.findOneAndDelete({
     _id: expId,
@@ -131,13 +128,20 @@ exports.updateExpense = asyncHandler(async (req, res, next) => {
     return next(new AppError("Amount must be a number", 400));
   }
 
-  let expId = validateObjectId(req.params.id, 'Expense ID');
-  let uId = validateObjectId(req.user.id, 'User ID');
+  let expId = validateObjectId(req.params.id, "Expense ID");
+  let uId = validateObjectId(req.user.id, "User ID");
 
   let updatedExp = await Expense.findOneAndUpdate(
     { _id: expId, user: uId },
-    { title: title, icon: icon, amount: myAmt, category: category, date: date, description: description },
-    { new: true, runValidators: true }
+    {
+      title: title,
+      icon: icon,
+      amount: myAmt,
+      category: category,
+      date: date,
+      description: description,
+    },
+    { new: true, runValidators: true },
   );
 
   if (!updatedExp) {
@@ -170,7 +174,7 @@ exports.downloadExpenseExcel = asyncHandler(async (req, res, next) => {
       amount: item.amount,
       category: item.category,
       date: item.date,
-      description: item.description
+      description: item.description,
     });
   }
 
@@ -184,12 +188,9 @@ exports.downloadExpenseExcel = asyncHandler(async (req, res, next) => {
 
   res.setHeader(
     "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   );
-  res.setHeader(
-    "Content-Disposition",
-    "attachment; filename=expenses.xlsx"
-  );
+  res.setHeader("Content-Disposition", "attachment; filename=expenses.xlsx");
 
   await wb.xlsx.write(res);
   res.end();

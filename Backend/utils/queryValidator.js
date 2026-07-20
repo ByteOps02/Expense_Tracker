@@ -1,9 +1,9 @@
 // validate inputs to prevent hacks
-const mongoose = require('mongoose');
-const AppError = require('./AppError');
+const mongoose = require("mongoose");
+const AppError = require("./AppError");
 
 // check if id is valid mongo id
-let validateObjectId = (id, paramName = 'ID') => {
+let validateObjectId = (id, paramName = "ID") => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(`Invalid ${paramName} format`, 400);
   }
@@ -14,14 +14,14 @@ let validateObjectId = (id, paramName = 'ID') => {
 let validateEmail = (email) => {
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    throw new AppError('Invalid email format', 400);
+    throw new AppError("Invalid email format", 400);
   }
   return email.trim().toLowerCase();
 };
 
 // clean up string inputs
-let sanitizeString = (input, fieldName = 'input', maxLength = 500) => {
-  if (typeof input !== 'string') {
+let sanitizeString = (input, fieldName = "input", maxLength = 500) => {
+  if (typeof input !== "string") {
     throw new AppError(`${fieldName} must be a string`, 400);
   }
 
@@ -38,7 +38,7 @@ let sanitizeString = (input, fieldName = 'input', maxLength = 500) => {
 };
 
 // clean up numbers
-let sanitizeNumber = (input, fieldName = 'number') => {
+let sanitizeNumber = (input, fieldName = "number") => {
   let num = Number(input);
   if (isNaN(num) || num < 0) {
     throw new AppError(`${fieldName} must be a positive number`, 400);
@@ -48,8 +48,8 @@ let sanitizeNumber = (input, fieldName = 'number') => {
 
 // validate query object
 let validateQueryObject = (queryObj) => {
-  if (typeof queryObj !== 'object' || queryObj === null) {
-    throw new AppError('Query object must be an object', 400);
+  if (typeof queryObj !== "object" || queryObj === null) {
+    throw new AppError("Query object must be an object", 400);
   }
   return queryObj;
 };

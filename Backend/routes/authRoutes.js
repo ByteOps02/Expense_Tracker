@@ -20,7 +20,12 @@ const {
 let router = express.Router();
 
 // register route
-router.post("/register", validateRegister, handleValidationErrors, registerUser);
+router.post(
+  "/register",
+  validateRegister,
+  handleValidationErrors,
+  registerUser,
+);
 
 // login route
 router.post("/login", validateLogin, handleValidationErrors, loginUser);
@@ -29,10 +34,22 @@ router.post("/login", validateLogin, handleValidationErrors, loginUser);
 router.get("/getUser", Protect, getUserInfo);
 
 // update user
-router.put("/update", Protect, validateUpdateUser, handleValidationErrors, updateUser);
+router.put(
+  "/update",
+  Protect,
+  validateUpdateUser,
+  handleValidationErrors,
+  updateUser,
+);
 
 // change password
-router.post("/change-password", Protect, validateChangePassword, handleValidationErrors, changePassword);
+router.post(
+  "/change-password",
+  Protect,
+  validateChangePassword,
+  handleValidationErrors,
+  changePassword,
+);
 
 // upload image
 router.post("/upload-image", upload.single("image"), uploadProfileImage);

@@ -8,7 +8,10 @@ let upload = multer({
     if (allowedFormats.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid file format. Only JPEG, PNG, and JPG are allowed."), false);
+      cb(
+        new Error("Invalid file format. Only JPEG, PNG, and JPG are allowed."),
+        false,
+      );
     }
   },
 });

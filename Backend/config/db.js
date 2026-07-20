@@ -26,7 +26,7 @@ let connectDB = async () => {
     console.log("MongoDB connected successfully.");
   } catch (error) {
     console.error("MongoDB connection error:", error);
-    cachedPromise = null; 
+    cachedPromise = null;
     throw new Error("Database connection failed.");
   }
 };

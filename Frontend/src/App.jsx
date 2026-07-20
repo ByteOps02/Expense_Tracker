@@ -22,8 +22,12 @@ let Home = lazy(() => import("./pages/Dashboard/Home"));
 let Income = lazy(() => import("./pages/Dashboard/Income"));
 let Expense = lazy(() => import("./pages/Dashboard/Expense"));
 let Settings = lazy(() => import("./pages/Dashboard/Settings"));
-let RecentTransactionsPage = lazy(() => import("./pages/Dashboard/RecentTransactionsPage"));
-let MonthlyAnalyticsPage = lazy(() => import("./pages/Dashboard/MonthlyAnalytics"));
+let RecentTransactionsPage = lazy(
+  () => import("./pages/Dashboard/RecentTransactionsPage"),
+);
+let MonthlyAnalyticsPage = lazy(
+  () => import("./pages/Dashboard/MonthlyAnalytics"),
+);
 
 // wrapper for protected routes
 let ProtectedRoute = ({ Component }) => {
@@ -39,58 +43,65 @@ let ProtectedRoute = ({ Component }) => {
 // main app
 let App = () => {
   return (
-      <ErrorBoundary>
-        <UserProvider>
-          <ThemeProvider>
-            <div>
-              <Router>
-                <ErrorBoundary>
-                  <Suspense
-                    fallback={
-                      <LoadingSpinner fullScreen text="Loading application..." />
-                    }
-                  >
-                    <Routes>
-                      {/* redirect to login */}
-                      <Route path="/" element={<Navigate to="/login" replace />} />
-  
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<SignUp />} />
-  
-                      {/* pages that need login */}
-                      <Route
-                        path="/dashboard"
-                        element={<ProtectedRoute Component={Home} />}
-                      />
-                      <Route
-                        path="/income"
-                        element={<ProtectedRoute Component={Income} />}
-                      />
-                      <Route
-                        path="/expense"
-                        element={<ProtectedRoute Component={Expense} />}
-                      />
-                      <Route
-                        path="/settings"
-                        element={<ProtectedRoute Component={Settings} />}
-                      />
-                      <Route
-                        path="/recent-transactions"
-                        element={<ProtectedRoute Component={RecentTransactionsPage} />}
-                      />
-                      <Route
-                        path="/monthly-analytics"
-                        element={<ProtectedRoute Component={MonthlyAnalyticsPage} />}
-                      />
-                    </Routes>
-                  </Suspense>
-                </ErrorBoundary>
-              </Router>
-              <Analytics />
-            </div>
-          </ThemeProvider>
-        </UserProvider>
-      </ErrorBoundary>
+    <ErrorBoundary>
+      <UserProvider>
+        <ThemeProvider>
+          <div>
+            <Router>
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <LoadingSpinner fullScreen text="Loading application..." />
+                  }
+                >
+                  <Routes>
+                    {/* redirect to login */}
+                    <Route
+                      path="/"
+                      element={<Navigate to="/login" replace />}
+                    />
+
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+
+                    {/* pages that need login */}
+                    <Route
+                      path="/dashboard"
+                      element={<ProtectedRoute Component={Home} />}
+                    />
+                    <Route
+                      path="/income"
+                      element={<ProtectedRoute Component={Income} />}
+                    />
+                    <Route
+                      path="/expense"
+                      element={<ProtectedRoute Component={Expense} />}
+                    />
+                    <Route
+                      path="/settings"
+                      element={<ProtectedRoute Component={Settings} />}
+                    />
+                    <Route
+                      path="/recent-transactions"
+                      element={
+                        <ProtectedRoute Component={RecentTransactionsPage} />
+                      }
+                    />
+                    <Route
+                      path="/monthly-analytics"
+                      element={
+                        <ProtectedRoute Component={MonthlyAnalyticsPage} />
+                      }
+                    />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
+            </Router>
+            <Analytics />
+          </div>
+        </ThemeProvider>
+      </UserProvider>
+    </ErrorBoundary>
   );
 };
 

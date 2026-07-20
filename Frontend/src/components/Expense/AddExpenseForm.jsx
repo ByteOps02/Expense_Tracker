@@ -23,19 +23,21 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
         title: editingData.title || "",
         category: editingData.category || "",
         amount: editingData.amount || "",
-        date: editingData.date ? new Date(editingData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        date: editingData.date
+          ? new Date(editingData.date).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
         description: editingData.description || "",
         icon: editingData.icon || "",
       });
     } else {
-         setExpense({
-            title: "",
-            category: "",
-            amount: "",
-            date: new Date().toISOString().split("T")[0],
-            description: "",
-            icon: "",
-          });
+      setExpense({
+        title: "",
+        category: "",
+        amount: "",
+        date: new Date().toISOString().split("T")[0],
+        description: "",
+        icon: "",
+      });
     }
   }, [editingData]);
 
@@ -67,12 +69,12 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
 
       if (!editingData) {
         setExpense({
-            title: "",
-            category: "",
-            amount: "",
-            date: new Date().toISOString().split("T")[0],
-            description: "",
-            icon: "",
+          title: "",
+          category: "",
+          amount: "",
+          date: new Date().toISOString().split("T")[0],
+          description: "",
+          icon: "",
         });
       }
 
@@ -116,10 +118,8 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
         "
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-
           {/* TITLE + CATEGORY */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             {/* Expense Title */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -193,7 +193,6 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
 
           {/* AMOUNT + DATE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Amount */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -269,7 +268,6 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
 
           {/* BUTTONS */}
           <div className="flex justify-end space-x-3">
-            
             {/* Cancel */}
             <button
               type="button"
@@ -298,7 +296,11 @@ const AddExpenseForm = ({ onAddExpense, closeModal, editingData = null }) => {
                 disabled:opacity-50
               "
             >
-               {isSubmitting ? "Saving..." : (editingData ? "Update Expense" : "Add Expense")}
+              {isSubmitting
+                ? "Saving..."
+                : editingData
+                  ? "Update Expense"
+                  : "Add Expense"}
             </button>
           </div>
         </form>

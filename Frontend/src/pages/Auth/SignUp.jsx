@@ -60,7 +60,7 @@ let SignUp = () => {
       // Make API call to register the user
       const response = await axiosInstance.post(
         API_PATHS.AUTH.REGISTER,
-        requestBody
+        requestBody,
       );
 
       // On success, store the token, update user context and navigate to the dashboard
@@ -115,21 +115,25 @@ let SignUp = () => {
             <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
             {/* Full name, email, and password input fields */}
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
-                <div className="relative">
-                  <FiUser className="absolute top-3.5 left-3 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Enter Full Name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                  />
-                </div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Full Name
+              </label>
+              <div className="relative">
+                <FiUser className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Enter Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                />
+              </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email Address
+              </label>
               <div className="relative">
                 <FiMail className="absolute top-3.5 left-3 text-gray-400" />
                 <input
@@ -143,8 +147,10 @@ let SignUp = () => {
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
-               <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Password
+              </label>
+              <div className="relative">
                 <FiLock className="absolute top-3.5 left-3 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -165,8 +171,10 @@ let SignUp = () => {
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
-               <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Confirm Password
+              </label>
+              <div className="relative">
                 <FiLock className="absolute top-3.5 left-3 text-gray-400" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -185,8 +193,12 @@ let SignUp = () => {
                 </button>
               </div>
             </div>
-            
-            {error && <p className="text-red-500 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">{error}</p>}
+
+            {error && (
+              <p className="text-red-500 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
+                {error}
+              </p>
+            )}
             {/* Sign up button */}
             <motion.button
               whileHover={{ scale: 1.01 }}

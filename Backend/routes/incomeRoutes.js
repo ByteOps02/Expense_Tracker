@@ -34,10 +34,23 @@ router.post("/", Protect, validateIncome, handleValidationErrors, addIncome);
 router.get("/", Protect, getAllIncome);
 
 // update income
-router.put("/:id", Protect, validateMongoId, validateIncome, handleValidationErrors, updateIncome);
+router.put(
+  "/:id",
+  Protect,
+  validateMongoId,
+  validateIncome,
+  handleValidationErrors,
+  updateIncome,
+);
 
 // delete income
-router.delete("/:id", Protect, validateMongoId, handleValidationErrors, deleteIncome);
+router.delete(
+  "/:id",
+  Protect,
+  validateMongoId,
+  handleValidationErrors,
+  deleteIncome,
+);
 
 // download excel
 router.get("/download-excel", Protect, downloadIncomeExcel);

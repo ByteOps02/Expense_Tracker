@@ -11,7 +11,14 @@ import {
 import { Bar } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 const ChartJsBarChart = ({ data }) => {
   const { theme } = useContext(ThemeContext);
@@ -53,7 +60,7 @@ const ChartJsBarChart = ({ data }) => {
 
   const chartData = {
     labels: data.map(
-      (item) => item?.name || item?.month || item?.source || item?.category
+      (item) => item?.name || item?.month || item?.source || item?.category,
     ),
     datasets,
   };
@@ -64,7 +71,7 @@ const ChartJsBarChart = ({ data }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 1000, easing: 'easeOutQuart' },
+    animation: { duration: 1000, easing: "easeOutQuart" },
     plugins: {
       legend: {
         display: true,
@@ -78,7 +85,9 @@ const ChartJsBarChart = ({ data }) => {
         },
       },
       tooltip: {
-        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        backgroundColor: isDark
+          ? "rgba(15,23,42,0.95)"
+          : "rgba(255,255,255,0.97)",
         titleColor: isDark ? "#f1f5f9" : "#1f2937",
         bodyColor: isDark ? "#cbd5e1" : "#374151",
         borderColor: isDark ? "#334155" : "#e5e7eb",

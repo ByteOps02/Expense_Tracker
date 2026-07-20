@@ -35,17 +35,17 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
         coll: "expenses",
         pipeline: [
           { $match: expenseQuery },
-          { $addFields: { type: "expense" } }
-        ]
-      }
+          { $addFields: { type: "expense" } },
+        ],
+      },
     },
     { $sort: { date: -1 } },
     {
       $facet: {
         metadata: [{ $count: "total" }],
-        data: [{ $skip: skipVal }, { $limit: limitVal }]
-      }
-    }
+        data: [{ $skip: skipVal }, { $limit: limitVal }],
+      },
+    },
   ];
 
   let result = await Income.aggregate(myPipeline);
@@ -61,7 +61,7 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
       total: totalCount,
       page: pageNo,
       limit: limitVal,
-      totalPages: totalPages
+      totalPages: totalPages,
     },
     data: {
       transactions: allTransactions,
@@ -127,11 +127,11 @@ exports.downloadTransactionsExcel = asyncHandler(async (req, res, next) => {
 
   res.setHeader(
     "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   );
   res.setHeader(
     "Content-Disposition",
-    "attachment; filename=" + "transactions.xlsx"
+    "attachment; filename=" + "transactions.xlsx",
   );
 
   await wb.xlsx.write(res);

@@ -25,21 +25,23 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
         source: editingData.source || "",
         category: editingData.category || "",
         amount: editingData.amount || "",
-        date: editingData.date ? new Date(editingData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        date: editingData.date
+          ? new Date(editingData.date).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
         note: editingData.note || "",
         icon: editingData.icon || "",
       });
     } else {
-        // Reset if no editing data
-        setIncome({
-            title: "",
-            source: "",
-            category: "",
-            amount: "",
-            date: new Date().toISOString().split("T")[0],
-            note: "",
-            icon: "",
-        });
+      // Reset if no editing data
+      setIncome({
+        title: "",
+        source: "",
+        category: "",
+        amount: "",
+        date: new Date().toISOString().split("T")[0],
+        note: "",
+        icon: "",
+      });
     }
   }, [editingData]);
 
@@ -73,13 +75,13 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
 
       if (!editingData) {
         setIncome({
-            title: "",
-            source: "",
-            category: "",
-            amount: "",
-            date: new Date().toISOString().split("T")[0],
-            note: "",
-            icon: "",
+          title: "",
+          source: "",
+          category: "",
+          amount: "",
+          date: new Date().toISOString().split("T")[0],
+          note: "",
+          icon: "",
         });
       }
 
@@ -111,10 +113,8 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
         "
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-
           {/* TITLE + SOURCE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Income Title */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold">
@@ -192,21 +192,21 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
               )}
             </div>
           </div>
-            {/* Category */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold">
-                Category <span className="text-green-500">*</span>
-              </label>
+          {/* Category */}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold">
+              Category <span className="text-green-500">*</span>
+            </label>
 
-              <div className="relative">
-                <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+            <div className="relative">
+              <LuBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
 
-                <input
-                  type="text"
-                  placeholder="e.g., Salary, Investment"
-                  value={income.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
-                  className={`
+              <input
+                type="text"
+                placeholder="e.g., Salary, Investment"
+                value={income.category}
+                onChange={(e) => handleChange("category", e.target.value)}
+                className={`
                     w-full pl-10 pr-4 py-2.5 rounded-xl
                     bg-gray-100 dark:bg-gray-800
                     text-gray-900 dark:text-gray-100
@@ -219,17 +219,16 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
                     focus:outline-none focus:ring-2
                     focus:ring-green-300 dark:focus:ring-green-800
                   `}
-                />
-              </div>
-
-              {errors.category && (
-                <p className="text-xs text-red-500">{errors.category}</p>
-              )}
+              />
             </div>
+
+            {errors.category && (
+              <p className="text-xs text-red-500">{errors.category}</p>
+            )}
+          </div>
 
           {/* AMOUNT + DATE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Amount */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold">
@@ -327,7 +326,11 @@ const AddIncomeForm = ({ onAddIncome, closeModal, editingData = null }) => {
                 disabled:opacity-50
               "
             >
-              {isSubmitting ? "Saving..." : (editingData ? "Update Income" : "Add Income")}
+              {isSubmitting
+                ? "Saving..."
+                : editingData
+                  ? "Update Income"
+                  : "Add Income"}
             </button>
           </div>
         </form>

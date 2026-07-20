@@ -46,7 +46,16 @@ let UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, updateUser, clearUser, selectedMonth, setSelectedMonth }}>
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        updateUser,
+        clearUser,
+        selectedMonth,
+        setSelectedMonth,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

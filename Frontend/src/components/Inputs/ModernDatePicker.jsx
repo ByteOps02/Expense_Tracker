@@ -4,7 +4,15 @@ import React, { useState, useRef, useEffect } from "react";
 import { LuCalendar, LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { motion, AnimatePresence } from "framer-motion";
 
-const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple", className = "", inputClassName = "" }) => {
+const ModernDatePicker = ({
+  value,
+  onChange,
+  error,
+  label,
+  colorTheme = "purple",
+  className = "",
+  inputClassName = "",
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Initialize currentMonth from the selected value so the picker
@@ -22,9 +30,9 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
   // ⛔ FIX: Prevent all timezone shifting
   const selectedDate = value
     ? (() => {
-      const [y, m, d] = value.split("-");
-      return new Date(Number(y), Number(m) - 1, Number(d));
-    })()
+        const [y, m, d] = value.split("-");
+        return new Date(Number(y), Number(m) - 1, Number(d));
+      })()
     : null;
 
   // Sync calendar view to the selected value whenever it changes
@@ -47,40 +55,39 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
   }, []);
 
   // 🎨 THEME SYSTEM + FALLBACK
-  const theme =
-    {
-      purple: {
-        glow: "shadow-[0_0_15px_rgba(139,92,246,0.3)]",
-        accent: "text-purple-600",
-        bgAccent: "bg-purple-600 hover:bg-purple-700",
-        ring: "focus:ring-purple-400/50",
-        hover: "hover:bg-purple-50 dark:hover:bg-purple-900/40",
-        today: "border-purple-600 text-purple-600 dark:text-purple-300",
-      },
-      green: {
-        glow: "shadow-[0_0_15px_rgba(34,197,94,0.3)]",
-        accent: "text-green-600",
-        bgAccent: "bg-green-600 hover:bg-green-700",
-        ring: "focus:ring-green-400/50",
-        hover: "hover:bg-green-50 dark:hover:bg-green-900/40",
-        today: "border-green-600 text-green-600 dark:text-green-300",
-      },
-      red: {
-        glow: "shadow-[0_0_15px_rgba(239,68,68,0.3)]",
-        accent: "text-red-600",
-        bgAccent: "bg-red-600 hover:bg-red-700",
-        ring: "focus:ring-red-400/50",
-        hover: "hover:bg-red-50 dark:hover:bg-red-900/40",
-        today: "border-red-600 text-red-600 dark:text-red-300",
-      },
-    }[colorTheme] || {
+  const theme = {
+    purple: {
       glow: "shadow-[0_0_15px_rgba(139,92,246,0.3)]",
       accent: "text-purple-600",
       bgAccent: "bg-purple-600 hover:bg-purple-700",
       ring: "focus:ring-purple-400/50",
       hover: "hover:bg-purple-50 dark:hover:bg-purple-900/40",
       today: "border-purple-600 text-purple-600 dark:text-purple-300",
-    };
+    },
+    green: {
+      glow: "shadow-[0_0_15px_rgba(34,197,94,0.3)]",
+      accent: "text-green-600",
+      bgAccent: "bg-green-600 hover:bg-green-700",
+      ring: "focus:ring-green-400/50",
+      hover: "hover:bg-green-50 dark:hover:bg-green-900/40",
+      today: "border-green-600 text-green-600 dark:text-green-300",
+    },
+    red: {
+      glow: "shadow-[0_0_15px_rgba(239,68,68,0.3)]",
+      accent: "text-red-600",
+      bgAccent: "bg-red-600 hover:bg-red-700",
+      ring: "focus:ring-red-400/50",
+      hover: "hover:bg-red-50 dark:hover:bg-red-900/40",
+      today: "border-red-600 text-red-600 dark:text-red-300",
+    },
+  }[colorTheme] || {
+    glow: "shadow-[0_0_15px_rgba(139,92,246,0.3)]",
+    accent: "text-purple-600",
+    bgAccent: "bg-purple-600 hover:bg-purple-700",
+    ring: "focus:ring-purple-400/50",
+    hover: "hover:bg-purple-50 dark:hover:bg-purple-900/40",
+    today: "border-purple-600 text-purple-600 dark:text-purple-300",
+  };
 
   const formatDisplayDate = (date) => {
     if (!date) return "Select date";
@@ -150,7 +157,8 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
   return (
     <div className={`space-y-2 ${className}`} ref={datePickerRef}>
       <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-        {React.isValidElement(label) ? label : (label || "Date")} <span className={theme.accent}>*</span>
+        {React.isValidElement(label) ? label : label || "Date"}{" "}
+        <span className={theme.accent}>*</span>
       </label>
 
       {/* Input */}
@@ -239,13 +247,14 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
                     className={`
                       aspect-square rounded-lg flex items-center justify-center
                       text-sm transition-all duration-150
-                      ${!date
-                        ? "invisible"
-                        : isSelected(date)
-                          ? `${theme.bgAccent} text-white shadow-md`
-                          : isToday(date)
-                            ? `border ${theme.today} bg-white dark:bg-gray-800 font-semibold`
-                            : `text-gray-700 dark:text-gray-300 ${theme.hover}`
+                      ${
+                        !date
+                          ? "invisible"
+                          : isSelected(date)
+                            ? `${theme.bgAccent} text-white shadow-md`
+                            : isToday(date)
+                              ? `border ${theme.today} bg-white dark:bg-gray-800 font-semibold`
+                              : `text-gray-700 dark:text-gray-300 ${theme.hover}`
                       }
                     `}
                   >

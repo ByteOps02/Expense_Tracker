@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 
 const MonthSelector = ({ selectedMonth, onMonthChange }) => {
   const [displayMonth, setDisplayMonth] = useState(new Date());
@@ -14,8 +20,18 @@ const MonthSelector = ({ selectedMonth, onMonthChange }) => {
   }, [selectedMonth]);
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const handlePreviousMonth = () => {
@@ -93,7 +109,10 @@ const MonthSelector = ({ selectedMonth, onMonthChange }) => {
             <span>
               {monthNames[displayMonth.getMonth()]} {displayMonth.getFullYear()}
             </span>
-            <ChevronDown size={12} className="opacity-80 sm:w-[14px] sm:h-[14px]" />
+            <ChevronDown
+              size={12}
+              className="opacity-80 sm:w-[14px] sm:h-[14px]"
+            />
           </button>
 
           {/* Month & Year Picker Dropdown */}
@@ -140,18 +159,18 @@ const MonthSelector = ({ selectedMonth, onMonthChange }) => {
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
                   {monthNames.map((month, index) => (
-                     <button
-                       key={index}
-                       onClick={() => handleMonthSelect(index)}
-                       className={`py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
-                         index === displayMonth.getMonth() &&
-                         selectedYear === displayMonth.getFullYear()
-                           ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
-                           : "bg-gray-50 dark:bg-gray-700/50 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-gray-700 dark:text-gray-300"
-                       }`}
-                     >
-                       {month.slice(0, 3)}
-                     </button>
+                    <button
+                      key={index}
+                      onClick={() => handleMonthSelect(index)}
+                      className={`py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
+                        index === displayMonth.getMonth() &&
+                        selectedYear === displayMonth.getFullYear()
+                          ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
+                          : "bg-gray-50 dark:bg-gray-700/50 hover:bg-purple-50 dark:hover:bg-purple-900/30 text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      {month.slice(0, 3)}
+                    </button>
                   ))}
                 </div>
               </div>

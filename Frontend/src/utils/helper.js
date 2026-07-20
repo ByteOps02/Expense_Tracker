@@ -25,11 +25,11 @@ export let addThousandsSeparator = (num) => {
   let parts = num.toString().split(".");
   let integerPart = parts[0];
   let fractionalPart = parts[1];
-  
+
   let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  
+
   if (fractionalPart !== undefined) {
-      return `${formattedInteger}.${fractionalPart}`;
+    return `${formattedInteger}.${fractionalPart}`;
   }
   return formattedInteger;
 };
@@ -45,18 +45,18 @@ export let prepareExpenseLineChartData = (data = []) => {
 
   let chartData = [];
   for (let i = 0; i < sortedData.length; i++) {
-      let item = sortedData[i];
-      if (item) {
-          chartData.push({
-              month: new Date(item.date).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-              }),
-              amount: item.amount,
-              category: item.category,
-          });
-      }
+    let item = sortedData[i];
+    if (item) {
+      chartData.push({
+        month: new Date(item.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        amount: item.amount,
+        category: item.category,
+      });
+    }
   }
 
   return chartData;
@@ -73,16 +73,16 @@ export let prepareIncomeBarChartData = (data = []) => {
 
   let chartData = [];
   for (let i = 0; i < sortedData.length; i++) {
-      let item = sortedData[i];
-      chartData.push({
-          month: new Date(item?.date).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-          }),
-          amount: item?.amount,
-          source: item?.source,
-      });
+    let item = sortedData[i];
+    chartData.push({
+      month: new Date(item?.date).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+      amount: item?.amount,
+      source: item?.source,
+    });
   }
 
   return chartData;
@@ -93,19 +93,19 @@ export let prepareCategoryData = (data = [], key = "category") => {
 
   let grouped = {};
   for (let i = 0; i < data.length; i++) {
-      let item = data[i];
-      let label = item[key] || "Other";
-      if (!grouped[label]) {
-          grouped[label] = 0;
-      }
-      grouped[label] += (item.amount || 0);
+    let item = data[i];
+    let label = item[key] || "Other";
+    if (!grouped[label]) {
+      grouped[label] = 0;
+    }
+    grouped[label] += item.amount || 0;
   }
 
   let result = [];
   for (let label in grouped) {
-      result.push({ name: label, amount: grouped[label] });
+    result.push({ name: label, amount: grouped[label] });
   }
-  
+
   return result;
 };
 
@@ -114,18 +114,18 @@ export let prepareTitleAndCategoryData = (data = []) => {
 
   let grouped = {};
   for (let i = 0; i < data.length; i++) {
-      let item = data[i];
-      if (!item) continue;
-      let label = `${item.title || 'Unknown'} (${item.category || item.source || "N/A"})`;
-      if (!grouped[label]) {
-          grouped[label] = 0;
-      }
-      grouped[label] += (item.amount || 0);
+    let item = data[i];
+    if (!item) continue;
+    let label = `${item.title || "Unknown"} (${item.category || item.source || "N/A"})`;
+    if (!grouped[label]) {
+      grouped[label] = 0;
+    }
+    grouped[label] += item.amount || 0;
   }
 
   let result = [];
   for (let label in grouped) {
-      result.push({ name: label, amount: grouped[label] });
+    result.push({ name: label, amount: grouped[label] });
   }
 
   return result;
@@ -133,15 +133,15 @@ export let prepareTitleAndCategoryData = (data = []) => {
 
 export const CHART_COLORS = [
   "#875CF5",
-  "#FA2C37", 
-  "#FF6900", 
-  "#4ADE80", 
-  "#3B82F6", 
-  "#ec4899", 
-  "#06b6d4", 
-  "#f59e0b", 
-  "#6366f1", 
-  "#14b8a6", 
-  "#a855f7", 
-  "#0ea5e9", 
+  "#FA2C37",
+  "#FF6900",
+  "#4ADE80",
+  "#3B82F6",
+  "#ec4899",
+  "#06b6d4",
+  "#f59e0b",
+  "#6366f1",
+  "#14b8a6",
+  "#a855f7",
+  "#0ea5e9",
 ];

@@ -80,7 +80,11 @@ const ProfilePhotoSelector = ({ image, setImage, currentImage }) => {
             onClick={image ? handleRemoveImage : onChooseFile}
             aria-label={image ? "Remove profile photo" : "Change profile photo"}
           >
-            {image ? <LuTrash className="w-6 h-6 text-red-600" /> : <LuUpload className="w-6 h-6 text-blue-600" />}
+            {image ? (
+              <LuTrash className="w-6 h-6 text-red-600" />
+            ) : (
+              <LuUpload className="w-6 h-6 text-blue-600" />
+            )}
           </button>
         </div>
       )}

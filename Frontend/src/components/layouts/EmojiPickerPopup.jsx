@@ -14,7 +14,11 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
       >
         <div className="w-5 h-5 flex items-center justify-center mr-2">
           {icon ? (
-            <img src={icon} alt="Icon" className="w-full h-full object-contain" />
+            <img
+              src={icon}
+              alt="Icon"
+              className="w-full h-full object-contain"
+            />
           ) : (
             <LuImage className="w-full h-full text-gray-500 dark:text-gray-400" />
           )}
@@ -38,7 +42,11 @@ const EmojiPickerPopup = ({ icon, onSelect }) => {
 
             <EmojiPicker
               open={isOpen}
-              theme={document.documentElement.classList.contains("dark") ? "dark" : "light"}
+              theme={
+                document.documentElement.classList.contains("dark")
+                  ? "dark"
+                  : "light"
+              }
               onEmojiClick={(emoji) => {
                 onSelect(emoji?.imageUrl || "");
                 setIsOpen(false);

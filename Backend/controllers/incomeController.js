@@ -7,7 +7,7 @@ const { validateObjectId } = require("../utils/queryValidator");
 // add new income function
 exports.addIncome = asyncHandler(async (req, res, next) => {
   let { title, icon, amount, source, category, date, note } = req.body;
-  
+
   let myAmt = Number(amount);
   if (isNaN(myAmt)) {
     return next(new AppError("Amount must be a number", 400));
@@ -104,8 +104,8 @@ exports.getAllIncome = asyncHandler(async (req, res, next) => {
 
 // delete an income
 exports.deleteIncome = asyncHandler(async (req, res, next) => {
-  let incId = validateObjectId(req.params.id, 'Income ID');
-  let uId = validateObjectId(req.user.id, 'User ID');
+  let incId = validateObjectId(req.params.id, "Income ID");
+  let uId = validateObjectId(req.user.id, "User ID");
 
   let deletedInc = await Income.findOneAndDelete({
     _id: incId,
@@ -131,13 +131,21 @@ exports.updateIncome = asyncHandler(async (req, res, next) => {
     return next(new AppError("Amount must be a number", 400));
   }
 
-  let incId = validateObjectId(req.params.id, 'Income ID');
-  let uId = validateObjectId(req.user.id, 'User ID');
+  let incId = validateObjectId(req.params.id, "Income ID");
+  let uId = validateObjectId(req.user.id, "User ID");
 
   let updatedInc = await Income.findOneAndUpdate(
     { _id: incId, user: uId },
-    { title: title, icon: icon, amount: myAmt, source: source, category: category, date: date, note: note },
-    { new: true, runValidators: true }
+    {
+      title: title,
+      icon: icon,
+      amount: myAmt,
+      source: source,
+      category: category,
+      date: date,
+      note: note,
+    },
+    { new: true, runValidators: true },
   );
 
   if (!updatedInc) {
@@ -171,7 +179,7 @@ exports.downloadIncomeExcel = asyncHandler(async (req, res, next) => {
       source: item.source,
       category: item.category,
       date: item.date,
-      note: item.note
+      note: item.note,
     });
   }
 
@@ -185,12 +193,9 @@ exports.downloadIncomeExcel = asyncHandler(async (req, res, next) => {
 
   res.setHeader(
     "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   );
-  res.setHeader(
-    "Content-Disposition",
-    "attachment; filename=incomes.xlsx"
-  );
+  res.setHeader("Content-Disposition", "attachment; filename=incomes.xlsx");
 
   await wb.xlsx.write(res);
   res.end();

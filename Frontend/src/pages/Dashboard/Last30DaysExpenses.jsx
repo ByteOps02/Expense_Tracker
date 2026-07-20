@@ -1,11 +1,18 @@
 import React, { useMemo, memo } from "react";
 import ChartJsDoughnutChart from "../../components/Charts/ChartJsDoughnutChart";
-import { addThousandsSeparator, prepareTitleAndCategoryData, CHART_COLORS } from "../../utils/helper";
+import {
+  addThousandsSeparator,
+  prepareTitleAndCategoryData,
+  CHART_COLORS,
+} from "../../utils/helper";
 
 const Last30DaysExpenses = ({ data }) => {
-  const chartData = useMemo(() => prepareTitleAndCategoryData(data) || [], [data]);
+  const chartData = useMemo(
+    () => prepareTitleAndCategoryData(data) || [],
+    [data],
+  );
   const totalExpense = useMemo(
-    () => (data?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0),
+    () => data?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0,
     [data],
   );
 
@@ -18,11 +25,17 @@ const Last30DaysExpenses = ({ data }) => {
       </div>
 
       <div className="w-full h-[220px] lg:h-[300px] mt-4 relative flex items-center justify-center shrink-0">
-        <ChartJsDoughnutChart data={chartData} colors={CHART_COLORS} showLegend={false} />
+        <ChartJsDoughnutChart
+          data={chartData}
+          colors={CHART_COLORS}
+          showLegend={false}
+        />
 
         {chartData.length > 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
-            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Expense</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+              Total Expense
+            </span>
             <span className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
               ₹{addThousandsSeparator(totalExpense)}
             </span>
@@ -35,7 +48,9 @@ const Last30DaysExpenses = ({ data }) => {
           <div key={index} className="flex items-center gap-2">
             <span
               className="shrink-0 w-3 h-3 rounded-full"
-              style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+              style={{
+                backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+              }}
             />
             <span className="text-xs text-gray-600 dark:text-gray-300 truncate">
               {item.name}

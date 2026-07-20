@@ -27,7 +27,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     fullName,
     email,
     password,
-    profileImageUrl
+    profileImageUrl,
   });
 
   res.status(201).json({
@@ -46,7 +46,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   // check email
   let myEmail = validateEmail(email);
 
-  let foundUser = await User.findOne({ email: myEmail }).select('+password');
+  let foundUser = await User.findOne({ email: myEmail }).select("+password");
   if (!foundUser || !(await foundUser.comparePassword(password))) {
     return next(new AppError("Wrong email or password", 401));
   }
@@ -69,7 +69,7 @@ exports.getUserInfo = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    data: { user: myUser }
+    data: { user: myUser },
   });
 });
 
@@ -77,12 +77,12 @@ exports.getUserInfo = asyncHandler(async (req, res, next) => {
 exports.updateUser = asyncHandler(async (req, res, next) => {
   let { fullName, email, profileImageUrl } = req.body;
 
-  let uId = validateObjectId(req.user.id, 'User ID');
+  let uId = validateObjectId(req.user.id, "User ID");
 
   let updatedUser = await User.findByIdAndUpdate(
     uId,
     { fullName: fullName, email: email, profileImageUrl: profileImageUrl },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   ).select("-password");
 
   if (!updatedUser) {
@@ -101,7 +101,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 exports.changePassword = asyncHandler(async (req, res, next) => {
   let { currentPassword, newPassword } = req.body;
 
-  let myUser = await User.findById(req.user.id).select('+password');
+  let myUser = await User.findById(req.user.id).select("+password");
 
   if (!myUser || !(await myUser.comparePassword(currentPassword))) {
     return next(new AppError("Wrong current password", 401));
@@ -112,7 +112,7 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "Password changed"
+    message: "Password changed",
   });
 });
 
@@ -134,10 +134,10 @@ exports.uploadProfileImage = asyncHandler(async (req, res, next) => {
       res.status(200).json({
         status: "success",
         data: {
-          imageUrl: result.secure_url
-        }
+          imageUrl: result.secure_url,
+        },
       });
-    }
+    },
   );
 
   uploadTask.end(req.file.buffer);

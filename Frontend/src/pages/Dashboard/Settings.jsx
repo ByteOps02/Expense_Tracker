@@ -47,15 +47,18 @@ let Settings = () => {
     }
 
     if (newPassword.length < 8) {
-        setError("New password must be at least 8 characters long.");
-        return;
+      setError("New password must be at least 8 characters long.");
+      return;
     }
 
     try {
-      const response = await axiosInstance.post(API_PATHS.AUTH.CHANGE_PASSWORD, {
-        currentPassword,
-        newPassword,
-      });
+      const response = await axiosInstance.post(
+        API_PATHS.AUTH.CHANGE_PASSWORD,
+        {
+          currentPassword,
+          newPassword,
+        },
+      );
       setSuccess(response.data.message);
       setCurrentPassword("");
       setNewPassword("");
@@ -83,7 +86,10 @@ let Settings = () => {
         }
       }
 
-      const response = await axiosInstance.put(API_PATHS.AUTH.UPDATE_USER_INFO, requestBody);
+      const response = await axiosInstance.put(
+        API_PATHS.AUTH.UPDATE_USER_INFO,
+        requestBody,
+      );
       updateUser(response.data.data.user);
       setProfileSuccess("Profile updated successfully!");
     } catch (err) {
@@ -94,17 +100,26 @@ let Settings = () => {
   return (
     <DashboardLayout activeMenu="Settings">
       <div className="w-full">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Settings
+        </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors duration-300">
             <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
-              <FiUser className="text-purple-600 dark:text-purple-400" /> Profile Information
+              <FiUser className="text-purple-600 dark:text-purple-400" />{" "}
+              Profile Information
             </h4>
             <form onSubmit={handleProfileUpdate} className="space-y-4">
-              <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} currentImage={user?.profileImageUrl} />
+              <ProfilePhotoSelector
+                image={profilePic}
+                setImage={setProfilePic}
+                currentImage={user?.profileImageUrl}
+              />
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Full Name
+                </label>
                 <div className="relative">
                   <FiUser className="absolute top-3.5 left-3 text-gray-400" />
                   <input
@@ -117,7 +132,9 @@ let Settings = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Email Address
+                </label>
                 <div className="relative">
                   <FiMail className="absolute top-3.5 left-3 text-gray-400" />
                   <input
@@ -129,8 +146,16 @@ let Settings = () => {
                   />
                 </div>
               </div>
-              {profileError && <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">{profileError}</p>}
-              {profileSuccess && <p className="text-green-500 dark:text-green-400 text-sm bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">{profileSuccess}</p>}
+              {profileError && (
+                <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
+                  {profileError}
+                </p>
+              )}
+              {profileSuccess && (
+                <p className="text-green-500 dark:text-green-400 text-sm bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
+                  {profileSuccess}
+                </p>
+              )}
               <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
@@ -144,12 +169,15 @@ let Settings = () => {
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors duration-300">
             <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
-              <FiLock className="text-purple-600 dark:text-purple-400" /> Change Password
+              <FiLock className="text-purple-600 dark:text-purple-400" /> Change
+              Password
             </h4>
-            
+
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Current Password
+                </label>
                 <div className="relative">
                   <input
                     type="password"
@@ -162,7 +190,9 @@ let Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Password</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  New Password
+                </label>
                 <div className="relative">
                   <input
                     type="password"
@@ -174,8 +204,10 @@ let Settings = () => {
                 </div>
               </div>
 
-               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm New Password</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Confirm New Password
+                </label>
                 <div className="relative">
                   <input
                     type="password"
@@ -187,8 +219,16 @@ let Settings = () => {
                 </div>
               </div>
 
-              {error && <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">{error}</p>}
-              {success && <p className="text-green-500 dark:text-green-400 text-sm bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">{success}</p>}
+              {error && (
+                <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
+                  {error}
+                </p>
+              )}
+              {success && (
+                <p className="text-green-500 dark:text-green-400 text-sm bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
+                  {success}
+                </p>
+              )}
 
               <motion.button
                 whileHover={{ scale: 1.01 }}

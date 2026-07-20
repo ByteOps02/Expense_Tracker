@@ -95,43 +95,47 @@ const MonthlyAnalyticsPage = () => {
           <div className="card">
             <div className="text-center text-red-500 py-8">
               <p>{error}</p>
-              <button
-                onClick={fetchMonthlyData}
-                className="mt-4 btn-primary"
-              >
+              <button onClick={fetchMonthlyData} className="mt-4 btn-primary">
                 Retry
               </button>
             </div>
           </div>
         ) : monthlyData ? (
           <div className="space-y-6">
-
-
             {/* Summary Cards */}
             <div className="flex md:grid md:grid-cols-2 xl:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 no-scrollbar snap-x snap-mandatory">
               <InfoCard
                 icon={<MdAccountBalanceWallet />}
                 label="Total Income"
-                value={"₹" + addThousandsSeparator(monthlyData?.totalIncome ?? 0)}
+                value={
+                  "₹" + addThousandsSeparator(monthlyData?.totalIncome ?? 0)
+                }
                 color="bg-orange-500"
               />
               <InfoCard
                 icon={<MdTrendingDown />}
                 label="Total Expense"
-                value={"₹" + addThousandsSeparator(monthlyData?.totalExpense ?? 0)}
+                value={
+                  "₹" + addThousandsSeparator(monthlyData?.totalExpense ?? 0)
+                }
                 color="bg-red-500"
               />
               <InfoCard
                 icon={<MdTrendingUp />}
                 label="Total Savings"
-                value={"₹" + addThousandsSeparator(monthlyData?.totalSavings ?? 0)}
+                value={
+                  "₹" + addThousandsSeparator(monthlyData?.totalSavings ?? 0)
+                }
                 color="bg-purple-500"
               />
             </div>
 
             {/* Category Breakdown Section */}
             <div className="w-full">
-              <MonthlyAnalytics monthlyData={monthlyData} monthName={monthName} />
+              <MonthlyAnalytics
+                monthlyData={monthlyData}
+                monthName={monthName}
+              />
             </div>
 
             {/* 12-Month Trends Section */}

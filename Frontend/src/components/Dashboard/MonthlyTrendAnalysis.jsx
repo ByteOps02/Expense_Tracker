@@ -27,7 +27,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const MonthlyTrendAnalysis = ({ selectedMonth }) => {
@@ -58,7 +58,7 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
     try {
       const formattedMonth = getFormattedMonth(selectedMonth);
       const res = await axiosInstance.get(
-        `${API_PATHS.DASHBOARD.GET_TREND_SUMMARY}?month=${formattedMonth}`
+        `${API_PATHS.DASHBOARD.GET_TREND_SUMMARY}?month=${formattedMonth}`,
       );
       const monthData = res.data.data;
       setTrendData(monthData);
@@ -73,10 +73,10 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
           monthData.reduce((sum, m) => sum + m.savings, 0) / monthData.length;
 
         const highestSpendMonth = monthData.reduce((prev, current) =>
-          prev.expense > current.expense ? prev : current
+          prev.expense > current.expense ? prev : current,
         );
         const highestIncomeMonth = monthData.reduce((prev, current) =>
-          prev.income > current.income ? prev : current
+          prev.income > current.income ? prev : current,
         );
 
         setComparisonMetrics({
@@ -139,7 +139,7 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
       {
         label: "Income",
         data: trendData.map((item) => item.income),
-        borderColor: "#10b981", 
+        borderColor: "#10b981",
         backgroundColor: (context) => {
           if (!context.chart.chartArea) return "rgba(16, 185, 129, 0.1)";
           const ctx = context.chart.ctx;
@@ -159,7 +159,7 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
       {
         label: "Expense",
         data: trendData.map((item) => item.expense),
-        borderColor: "#ef4444", 
+        borderColor: "#ef4444",
         backgroundColor: (context) => {
           if (!context.chart.chartArea) return "rgba(239, 68, 68, 0.1)";
           const ctx = context.chart.ctx;
@@ -196,7 +196,9 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
         },
       },
       tooltip: {
-        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        backgroundColor: isDark
+          ? "rgba(15,23,42,0.95)"
+          : "rgba(255,255,255,0.97)",
         titleColor: isDark ? "#f1f5f9" : "#1f2937",
         bodyColor: isDark ? "#cbd5e1" : "#374151",
         borderColor: isDark ? "#334155" : "#e5e7eb",
@@ -264,7 +266,9 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        backgroundColor: isDark
+          ? "rgba(15,23,42,0.95)"
+          : "rgba(255,255,255,0.97)",
         titleColor: isDark ? "#f1f5f9" : "#1f2937",
         bodyColor: isDark ? "#cbd5e1" : "#374151",
         borderColor: isDark ? "#334155" : "#e5e7eb",
@@ -330,7 +334,9 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        backgroundColor: isDark
+          ? "rgba(15,23,42,0.95)"
+          : "rgba(255,255,255,0.97)",
         titleColor: isDark ? "#f1f5f9" : "#1f2937",
         bodyColor: isDark ? "#cbd5e1" : "#374151",
         borderColor: isDark ? "#334155" : "#e5e7eb",
@@ -516,7 +522,12 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
                   Savings vs Last Month
                 </p>
                 <p className="text-2xl font-bold text-gray-800 dark:text-white">
-                  ₹{addThousandsSeparator(Math.abs(currentMonthData.savings - previousMonthData.savings))}
+                  ₹
+                  {addThousandsSeparator(
+                    Math.abs(
+                      currentMonthData.savings - previousMonthData.savings,
+                    ),
+                  )}
                 </p>
               </div>
               <div
@@ -544,7 +555,9 @@ const MonthlyTrendAnalysis = ({ selectedMonth }) => {
                       : "text-red-600 dark:text-red-400"
                   }`}
                 >
-                  {currentMonthData.savings - previousMonthData.savings >= 0 ? "+" : "-"}
+                  {currentMonthData.savings - previousMonthData.savings >= 0
+                    ? "+"
+                    : "-"}
                 </span>
               </div>
             </div>

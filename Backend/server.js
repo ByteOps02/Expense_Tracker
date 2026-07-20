@@ -15,7 +15,7 @@ const incomeRoutes = require("./routes/incomeRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
-const globalErrorHandler = require('./middleware/errorMiddleware');
+const globalErrorHandler = require("./middleware/errorMiddleware");
 const { sanitizeMongoParams } = require("./middleware/validationMiddleware");
 const connectDBMiddleware = require("./middleware/connectDBMiddleware");
 
@@ -23,14 +23,16 @@ const app = express();
 
 app.use(compression());
 
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 
 // CORS setup
 let allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 if (process.env.CLIENT_URL) {
-  allowedOrigins = process.env.CLIENT_URL.split(',').map(url => url.trim());
+  allowedOrigins = process.env.CLIENT_URL.split(",").map((url) => url.trim());
 }
 
 app.use(
@@ -39,7 +41,10 @@ app.use(
       // allow if no origin
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        origin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
         console.error(`CORS error: ${origin} not allowed`);
@@ -82,7 +87,10 @@ const imgLimiter = rateLimit({
 
 app.set("trust proxy", 1);
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/v1/auth/login") || req.path.startsWith("/api/v1/auth/register")) {
+  if (
+    req.path.startsWith("/api/v1/auth/login") ||
+    req.path.startsWith("/api/v1/auth/register")
+  ) {
     return authLimiter(req, res, next);
   }
   if (req.path.startsWith("/api/v1/auth/upload-image")) {

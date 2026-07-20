@@ -97,26 +97,26 @@ exports.getDashboardExpenseSummary = asyncHandler(async (req, res, next) => {
     {
       $match: {
         user: new mongoose.Types.ObjectId(uId),
-        date: { $gte: pastMonth }
-      }
+        date: { $gte: pastMonth },
+      },
     },
     {
       $group: {
         _id: "$category",
-        totalAmount: { $sum: "$amount" }
-      }
+        totalAmount: { $sum: "$amount" },
+      },
     },
     {
-      $sort: { totalAmount: -1 }
-    }
+      $sort: { totalAmount: -1 },
+    },
   ]);
 
   res.status(200).json({
     status: "success",
     results: mySummary.length,
     data: {
-      summary: mySummary
-    }
+      summary: mySummary,
+    },
   });
 });
 
@@ -188,7 +188,9 @@ exports.getMonthlyDashboardSummary = asyncHandler(async (req, res, next) => {
   let totalInc = incData.totalIncome[0]?.total || 0;
   let totalExp = expData.totalExpense[0]?.total || 0;
   let savings = totalInc - totalExp;
-  let totalCount = (incData.monthlyIncomes?.length || 0) + (expData.monthlyExpenses?.length || 0);
+  let totalCount =
+    (incData.monthlyIncomes?.length || 0) +
+    (expData.monthlyExpenses?.length || 0);
 
   let allTransactions = [
     ...(incData.monthlyIncomes || []),
@@ -326,7 +328,15 @@ exports.getTrendSummary = asyncHandler(async (req, res, next) => {
   startDate.setDate(1);
   startDate.setHours(0, 0, 0, 0);
 
-  let endDate = new Date(parseInt(year), parseInt(monthNum), 0, 23, 59, 59, 999);
+  let endDate = new Date(
+    parseInt(year),
+    parseInt(monthNum),
+    0,
+    23,
+    59,
+    59,
+    999,
+  );
 
   let [incomeStats, expenseStats] = await Promise.all([
     Income.aggregate([

@@ -86,7 +86,9 @@ let Login = () => {
           <form className="space-y-6" onSubmit={handleLogin}>
             {/* Email and password input fields */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email Address
+              </label>
               <div className="relative">
                 <FiMail className="absolute top-3.5 left-3 text-gray-400" />
                 <input
@@ -100,7 +102,9 @@ let Login = () => {
               </div>
             </div>
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Password
+              </label>
               <div className="relative">
                 <FiLock className="absolute top-3.5 left-3 text-gray-400" />
                 <input
@@ -120,7 +124,11 @@ let Login = () => {
                 </button>
               </div>
             </div>
-            {error && <p className="text-red-500 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">{error}</p>}
+            {error && (
+              <p className="text-red-500 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
+                {error}
+              </p>
+            )}
             {/* Login button */}
             <motion.button
               whileHover={{ scale: 1.01 }}
