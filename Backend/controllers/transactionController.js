@@ -22,7 +22,7 @@ exports.getAllTransactions = asyncHandler(async (req, res, next) => {
     if (year && monthNum && !isNaN(year) && !isNaN(monthNum)) {
       let startDate = new Date(year, monthNum - 1, 1);
       let endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
-      myMatchQuery.date = { $gte: startDate, $lte: endDate };
+      myMatchQuery.date = { $gte: startDate, $lte: endDate }; //gte -> greater than or equal to , lte -> less than equal to
       expenseQuery.date = { $gte: startDate, $lte: endDate };
     }
   }
