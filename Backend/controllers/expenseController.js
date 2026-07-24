@@ -180,7 +180,7 @@ exports.downloadExpenseExcel = asyncHandler(async (req, res, next) => {
 
   if (cleanData.length > 0) {
     let myHeaders = Object.keys(cleanData[0]);
-    ws.addRow(myHeaders);
+    ws.addRow(myHeaders); //worksheet
     for (let j = 0; j < cleanData.length; j++) {
       ws.addRow(Object.values(cleanData[j]));
     }
