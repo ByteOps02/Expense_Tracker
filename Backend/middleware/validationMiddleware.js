@@ -210,6 +210,26 @@ const validateChangePassword = [
     .withMessage("New password must be at least 8 characters"),
 ];
 
+// validate forgot password
+const validateForgotPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Must be a valid email")
+    .normalizeEmail(),
+];
+
+// validate reset password
+const validateResetPassword = [
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters"),
+];
+
 // validate update user
 const validateUpdateUser = [
   body("fullName")
@@ -245,6 +265,8 @@ module.exports = {
   validateRegister,
   validateLogin,
   validateChangePassword,
+  validateForgotPassword,
+  validateResetPassword,
   validateUpdateUser,
   validateMongoId,
 };

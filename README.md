@@ -23,6 +23,7 @@ It's basically an app where you can log your income and expenses, set budgets fo
 ### Authentication & User Management
 - Sign Up / Login with JWT (tokens expire after 1 hour)
 - Password hashing with bcryptjs
+- Forgot Password & Reset Password via Email (Nodemailer)
 - Profile management — update your name, email, and profile picture
 - Profile pictures uploaded to Cloudinary via Multer
 
@@ -67,6 +68,7 @@ It's basically an app where you can log your income and expenses, set budgets fo
 - JWT for authentication
 - bcryptjs for password hashing
 - Cloudinary + Multer for image uploads
+- Nodemailer for sending emails
 - ExcelJS for generating Excel files
 - Helmet for security headers
 - express-rate-limit for rate limiting
@@ -172,6 +174,9 @@ CLIENT_URL=http://localhost:5173
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+FRONTEND_URL=http://localhost:5173
 ```
 
 Start the backend:
@@ -215,6 +220,9 @@ Now open `http://localhost:5173` in your browser and you're good to go!
 | `CLOUDINARY_CLOUD_NAME` | From your Cloudinary dashboard |
 | `CLOUDINARY_API_KEY` | From your Cloudinary dashboard |
 | `CLOUDINARY_API_SECRET` | From your Cloudinary dashboard |
+| `EMAIL_USER` | Your SMTP email address |
+| `EMAIL_PASS` | Your SMTP email app password |
+| `FRONTEND_URL` | Frontend URL for the email link |
 
 ### Frontend (`Frontend/.env`)
 
@@ -238,6 +246,8 @@ All routes are prefixed with `/api`. Protected routes need an `Authorization: Be
 | PUT | `/profile` | Yes | Update your profile |
 | PUT | `/change-password` | Yes | Change your password |
 | POST | `/upload-avatar` | Yes | Upload a profile photo |
+| POST | `/forgot-password` | No | Request password reset link |
+| PUT | `/reset-password/:token` | No | Reset password with token |
 
 ### Income — `/api/income`
 

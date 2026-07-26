@@ -4,6 +4,8 @@ const cloudinary = require("../config/cloudinary");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { validateEmail, validateObjectId } = require("../utils/queryValidator");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
@@ -113,6 +115,80 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Password changed",
+  });
+});
+
+// forgot password
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  let myEmail = validateEmail(req.body.email);
+
+  const user = await User.findOne({ email: myEmail });
+
+  if (!user) {
+    return next(new AppError("There is no user with that email address.", 404));
+  }
+
+  // Generate the random reset token
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+  // Create reset URL
+  const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
+
+  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+  const html = `
+    <p>You are receiving this email because you (or someone else) has requested the reset of a password.</p>
+    <p>Click the link below to reset your password:</p>
+    <a href="${resetUrl}">${resetUrl}</a>
+  `;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset Token",
+      message,
+      html,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Token sent to email!",
+    });
+  } catch (err) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError("There was an error sending the email. Try again later!", 500));
+  }
+});
+
+// reset password
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError("Token is invalid or has expired", 400));
+  }
+
+  // Set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Password reset successful. Please log in.",
   });
 });
 

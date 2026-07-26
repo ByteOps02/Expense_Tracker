@@ -5,6 +5,7 @@ This is the backend API for my Expense Tracker app, built with Node.js and Expre
 ## What it does
 
 - Handles user signup, login, and profile updates using JWT for security.
+- Handles password resets with email links using Nodemailer.
 - Manages all the CRUD (Create, Read, Update, Delete) operations for expenses, incomes, and budgets.
 - Sends data to the frontend so it can display charts and dashboards.
 - Uploads profile pictures to Cloudinary.
@@ -16,6 +17,7 @@ This is the backend API for my Expense Tracker app, built with Node.js and Expre
 - **JWT (jsonwebtoken):** To keep users logged in securely.
 - **Bcryptjs:** To hash passwords so they aren't stored as plain text.
 - **Multer & Cloudinary:** For handling image uploads.
+- **Nodemailer:** To send password reset emails.
 - **Dotenv:** To manage environment variables.
 
 ## Getting Started
@@ -34,6 +36,9 @@ This is the backend API for my Expense Tracker app, built with Node.js and Expre
    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
    CLOUDINARY_API_KEY=your_cloudinary_key
    CLOUDINARY_API_SECRET=your_cloudinary_secret
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_app_password
+   FRONTEND_URL=http://localhost:5173
    ```
 
 3. Run the server:

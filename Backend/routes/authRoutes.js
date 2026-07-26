@@ -6,6 +6,8 @@ const {
   getUserInfo,
   updateUser,
   changePassword,
+  forgotPassword,
+  resetPassword,
   uploadProfileImage,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadMiddleware");
@@ -15,6 +17,8 @@ const {
   validateLogin,
   validateChangePassword,
   validateUpdateUser,
+  validateForgotPassword,
+  validateResetPassword,
 } = require("../middleware/validationMiddleware");
 
 let router = express.Router();
@@ -53,5 +57,21 @@ router.post(
 
 // upload image
 router.post("/upload-image", upload.single("image"), uploadProfileImage);
+
+// forgot password
+router.post(
+  "/forgot-password",
+  validateForgotPassword,
+  handleValidationErrors,
+  forgotPassword,
+);
+
+// reset password
+router.put(
+  "/reset-password/:token",
+  validateResetPassword,
+  handleValidationErrors,
+  resetPassword,
+);
 
 module.exports = router;

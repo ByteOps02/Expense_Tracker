@@ -18,6 +18,8 @@ import LoadingSpinner from "./components/LoadingSpinner";
 // lazy loading pages to make it faster
 let Login = lazy(() => import("./pages/Auth/Login"));
 let SignUp = lazy(() => import("./pages/Auth/SignUp"));
+let ForgotPassword = lazy(() => import("./pages/Auth/ForgotPassword"));
+let ResetPassword = lazy(() => import("./pages/Auth/ResetPassword"));
 let Home = lazy(() => import("./pages/Dashboard/Home"));
 let Income = lazy(() => import("./pages/Dashboard/Income"));
 let Expense = lazy(() => import("./pages/Dashboard/Expense"));
@@ -63,6 +65,8 @@ let App = () => {
 
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
 
                     {/* pages that need login */}
                     <Route
