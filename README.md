@@ -89,7 +89,8 @@ Expense_Tracker/
 │   │   ├── budgetController.js
 │   │   ├── dashboardController.js
 │   │   ├── expenseController.js
-│   │   └── incomeController.js
+│   │   ├── incomeController.js
+│   │   └── transactionController.js
 │   ├── middleware/             # Auth middleware, validation, rate limiting
 │   ├── models/                 # Mongoose schemas
 │   │   ├── User.js
@@ -127,7 +128,9 @@ Expense_Tracker/
     │   ├── pages/
     │   │   ├── Auth/
     │   │   │   ├── Login.jsx
-    │   │   │   └── SignUp.jsx
+    │   │   │   ├── SignUp.jsx
+    │   │   │   ├── ForgotPassword.jsx
+    │   │   │   └── ResetPassword.jsx
     │   │   └── Dashboard/
     │   │       ├── Home.jsx
     │   │       ├── Income.jsx
@@ -234,57 +237,59 @@ Now open `http://localhost:5173` in your browser and you're good to go!
 
 ## API Endpoints
 
-All routes are prefixed with `/api`. Protected routes need an `Authorization: Bearer <token>` header.
+All routes are prefixed with `/api/v1`. Protected routes need an `Authorization: Bearer <token>` header.
 
-### Auth — `/api/auth`
+### Auth — `/api/v1/auth`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
 | POST | `/register` | No | Create a new account |
 | POST | `/login` | No | Login and get a JWT |
-| GET | `/profile` | Yes | Get your profile |
-| PUT | `/profile` | Yes | Update your profile |
-| PUT | `/change-password` | Yes | Change your password |
-| POST | `/upload-avatar` | Yes | Upload a profile photo |
+| GET | `/getUser` | Yes | Get your profile |
+| PUT | `/update` | Yes | Update your profile |
+| POST | `/change-password` | Yes | Change your password |
+| POST | `/upload-image` | Yes | Upload a profile photo |
 | POST | `/forgot-password` | No | Request password reset link |
 | PUT | `/reset-password/:token` | No | Reset password with token |
 
-### Income — `/api/income`
+### Income — `/api/v1/income`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
 | GET | `/` | Yes | Get all income entries |
-| POST | `/add` | Yes | Add an income entry |
+| POST | `/` | Yes | Add an income entry |
 | PUT | `/:id` | Yes | Edit an income entry |
 | DELETE | `/:id` | Yes | Delete an income entry |
-| GET | `/download` | Yes | Download as Excel |
+| GET | `/download-excel` | Yes | Download as Excel |
 
-### Expense — `/api/expense`
+### Expense — `/api/v1/expense`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
 | GET | `/` | Yes | Get all expense entries |
-| POST | `/add` | Yes | Add an expense entry |
+| POST | `/` | Yes | Add an expense entry |
 | PUT | `/:id` | Yes | Edit an expense entry |
 | DELETE | `/:id` | Yes | Delete an expense entry |
-| GET | `/download` | Yes | Download as Excel |
+| GET | `/download-excel` | Yes | Download as Excel |
 
-### Budget — `/api/budget`
+### Budget — `/api/v1/budgets`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
 | GET | `/` | Yes | Get all budgets |
-| POST | `/add` | Yes | Create a budget |
+| POST | `/` | Yes | Create a budget |
+| GET | `/:id` | Yes | Get a single budget |
 | PUT | `/:id` | Yes | Update a budget |
 | DELETE | `/:id` | Yes | Delete a budget |
+| GET | `/report/actual-vs-budget` | Yes | Actual vs budget report |
 
-### Dashboard — `/api/dashboard`
+### Dashboard — `/api/v1/dashboard`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
 | GET | `/` | Yes | Get dashboard summary |
 
-### Transactions — `/api/transactions`
+### Transactions — `/api/v1/transactions`
 
 | Method | Endpoint | Protected | Description |
 |---|---|---|---|
