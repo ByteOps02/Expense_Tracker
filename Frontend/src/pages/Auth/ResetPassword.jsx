@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiLock, FiEye, FiEyeOff, FiMail, FiKey } from "react-icons/fi";
 import { LuSun, LuMoon } from "react-icons/lu";
 import { useTheme } from "../../hooks/useTheme";
 import axiosInstance from "../../utils/axiosInstance";
@@ -9,6 +9,9 @@ import { API_PATHS } from "../../utils/apiPath";
 import AuthBranding from "../../components/layouts/AuthBranding";
 
 const ResetPassword = () => {
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +21,6 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
 
   const { theme, toggleTheme } = useTheme();
-  const { token } = useParams();
   const navigate = useNavigate();
 
   const handleResetPassword = async (e) => {
@@ -37,7 +39,9 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.put(API_PATHS.AUTH.RESET_PASSWORD(token), {
+      const response = await axiosInstance.put(API_PATHS.AUTH.RESET_PASSWORD, {
+        email,
+        otp,
         password,
       });
       setMessage(response.data.message || "Password has been reset successfully.");
@@ -85,6 +89,39 @@ const ResetPassword = () => {
             </p>
           </div>
           <form className="space-y-6" onSubmit={handleResetPassword}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email Address
+              </label>
+              <div className="relative">
+                <FiMail className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                OTP
+              </label>
+              <div className="relative">
+                <FiKey className="absolute top-3.5 left-3 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                  className="w-full pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-500 dark:focus:border-purple-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 New Password

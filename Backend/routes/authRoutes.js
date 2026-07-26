@@ -68,7 +68,7 @@ router.post(
 
 // reset password
 router.put(
-  "/reset-password/:token",
+  "/reset-password",
   validateResetPassword,
   handleValidationErrors,
   resetPassword,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiMail } from "react-icons/fi";
 import { LuSun, LuMoon } from "react-icons/lu";
@@ -16,6 +16,7 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
 
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -31,7 +32,10 @@ const ForgotPassword = () => {
       const response = await axiosInstance.post(API_PATHS.AUTH.FORGOT_PASSWORD, {
         email,
       });
-      setMessage(response.data.message || "Password reset link sent to your email.");
+      setMessage(response.data.message || "OTP sent to your email.");
+      setTimeout(() => {
+        navigate("/reset-password", { state: { email } });
+      }, 1500);
     } catch (err) {
       setError(
         err.response?.data?.message || "Failed to send reset link. Try again."

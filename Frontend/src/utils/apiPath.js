@@ -8,7 +8,7 @@ export let API_PATHS = {
     CHANGE_PASSWORD: "/api/v1/auth/change-password",
     UPDATE_USER_INFO: "/api/v1/auth/update",
     FORGOT_PASSWORD: "/api/v1/auth/forgot-password",
-    RESET_PASSWORD: (token) => `/api/v1/auth/reset-password/${token}`,
+    RESET_PASSWORD: "/api/v1/auth/reset-password",
   },
   DASHBOARD: {
     GET_DATA: "/api/v1/dashboard",

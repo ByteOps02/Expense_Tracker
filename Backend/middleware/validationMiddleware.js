@@ -223,6 +223,19 @@ const validateForgotPassword = [
 
 // validate reset password
 const validateResetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Must be a valid email")
+    .normalizeEmail(),
+  body("otp")
+    .trim()
+    .notEmpty()
+    .withMessage("OTP is required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("OTP must be 6 digits"),
   body("password")
     .notEmpty()
     .withMessage("Password is required")

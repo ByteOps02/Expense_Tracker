@@ -23,7 +23,7 @@ It's basically an app where you can log your income and expenses, set budgets fo
 ### Authentication & User Management
 - Sign Up / Login with JWT (tokens expire after 1 hour)
 - Password hashing with bcryptjs
-- Forgot Password & Reset Password via Email (Nodemailer)
+- Forgot Password & Reset Password via Email OTP Verification (Nodemailer)
 - Profile management — update your name, email, and profile picture
 - Profile pictures uploaded to Cloudinary via Multer
 
@@ -249,8 +249,8 @@ All routes are prefixed with `/api/v1`. Protected routes need an `Authorization:
 | PUT | `/update` | Yes | Update your profile |
 | POST | `/change-password` | Yes | Change your password |
 | POST | `/upload-image` | Yes | Upload a profile photo |
-| POST | `/forgot-password` | No | Request password reset link |
-| PUT | `/reset-password/:token` | No | Reset password with token |
+| POST | `/forgot-password` | No | Request password reset OTP |
+| PUT | `/reset-password` | No | Reset password with OTP |
 
 ### Income — `/api/v1/income`
 

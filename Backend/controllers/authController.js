@@ -132,14 +132,11 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
 
-  // Create reset URL
-  const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
-
-  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Your OTP for password reset is: \n\n ${resetToken}`;
   const html = `
     <p>You are receiving this email because you (or someone else) has requested the reset of a password.</p>
-    <p>Click the link below to reset your password:</p>
-    <a href="${resetUrl}">${resetUrl}</a>
+    <p>Your OTP for password reset is:</p>
+    <h2>${resetToken}</h2>
   `;
 
   try {
@@ -165,23 +162,28 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
 // reset password
 exports.resetPassword = asyncHandler(async (req, res, next) => {
+  const { email, otp, password } = req.body;
+
+  let myEmail = validateEmail(email);
+
   // Get hashed token
   const resetPasswordToken = crypto
     .createHash("sha256")
-    .update(req.params.token)
+    .update(otp)
     .digest("hex");
 
   const user = await User.findOne({
+    email: myEmail,
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
 
   if (!user) {
-    return next(new AppError("Token is invalid or has expired", 400));
+    return next(new AppError("OTP is invalid or has expired", 400));
   }
 
   // Set new password
-  user.password = req.body.password;
+  user.password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
   await user.save();
