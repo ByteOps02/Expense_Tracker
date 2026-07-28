@@ -5,11 +5,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendEmail = async (options) => {
   try {
     const data = await resend.emails.send({
-      from: `Expense Tracker <onboarding@resend.dev>`, // Resend testing email by default, user can change this
+      from: `Expense Tracker <expense_tracker@resend.dev>`,
       to: options.email,
       subject: options.subject,
       text: options.message,
-      html: options.html, // Optional HTML message
+      html: options.html,
     });
     
     console.log("Email sent successfully:", data);
